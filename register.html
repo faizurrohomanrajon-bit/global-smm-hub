@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,12 +10,11 @@
 body{font-family:Arial,sans-serif;background:#080f1d;color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .container{width:100%;max-width:450px}
 .logo{text-align:center;margin-bottom:25px;font-size:24px;font-weight:bold;color:#4ade80}
-.card{background:#111e30;border:1px solid #263951;border-radius:20px;padding:30px;box-shadow:0 20px 60px #0005}
+.card{background:#111e30;border:1px solid #263951;border-radius:20px;padding:30px}
 h1{text-align:center;font-size:29px;margin-bottom:10px}
 .sub{text-align:center;color:#94a3b8;font-size:14px;margin-bottom:27px}
 label{display:block;margin-bottom:8px;font-size:14px}
-input{width:100%;padding:14px;background:#091424;border:1px solid #34445b;border-radius:9px;color:white;font-size:15px;outline:none;margin-bottom:17px}
-input:focus{border-color:#4ade80}
+input{width:100%;padding:14px;background:#091424;border:1px solid #34445b;border-radius:9px;color:white;font-size:15px;margin-bottom:17px}
 button{width:100%;padding:15px;border:0;border-radius:9px;background:#16a34a;color:white;font-size:16px;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.6}
 .message{text-align:center;margin-top:15px;font-size:13px;line-height:1.6}
@@ -56,22 +54,65 @@ Already have an account? <a href="login.html">Login</a>
 <div class="home"><a href="index.html">← Back to Homepage</a></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-document.getElementById("registerForm").addEventListener("submit",function(e){
-e.preventDefault();
-const password=document.getElementById("password").value;
-const confirm=document.getElementById("confirmPassword").value;
-const message=document.getElementById("message");
+const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-if(password!==confirm){
-message.style.color="#f87171";
-message.textContent="Passwords do not match.";
-return;
-}
-message.style.color="#facc15";
-message.textContent="Registration system setup is coming. Please wait for account integration.";
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const confirm = document.getElementById("confirmPassword").value;
+  const message = document.getElementById("message");
+  const button = document.getElementById("registerBtn");
+
+  if (password !== confirm) {
+    message.style.color = "#f87171";
+    message.textContent = "Passwords do not match.";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "PLEASE WAIT...";
+  message.textContent = "";
+
+  try {
+    const { data, error } = await supabaseClient.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          full_name: name
+        }
+      }
+    });
+
+    if (error) throw error;
+
+    message.style.color = "#4ade80";
+    message.textContent = "Account created successfully! Please login.";
+
+    document.getElementById("registerForm").reset();
+
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1800);
+
+  } catch (error) {
+    message.style.color = "#f87171";
+    message.textContent = error.message;
+  } finally {
+    button.disabled = false;
+    button.textContent = "CREATE ACCOUNT →";
+  }
 });
 </script>
 </body>
   </html>
-  
