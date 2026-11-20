@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080f1d">
+<title>Login | GLOBAL SMM HUB</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#080f1d;color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.container{width:100%;max-width:430px}
+.logo{text-align:center;margin-bottom:28px;font-size:24px;font-weight:bold;color:#4ade80}
+.card{background:#111e30;border:1px solid #263951;border-radius:20px;padding:32px;box-shadow:0 20px 60px #0005}
+h1{text-align:center;font-size:30px;margin-bottom:10px}
+.sub{text-align:center;color:#94a3b8;font-size:14px;margin-bottom:30px}
+label{display:block;margin-bottom:9px;font-size:14px}
+input{width:100%;padding:15px;background:#091424;border:1px solid #34445b;border-radius:9px;color:white;font-size:15px;outline:none;margin-bottom:20px}
+input:focus{border-color:#4ade80}
+button{width:100%;padding:15px;border:0;border-radius:9px;background:#16a34a;color:white;font-weight:bold;font-size:16px;cursor:pointer}
+button:disabled{opacity:.6}
+.links{text-align:center;margin-top:23px;font-size:14px;color:#94a3b8;line-height:2}
+a{color:#4ade80;text-decoration:none}
+.message{text-align:center;margin-top:15px;font-size:13px;line-height:1.6}
+.home{text-align:center;margin-top:25px;color:#94a3b8;font-size:14px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="logo">🌍 GLOBAL SMM HUB</div>
+<div class="card">
+<h1>Welcome Back</h1>
+<p class="sub">Login to your global marketing account</p>
+
+<form id="loginForm">
+<label>Email Address</label>
+<input type="email" id="email" placeholder="Enter your email" required>
+
+<label>Password</label>
+<input type="password" id="password" placeholder="Enter your password" required>
+
+<button type="submit" id="loginBtn">LOGIN →</button>
+<div class="message" id="message"></div>
+</form>
+
+<div class="links">
+Don't have an account? <a href="register.html">Create Account</a>
+</div>
+</div>
+<div class="home"><a href="index.html">← Back to Homepage</a></div>
+</div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit",function(e){
+e.preventDefault();
+document.getElementById("message").textContent=
+"Login system setup is coming. Please wait for account integration.";
+});
+</script>
+</body>
+</html>
