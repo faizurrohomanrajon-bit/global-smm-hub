@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080f1d">
+<title>Register | GLOBAL SMM HUB</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#080f1d;color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.container{width:100%;max-width:450px}
+.logo{text-align:center;margin-bottom:25px;font-size:24px;font-weight:bold;color:#4ade80}
+.card{background:#111e30;border:1px solid #263951;border-radius:20px;padding:30px;box-shadow:0 20px 60px #0005}
+h1{text-align:center;font-size:29px;margin-bottom:10px}
+.sub{text-align:center;color:#94a3b8;font-size:14px;margin-bottom:27px}
+label{display:block;margin-bottom:8px;font-size:14px}
+input{width:100%;padding:14px;background:#091424;border:1px solid #34445b;border-radius:9px;color:white;font-size:15px;outline:none;margin-bottom:17px}
+input:focus{border-color:#4ade80}
+button{width:100%;padding:15px;border:0;border-radius:9px;background:#16a34a;color:white;font-size:16px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.6}
+.message{text-align:center;margin-top:15px;font-size:13px;line-height:1.6}
+.links{text-align:center;margin-top:22px;color:#94a3b8;font-size:14px}
+a{color:#4ade80;text-decoration:none}
+.home{text-align:center;margin-top:23px;color:#94a3b8;font-size:14px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="logo">🌍 GLOBAL SMM HUB</div>
+<div class="card">
+<h1>Create Account</h1>
+<p class="sub">Join our global marketing platform</p>
+
+<form id="registerForm">
+<label>Full Name</label>
+<input type="text" id="name" placeholder="Enter your full name" required>
+
+<label>Email Address</label>
+<input type="email" id="email" placeholder="Enter your email" required>
+
+<label>Password</label>
+<input type="password" id="password" placeholder="Create a password" minlength="8" required>
+
+<label>Confirm Password</label>
+<input type="password" id="confirmPassword" placeholder="Confirm your password" minlength="8" required>
+
+<button type="submit" id="registerBtn">CREATE ACCOUNT →</button>
+<div class="message" id="message"></div>
+</form>
+
+<div class="links">
+Already have an account? <a href="login.html">Login</a>
+</div>
+</div>
+<div class="home"><a href="index.html">← Back to Homepage</a></div>
+</div>
+
+<script>
+document.getElementById("registerForm").addEventListener("submit",function(e){
+e.preventDefault();
+const password=document.getElementById("password").value;
+const confirm=document.getElementById("confirmPassword").value;
+const message=document.getElementById("message");
+
+if(password!==confirm){
+message.style.color="#f87171";
+message.textContent="Passwords do not match.";
+return;
+}
+message.style.color="#facc15";
+message.textContent="Registration system setup is coming. Please wait for account integration.";
+});
+</script>
+</body>
+  </html>
+  
