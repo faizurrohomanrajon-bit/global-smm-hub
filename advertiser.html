@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Buyer - Global Earning</title>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#0b1120;color:white;font-family:Arial,sans-serif}
@@ -13,23 +14,36 @@ h2{color:#4ade80;margin:0}
 main{max-width:600px;margin:auto;padding:18px}
 .card{background:#172338;padding:20px;border-radius:15px;margin-top:18px}
 label{display:block;margin:15px 0 7px}
-input,textarea,select{width:100%;padding:13px;border-radius:8px;border:1px solid #34445e;background:#0b1120;color:white}
+input,textarea,select{
+width:100%;padding:13px;border-radius:8px;
+border:1px solid #34445e;background:#0b1120;color:white
+}
 textarea{min-height:90px;resize:vertical}
-button{width:100%;padding:15px;margin-top:20px;background:#4ade80;border:0;border-radius:9px;font-weight:bold;font-size:16px}
+button{
+width:100%;padding:15px;margin-top:20px;
+background:#4ade80;border:0;border-radius:9px;
+font-weight:bold;font-size:16px
+}
+button:disabled{opacity:.5}
 .note{color:#aab7ca;font-size:13px;line-height:1.6}
 </style>
 </head>
+
 <body>
 <header>
 <h2>GLOBAL EARNING 🌍</h2>
 <p>Buyer Work Posting</p>
 </header>
+
 <main>
 <div class="card">
 <h3>নতুন কাজ পোস্ট করুন</h3>
-<p class="note">আপনার কাজের তথ্য দিন। Admin অনুমোদনের পর কাজটি Worker-দের কাছে দেখানো হবে।</p>
+<p class="note">
+আপনার কাজের তথ্য দিন। Admin অনুমোদনের পর কাজটি Worker-দের কাছে দেখানো হবে।
+</p>
 
 <form id="taskForm">
+
 <label>কাজের নাম</label>
 <input id="title" required maxlength="100" placeholder="কাজের নাম লিখুন">
 
@@ -65,35 +79,138 @@ button{width:100%;padding:15px;margin-top:20px;background:#4ade80;border:0;borde
 
 <div class="note" id="budget">মোট বাজেট: 0.00</div>
 
-<button type="submit">কাজ পোস্ট করুন</button>
+<button type="submit" id="submitBtn">কাজ পোস্ট করুন</button>
 </form>
+
 <p id="message" class="note"></p>
 </div>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+// নিজের Supabase Project URL
+const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
+
+// নিজের Publishable Key এখানে বসাবে
+const SUPABASE_KEY = "এখানে_তোমার_PUBLISHABLE_KEY_বসাও";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
 const reward = document.getElementById("reward");
 const workers = document.getElementById("workers");
 const currency = document.getElementById("currency");
+const message = document.getElementById("message");
+const submitBtn = document.getElementById("submitBtn");
 
 function updateBudget(){
- const r = Number(reward.value);
- const w = Number(workers.value);
- const total = r * w;
- document.getElementById("budget").textContent =
- "মোট বাজেট: " + (Number.isFinite(total) ? total.toFixed(2) : "0.00")
- + " " + currency.value;
-}
-reward.addEventListener("input",updateBudget);
-workers.addEventListener("input",updateBudget);
-currency.addEventListener("change",updateBudget);
+  const r = Number(reward.value);
+  const w = Number(workers.value);
+  const total = r * w;
 
-document.getElementById("taskForm").addEventListener("submit",function(e){
- e.preventDefault();
- document.getElementById("message").textContent =
- "ফর্ম প্রস্তুত। Supabase ও Buyer Wallet সংযোগ করার পর কাজ জমা হবে।";
+  document.getElementById("budget").textContent =
+    "মোট বাজেট: " +
+    (Number.isFinite(total) ? total.toFixed(2) : "0.00") +
+    " " + currency.value;
+}
+
+reward.addEventListener("input", updateBudget);
+workers.addEventListener("input", updateBudget);
+currency.addEventListener("change", updateBudget);
+
+// লগইন যাচাই
+async function checkLogin(){
+  const { data, error } = await supabaseClient.auth.getUser();
+
+  if(error || !data.user){
+    message.textContent = "আগে Login করুন।";
+    submitBtn.disabled = true;
+    return;
+  }
+
+  submitBtn.disabled = false;
+}
+
+checkLogin();
+
+// কাজ জমা
+document.getElementById("taskForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  message.textContent = "";
+  submitBtn.disabled = true;
+  submitBtn.textContent = "জমা হচ্ছে...";
+
+  try {
+    const { data: authData, error: authError } =
+      await supabaseClient.auth.getUser();
+
+    if(authError || !authData.user){
+      throw new Error("আপনাকে আগে Login করতে হবে।");
+    }
+
+    const buyerId = authData.user.id;
+
+    const title = document.getElementById("title").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const requirements = document.getElementById("requirements").value.trim();
+    const category = document.getElementById("category").value;
+    const selectedCurrency = currency.value;
+    const r = Number(reward.value);
+    const w = Number(workers.value);
+    const deadlineValue = document.getElementById("deadline").value;
+
+    if(!title || !description || !category){
+      throw new Error("সব প্রয়োজনীয় তথ্য পূরণ করুন।");
+    }
+
+    if(!Number.isFinite(r) || r <= 0 || !Number.isInteger(w) || w <= 0){
+      throw new Error("পুরস্কার ও Worker সংখ্যা সঠিকভাবে দিন।");
+    }
+
+    const total = Number((r * w).toFixed(2));
+
+    const taskData = {
+      buyer_id: buyerId,
+      title: title,
+      description: description,
+      requirements: requirements || null,
+      category: category,
+      currency: selectedCurrency,
+      reward_per_worker: r,
+      total_budget: total,
+      workers_needed: w,
+      deadline: deadlineValue
+        ? new Date(deadlineValue).toISOString()
+        : null,
+      status: "draft"
+    };
+
+    const { error } = await supabaseClient
+      .from("tasks")
+      .insert(taskData);
+
+    if(error){
+      throw error;
+    }
+
+    message.textContent =
+      "সফলভাবে কাজ জমা হয়েছে! কাজটি এখন Draft অবস্থায় আছে। Admin অনুমোদনের পর Worker-রা দেখতে পাবে।";
+
+    document.getElementById("taskForm").reset();
+    updateBudget();
+
+  } catch(error) {
+    message.textContent = "সমস্যা: " + error.message;
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "কাজ পোস্ট করুন";
+  }
 });
 </script>
 </body>
-                                                                                     </html>
-  
+ </html>
+ 
