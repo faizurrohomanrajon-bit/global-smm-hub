@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLOBAL EARNING - Worker Tasks</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080f1d;color:#fff;font-family:Arial,sans-serif;padding:18px}
+.container{max-width:850px;margin:auto}
+h1{color:#4ade80}
+.card{background:#111d30;border:1px solid #26364d;border-radius:14px;padding:18px;margin:15px 0}
+.muted{color:#9aabc1;font-size:13px}
+.reward{color:#4ade80;font-size:20px;font-weight:bold}
+input,textarea{width:100%;padding:13px;margin:8px 0;background:#081321;color:white;border:1px solid #26364d;border-radius:8px}
+textarea{min-height:100px}
+button{background:#4ade80;color:#07111d;border:0;border-radius:8px;padding:12px 18px;font-weight:bold;cursor:pointer}
+.refresh{background:#26364d;color:white}
+button:disabled{opacity:.5}
+.status{color:#4ade80}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>GLOBAL EARNING 🌍</h1>
+<h2>Worker Panel</h2>
+<p class="muted">Available Work & Task Submission</p>
+
+<div class="card">
+<p id="userStatus">Checking Login...</p>
+<button class="refresh" onclick="loadTasks()">Refresh Tasks</button>
+<button class="refresh" onclick="location.href='dashboard.html'">Dashboard</button>
+<button class="refresh" onclick="logout()">Logout</button>
+</div>
+
+<h2>Available Tasks</h2>
+<div id="taskMessage" class="muted">Loading...</div>
+<div id="taskList"></div>
+
+<h2>My Submissions</h2>
+<div id="submissionMessage" class="muted">Loading...</div>
+<div id="mySubmissions"></div>
+
+</div>
+
+<script>
+const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
+
+// নিজের আগের Publishable Key বসাবে
+const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let currentUser = null;
+
+function safe(value){
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#039;"
+  })[c]);
+}
+
+async function start(){
+  const {data,error} = await db.auth.getUser();
+
+  if(error || !data.user){
+    document.getElementById("userStatus").textContent =
+      "প্রথমে Login করুন।";
+    document.getElementById("taskMessage").textContent =
+      "Login প্রয়োজন।";
+    return;
+  }
+
+  currentUser = data.user;
+
+  document.getElementById("userStatus").innerHTML =
+    '<span class="status">Worker Login ✓</span>';
+
+  await loadTasks();
+  await loadMySubmissions();
+}
+
+async function loadTasks(){
+  if(!currentUser) return;
+
+  const box = document.getElementById("taskList");
+  const msg = document.getElementById("taskMessage");
+
+  msg.textContent = "Loading tasks...";
+  box.innerHTML = "";
+
+  const {data:myData,error:myError} = await db
+    .from("task_submissions")
+    .select("task_id")
+    .eq("worker_id",currentUser.id);
+
+  if(myError){
+    msg.textContent = "Submission check Error: " + myError.message;
+    return;
+  }
+
+  const completedTaskIds = (myData || []).map(x=>x.task_id);
+
+  const {data,error} = await db
+    .from("tasks")
+    .select("id,title,description,requirements,reward_per_worker,currency,workers_needed")
+    .eq("status","active")
+    .order("created_at",{ascending:false});
+
+  if(error){
+    msg.textContent = "Error: " + error.message;
+    return;
+  }
+
+  const available = (data || []).filter(task =>
+    !completedTaskIds.includes(task.id)
+  );
+
+  if(available.length === 0){
+    msg.textContent = "এখন কোনো নতুন কাজ নেই। পরে আবার দেখুন।";
+    return;
+  }
+
+  msg.textContent = available.length + "টি Available Task";
+
+  available.forEach(task=>{
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <h3>${safe(task.title)}</h3>
+      <p>${safe(task.description)}</p>
+      <p class="muted">শর্ত: ${safe(task.requirements || "কোনো অতিরিক্ত শর্ত নেই")}</p>
+      <p class="reward">$${safe(task.reward_per_worker)} ${safe(task.currency)}</p>
+      <p class="muted">Workers Needed: ${safe(task.workers_needed)}</p>
+      <textarea class="proofInput" placeholder="কাজের প্রমাণ / Proof লিখুন"></textarea>
+      <button class="submitBtn">Submit Work</button>
+      <p class="muted result"></p>
+    `;
+
+    const btn = card.querySelector(".submitBtn");
+
+    btn.addEventListener("click",async ()=>{
+      const proof = card.querySelector(".proofInput").value.trim();
+      const result = card.querySelector(".result");
+
+      if(proof.length < 5){
+        result.textContent = "কমপক্ষে ৫ অক্ষরের Proof লিখুন।";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Submitting...";
+      result.textContent = "";
+
+      const {error:submitError} = await db
+        .from("task_submissions")
+        .insert({
+          task_id:task.id,
+          worker_id:currentUser.id,
+          evidence:proof,
+          status:"pending"
+        });
+
+      if(submitError){
+        result.textContent = "Error: " + submitError.message;
+        btn.disabled = false;
+        btn.textContent = "Submit Work";
+        return;
+      }
+
+      result.textContent = "Proof জমা হয়েছে। Admin Review করবে।";
+      card.querySelector(".proofInput").disabled = true;
+      btn.textContent = "Submitted ✓";
+
+      await loadMySubmissions();
+    });
+
+    box.appendChild(card);
+  });
+}
+
+async function loadMySubmissions(){
+  if(!currentUser) return;
+
+  const msg = document.getElementById("submissionMessage");
+  const box = document.getElementById("mySubmissions");
+
+  msg.textContent = "Loading...";
+  box.innerHTML = "";
+
+  const {data,error} = await db
+    .from("task_submissions")
+    .select("id,task_id,status,submitted_at")
+    .eq("worker_id",currentUser.id)
+    .order("submitted_at",{ascending:false});
+
+  if(error){
+    msg.textContent = "Error: " + error.message;
+    return;
+  }
+
+  if(!data || data.length === 0){
+    msg.textContent = "এখনো কোনো কাজ জমা দেননি।";
+    return;
+  }
+
+  msg.textContent = data.length + "টি Submission";
+
+  data.forEach(item=>{
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <p>Submission ID: ${safe(item.id)}</p>
+      <p>Status: <span class="status">${safe(item.status)}</span></p>
+      <p class="muted">Submitted: ${safe(item.submitted_at ? new Date(item.submitted_at).toLocaleString() : "")}</p>
+    `;
+
+    box.appendChild(card);
+  });
+}
+
+async function logout(){
+  await db.auth.signOut();
+  location.href = "login.html";
+}
+
+start();
+</script>
+</body>
+  </html>
+  
