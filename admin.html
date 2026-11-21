@@ -181,8 +181,75 @@ async function logout(){
   await db.auth.signOut();
   location.href = "login.html";
 }
-
+loadBuyerTasks();
 start();
+async function loadBuyerTasks(){
+  const {data,error} = await db
+    .from("tasks")
+    .select("id,title,description,reward_per_worker,currency,status")
+    .eq("status","draft")
+    .order("created_at",{ascending:false});
+
+  if(error){
+    alert("Buyer Tasks Error: " + error.message);
+    return;
+  }
+
+  let box = document.getElementById("buyerTasks");
+
+  if(!box){
+    box = document.createElement("div");
+    box.id = "buyerTasks";
+    document.querySelector(".container").appendChild(box);
+  }
+
+  box.innerHTML = "<h2>Buyer Pending Tasks</h2>";
+
+  if(!data || data.length === 0){
+    box.innerHTML += "<p class='muted'>কোনো Pending Buyer Task নেই।</p>";
+    return;
+  }
+
+  data.forEach(task=>{
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("h3");
+    title.textContent = task.title;
+
+    const desc = document.createElement("p");
+    desc.textContent = task.description || "";
+
+    const reward = document.createElement("p");
+    reward.textContent = "Reward: " + task.reward_per_worker + " " + task.currency;
+
+    const btn = document.createElement("button");
+    btn.textContent = "Approve & Activate";
+
+    btn.onclick = async ()=>{
+      if(!confirm("এই কাজটি Active করতে চান? পেমেন্ট যাচাই করা হয়েছে কি না নিশ্চিত করুন।")) return;
+
+      btn.disabled = true;
+
+      const {error} = await db.rpc(
+        "approve_buyer_task",
+        {p_task_id:task.id}
+      );
+
+      if(error){
+        alert("Error: " + error.message);
+        btn.disabled = false;
+        return;
+      }
+
+      alert("Task Active হয়েছে।");
+      await loadBuyerTasks();
+    };
+
+    card.append(title,desc,reward,btn);
+    box.appendChild(card);
+  });
+  }  
 </script>
 </body>
   </html>
