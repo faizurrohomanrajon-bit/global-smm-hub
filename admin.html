@@ -40,6 +40,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
 <script>
 const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
+
+// এখানে নিজের আগের Publishable Key বসাবে
 const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
 const db = window.supabase.createClient(
@@ -77,17 +79,14 @@ async function start(){
       message.textContent = "Admin check failed.";
       return;
     }
-document.getElementById("adminStatus").textContent =
-  "Logged-in User ID: " + user.id +
-  " | Admin: " + isAdmin;
-      if(isAdmin !== true){
-  document.getElementById("adminStatus").textContent =
-    "Your User ID: " + user.id +
-    " | Admin: " + isAdmin;
-  message.textContent = "Access denied.";
-  return;
-      }
-  
+
+    if(isAdmin !== true){
+      document.getElementById("adminStatus").textContent =
+        "Access denied. User ID: " + user.id;
+      message.textContent = "Access denied.";
+      return;
+    }
+
     document.getElementById("adminStatus").innerHTML =
       '<span class="status">Admin verified ✓</span>';
 
@@ -120,7 +119,7 @@ async function loadSubmissions(){
       )
     `)
     .eq("status","pending")
-    .order("created_at",{ascending:true});
+    .order("submitted_at",{ascending:true});
 
   if(error){
     message.textContent = "Error: " + error.message;
@@ -144,9 +143,9 @@ async function loadSubmissions(){
       <p class="muted">Submission ID: ${safe(item.id)}</p>
       <p>Worker ID: ${safe(item.worker_id)}</p>
       <p>Reward: $${safe(task.reward_per_worker)} ${safe(task.currency)}</p>
-      <p>Submitted: ${safe(new Date(item.created_at).toLocaleString())}</p>
+      <p>Submitted: ${safe(item.submitted_at ? new Date(item.submitted_at).toLocaleString() : "Unknown")}</p>
       <h4>Worker Proof</h4>
-      <div class="proof">${safe(item.proof_text || "No proof provided")}</div>
+      <div class="proof">${safe(item.evidence || "No proof provided")}</div>
       <button class="approve">Approve & Pay</button>
     `;
 
