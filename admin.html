@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLOBAL EARNING - Admin Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px;background:#080f1d;color:#fff;font-family:Arial,sans-serif}
+.container{max-width:850px;margin:auto}
+h1{color:#4ade80}
+.card{background:#111d30;border:1px solid #26364d;border-radius:14px;padding:18px;margin:15px 0;overflow-wrap:anywhere}
+.muted{color:#9aabc1;font-size:13px}
+button{background:#4ade80;color:#07111d;border:0;border-radius:8px;padding:12px 18px;font-weight:bold;cursor:pointer;margin:5px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.refresh{background:#26364d;color:white}
+.status{color:#4ade80}
+.proof{background:#081321;padding:12px;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>GLOBAL EARNING 🌍</h1>
+<h2>Admin Panel</h2>
+<p class="muted">Worker Submission Review</p>
+
+<div class="card">
+<h3>Admin Status</h3>
+<p id="adminStatus">Checking...</p>
+<button class="refresh" onclick="loadSubmissions()">Refresh Data</button>
+<button class="refresh" onclick="logout()">Logout</button>
+</div>
+
+<h2>Pending Submissions</h2>
+<div id="message" class="muted">Loading...</div>
+<div id="submissions"></div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const message = document.getElementById("message");
+const submissions = document.getElementById("submissions");
+
+function safe(value){
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#039;"
+  })[c]);
+}
+
+async function start(){
+  const {data:{session},error} = await db.auth.getSession();
+
+  if(error || !session){
+    location.href = "login.html";
+    return;
+  }
+
+  const {data:isAdmin,error:adminError} =
+    await db.rpc("is_admin");
+
+  if(adminError || isAdmin !== true){
+    document.getElementById("adminStatus").textContent =
+      "এই অ্যাকাউন্টের Admin অনুমতি নেই।";
+    message.textContent = "Access denied.";
+    return;
+  }
+
+  document.getElementById("adminStatus").innerHTML =
+    '<span class="status">Admin verified ✓</span>';
+
+  loadSubmissions();
+}
+
+async function loadSubmissions(){
+  message.textContent = "Loading submissions...";
+  submissions.innerHTML = "";
+
+  const {data,error} = await db
+    .from("task_submissions")
+    .select(`
+      id,
+      task_id,
+      worker_id,
+      proof_text,
+      status,
+      created_at,
+      tasks (
+        title,
+        reward_per_worker,
+        currency
+      )
+    `)
+    .eq("status","pending")
+    .order("created_at",{ascending:true});
+
+  if(error){
+    message.textContent = "Error: " + error.message;
+    return;
+  }
+
+  if(!data || data.length === 0){
+    message.textContent = "কোনো Pending Submission নেই।";
+    return;
+  }
+
+  message.textContent = data.length + "টি Pending Submission";
+
+  data.forEach(item=>{
+    const task = item.tasks || {};
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <h3>${safe(task.title || "Untitled Task")}</h3>
+      <p class="muted">Submission ID: ${safe(item.id)}</p>
+      <p>Worker ID: ${safe(item.worker_id)}</p>
+      <p>Reward: $${safe(task.reward_per_worker)} ${safe(task.currency)}</p>
+      <p>Submitted: ${safe(new Date(item.created_at).toLocaleString())}</p>
+      <h4>Worker Proof</h4>
+      <div class="proof">${safe(item.proof_text || "No proof provided")}</div>
+      <button class="approve">Approve & Pay</button>
+    `;
+
+    const btn = card.querySelector(".approve");
+    btn.addEventListener("click",()=>approve(item.id,btn));
+    submissions.appendChild(card);
+  });
+}
+
+async function approve(submissionId,button){
+  if(!confirm("এই Submission অনুমোদন করে Worker-কে USD Reward দিতে চান?")) return;
+
+  button.disabled = true;
+  button.textContent = "Processing...";
+
+  const {data,error} = await db.rpc(
+    "approve_task_and_pay_worker",
+    {p_submission_id:submissionId}
+  );
+
+  if(error){
+    alert("Approval failed: " + error.message);
+    button.disabled = false;
+    button.textContent = "Approve & Pay";
+    return;
+  }
+
+  alert("Approved! Worker-এর নতুন USD balance: $" + data);
+  loadSubmissions();
+}
+
+async function logout(){
+  await db.auth.signOut();
+  location.href = "login.html";
+}
+
+start();
+</script>
+</body>
+  </html>
+  
