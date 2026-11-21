@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080f1d">
+<title>Dashboard | GLOBAL EARNING</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#080f1d;color:#fff;padding:16px}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 0;margin-bottom:22px}
+.logo{color:#4ade80;font-size:20px;font-weight:bold}
+.logout{background:#1e293b;color:#fff;padding:9px 13px;border-radius:8px;text-decoration:none}
+.welcome{margin-bottom:20px}
+.welcome h2{font-size:23px;margin-bottom:7px}
+.welcome p{color:#94a3b8;font-size:14px}
+.balance{background:linear-gradient(135deg,#14532d,#166534);padding:22px;border-radius:15px;margin-bottom:22px}
+.balance p{color:#bbf7d0;font-size:14px}
+.balance h1{font-size:32px;margin-top:9px}
+.section-title{font-size:18px;margin:22px 0 13px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat,.menu{background:#111c2e;border:1px solid #263449;border-radius:12px;padding:17px}
+.stat h3{font-size:22px;color:#4ade80;margin-bottom:7px}
+.stat p{font-size:13px;color:#94a3b8}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.menu{display:block;text-decoration:none;color:#fff;min-height:105px}
+.menu .emoji{font-size:25px;margin-bottom:12px}
+.menu strong{display:block;font-size:15px}
+.menu small{display:block;color:#94a3b8;margin-top:6px}
+.menu:active{border-color:#4ade80}
+footer{text-align:center;color:#64748b;font-size:12px;margin:30px 0 15px}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">🌍 GLOBAL EARNING</div>
+<a class="logout" href="login.html">Login</a>
+</header>
+
+<section class="welcome">
+<h2>Welcome to Dashboard 👋</h2>
+<p>আপনার কাজ ও আয়ের হিসাব এখানে দেখুন।</p>
+</section>
+
+<section class="balance">
+<p>💰 My Total Balance</p>
+<h1>৳ 0.00</h1>
+</section>
+
+<h3 class="section-title">My Overview</h3>
+<section class="stats">
+<div class="stat">
+<h3>0</h3>
+<p>Available Tasks</p>
+</div>
+<div class="stat">
+<h3>0</h3>
+<p>My Tasks</p>
+</div>
+</section>
+
+<h3 class="section-title">Dashboard Menu</h3>
+<section class="menu-grid">
+
+<a class="menu" href="tasks.html">
+<div class="emoji">📋</div>
+<strong>Available Tasks</strong>
+<small>নতুন কাজ খুঁজুন</small>
+</a>
+
+<a class="menu" href="my-tasks.html">
+<div class="emoji">📝</div>
+<strong>My Tasks</strong>
+<small>আপনার নেওয়া কাজ</small>
+</a>
+
+<a class="menu" href="wallet.html">
+<div class="emoji">💰</div>
+<strong>Wallet</strong>
+<small>আপনার ব্যালেন্স</small>
+</a>
+
+<a class="menu" href="referral.html">
+<div class="emoji">👥</div>
+<strong>Referral</strong>
+<small>বন্ধু আমন্ত্রণ</small>
+</a>
+
+<a class="menu" href="profile.html">
+<div class="emoji">👤</div>
+<strong>My Profile</strong>
+<small>প্রোফাইল তথ্য</small>
+</a>
+
+<a class="menu" href="index.html">
+<div class="emoji">🏠</div>
+<strong>Home</strong>
+<small>হোমপেজে ফিরে যান</small>
+</a>
+
+</section>
+
+<footer>© 2026 GLOBAL EARNING 🌍</footer>
+
+</body>
+</html>
