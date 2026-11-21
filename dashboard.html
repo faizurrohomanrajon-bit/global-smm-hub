@@ -1,88 +1,109 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Global SMM Hub - Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080f1d">
+<title>Dashboard | GLOBAL EARNING</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#0b1120;color:#fff;font-family:Arial,sans-serif}
-header{padding:20px;background:#111c30;border-bottom:1px solid #26334b}
-h2{margin:0;color:#4ade80}
-main{padding:18px;max-width:700px;margin:auto}
-.card{background:#172338;padding:20px;border-radius:14px;margin:15px 0}
-.balance{display:flex;gap:12px}
-.balance .card{flex:1}
-.amount{font-size:25px;color:#4ade80;margin-top:12px}
-button{width:100%;padding:14px;border:0;border-radius:9px;background:#4ade80;color:#07111d;font-weight:bold;margin-top:10px}
-nav{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-nav button{background:#263750;color:white}
-.small{color:#aab7ca;font-size:13px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#080f1d;color:#fff;padding:16px}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 0;margin-bottom:22px}
+.logo{color:#4ade80;font-size:20px;font-weight:bold}
+.logout{background:#1e293b;color:#fff;padding:9px 13px;border-radius:8px;text-decoration:none}
+.welcome{margin-bottom:20px}
+.welcome h2{font-size:23px;margin-bottom:7px}
+.welcome p{color:#94a3b8;font-size:14px}
+.balance{background:linear-gradient(135deg,#14532d,#166534);padding:22px;border-radius:15px;margin-bottom:22px}
+.balance p{color:#bbf7d0;font-size:14px}
+.balance h1{font-size:32px;margin-top:9px}
+.section-title{font-size:18px;margin:22px 0 13px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat,.menu{background:#111c2e;border:1px solid #263449;border-radius:12px;padding:17px}
+.stat h3{font-size:22px;color:#4ade80;margin-bottom:7px}
+.stat p{font-size:13px;color:#94a3b8}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.menu{display:block;text-decoration:none;color:#fff;min-height:105px}
+.menu .emoji{font-size:25px;margin-bottom:12px}
+.menu strong{display:block;font-size:15px}
+.menu small{display:block;color:#94a3b8;margin-top:6px}
+.menu:active{border-color:#4ade80}
+footer{text-align:center;color:#64748b;font-size:12px;margin:30px 0 15px}
 </style>
 </head>
 <body>
+
 <header>
-<h2>GLOBAL SMM HUB 🌍</h2>
-<p class="small">Customer Dashboard</p>
+<div class="logo">🌍 GLOBAL EARNING</div>
+<a class="logout" href="login.html">Login</a>
 </header>
-<main>
-<div class="card">
-<h3>Welcome!</h3>
-<p id="email">Loading account...</p>
+
+<section class="welcome">
+<h2>Welcome to Dashboard 👋</h2>
+<p>আপনার কাজ ও আয়ের হিসাব এখানে দেখুন।</p>
+</section>
+
+<section class="balance">
+<p>💰 My Total Balance</p>
+<h1>৳ 0.00</h1>
+</section>
+
+<h3 class="section-title">My Overview</h3>
+<section class="stats">
+<div class="stat">
+<h3>0</h3>
+<p>Available Tasks</p>
 </div>
-
-<div class="balance">
-<div class="card">
-<div class="small">BDT Balance</div>
-<div class="amount">৳0.00</div>
+<div class="stat">
+<h3>0</h3>
+<p>My Tasks</p>
 </div>
-<div class="card">
-<div class="small">USD Balance</div>
-<div class="amount">$0.00</div>
-</div>
-</div>
+</section>
 
-<div class="card">
-<h3>Dashboard Menu</h3>
-<nav>
-<button onclick="alert('Services coming soon')">Services</button>
-<button onclick="alert('Orders coming soon')">My Orders</button>
-<button onclick="alert('Wallet coming soon')">Wallet</button>
-<button onclick="alert('API integration coming soon')">API Provider</button>
-<button onclick="alert('Reseller system coming soon')">Reseller</button>
-<button onclick="alert('Admin panel coming soon')">Admin Panel</button>
-</nav>
-</div>
+<h3 class="section-title">Dashboard Menu</h3>
+<section class="menu-grid">
 
-<button onclick="logout()">Logout</button>
-</main>
+<a class="menu" href="tasks.html">
+<div class="emoji">📋</div>
+<strong>Available Tasks</strong>
+<small>নতুন কাজ খুঁজুন</small>
+</a>
 
-<script>
-const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
-const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+<a class="menu" href="my-tasks.html">
+<div class="emoji">📝</div>
+<strong>My Tasks</strong>
+<small>আপনার নেওয়া কাজ</small>
+</a>
 
-async function checkLogin(){
-  const {data,error} = await supabaseClient.auth.getUser();
-  if(error || !data.user){
-    window.location.href = "login.html";
-    return;
-  }
-  document.getElementById("email").textContent = data.user.email;
-}
+<a class="menu" href="wallet.html">
+<div class="emoji">💰</div>
+<strong>Wallet</strong>
+<small>আপনার ব্যালেন্স</small>
+</a>
 
-async function logout(){
-  await supabaseClient.auth.signOut();
-  window.location.href = "login.html";
-}
+<a class="menu" href="referral.html">
+<div class="emoji">👥</div>
+<strong>Referral</strong>
+<small>বন্ধু আমন্ত্রণ</small>
+</a>
 
-checkLogin();
-</script>
+<a class="menu" href="profile.html">
+<div class="emoji">👤</div>
+<strong>My Profile</strong>
+<small>প্রোফাইল তথ্য</small>
+</a>
+
+<a class="menu" href="index.html">
+<div class="emoji">🏠</div>
+<strong>Home</strong>
+<small>হোমপেজে ফিরে যান</small>
+</a>
+
+</section>
+
+<footer>© 2026 GLOBAL EARNING 🌍</footer>
+
 </body>
   </html>
   
