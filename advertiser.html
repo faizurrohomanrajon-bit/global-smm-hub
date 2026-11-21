@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buyer - Global Earning</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1120;color:white;font-family:Arial,sans-serif}
+header{padding:20px;background:#111c30}
+h2{color:#4ade80;margin:0}
+main{max-width:600px;margin:auto;padding:18px}
+.card{background:#172338;padding:20px;border-radius:15px;margin-top:18px}
+label{display:block;margin:15px 0 7px}
+input,textarea,select{width:100%;padding:13px;border-radius:8px;border:1px solid #34445e;background:#0b1120;color:white}
+textarea{min-height:90px;resize:vertical}
+button{width:100%;padding:15px;margin-top:20px;background:#4ade80;border:0;border-radius:9px;font-weight:bold;font-size:16px}
+.note{color:#aab7ca;font-size:13px;line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+<h2>GLOBAL EARNING 🌍</h2>
+<p>Buyer Work Posting</p>
+</header>
+<main>
+<div class="card">
+<h3>নতুন কাজ পোস্ট করুন</h3>
+<p class="note">আপনার কাজের তথ্য দিন। Admin অনুমোদনের পর কাজটি Worker-দের কাছে দেখানো হবে।</p>
+
+<form id="taskForm">
+<label>কাজের নাম</label>
+<input id="title" required maxlength="100" placeholder="কাজের নাম লিখুন">
+
+<label>কাজের বিবরণ</label>
+<textarea id="description" required placeholder="কাজের বিস্তারিত লিখুন"></textarea>
+
+<label>কাজের শর্ত</label>
+<textarea id="requirements" placeholder="কাজের শর্ত লিখুন"></textarea>
+
+<label>কাজের ধরন</label>
+<select id="category" required>
+<option value="">নির্বাচন করুন</option>
+<option value="advertising">বিজ্ঞাপন প্রচারণা</option>
+<option value="content">কনটেন্ট তৈরি</option>
+<option value="design">ডিজাইন</option>
+<option value="other">অন্যান্য বৈধ কাজ</option>
+</select>
+
+<label>মুদ্রা</label>
+<select id="currency">
+<option value="BDT">BDT (টাকা)</option>
+<option value="USD">USD (ডলার)</option>
+</select>
+
+<label>প্রতি Worker-এর পুরস্কার</label>
+<input id="reward" type="number" min="0.01" step="0.01" required>
+
+<label>কতজন Worker কাজ করবে?</label>
+<input id="workers" type="number" min="1" step="1" required>
+
+<label>কাজের শেষ তারিখ</label>
+<input id="deadline" type="datetime-local">
+
+<div class="note" id="budget">মোট বাজেট: 0.00</div>
+
+<button type="submit">কাজ পোস্ট করুন</button>
+</form>
+<p id="message" class="note"></p>
+</div>
+</main>
+
+<script>
+const reward = document.getElementById("reward");
+const workers = document.getElementById("workers");
+const currency = document.getElementById("currency");
+
+function updateBudget(){
+ const r = Number(reward.value);
+ const w = Number(workers.value);
+ const total = r * w;
+ document.getElementById("budget").textContent =
+ "মোট বাজেট: " + (Number.isFinite(total) ? total.toFixed(2) : "0.00")
+ + " " + currency.value;
+}
+reward.addEventListener("input",updateBudget);
+workers.addEventListener("input",updateBudget);
+currency.addEventListener("change",updateBudget);
+
+document.getElementById("taskForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ document.getElementById("message").textContent =
+ "ফর্ম প্রস্তুত। Supabase ও Buyer Wallet সংযোগ করার পর কাজ জমা হবে।";
+});
+</script>
+</body>
+                                                                                     </html>
+  
