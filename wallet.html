@@ -33,6 +33,7 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 .card h3{font-size:23px;color:#4ade80;margin-top:12px}
 .history{background:#111c2e;border:1px solid #26364e;border-radius:15px;padding:20px;text-align:center;color:#94a3b8;font-size:13px;line-height:1.8}
 .notice{margin-top:20px;padding:15px;border:1px solid #35445a;border-radius:12px;color:#94a3b8;font-size:12px;line-height:1.7}
+#message{margin:15px 0;color:#fbbf24;font-size:13px}
 footer{text-align:center;color:#64748b;font-size:11px;margin:30px 0 10px}
 @media(max-width:400px){.container{padding:15px}.balance h2{font-size:32px}}
 </style>
@@ -53,7 +54,7 @@ footer{text-align:center;color:#64748b;font-size:11px;margin:30px 0 10px}
 
 <section class="balance">
 <small>💰 TOTAL WALLET BALANCE</small>
-<h2>$0.00 USD</h2>
+<h2 id="totalBalance">$0.00 USD</h2>
 <p>Available wallet balance</p>
 </section>
 
@@ -67,37 +68,137 @@ footer{text-align:center;color:#64748b;font-size:11px;margin:30px 0 10px}
 <section class="cards">
 <div class="card">
 <span>Available Balance</span>
-<h3>$0.00</h3>
+<h3 id="availableBalance">$0.00</h3>
 </div>
 <div class="card">
 <span>Pending Balance</span>
-<h3>$0.00</h3>
+<h3 id="pendingBalance">$0.00</h3>
 </div>
 <div class="card">
 <span>Total Earnings</span>
-<h3>$0.00</h3>
+<h3 id="totalEarnings">$0.00</h3>
 </div>
 <div class="card">
 <span>Referral Earnings</span>
-<h3>$0.00</h3>
+<h3 id="referralEarnings">$0.00</h3>
 </div>
 </section>
 
-<h2 class="section">Transaction History</h2>
+<div id="message">Wallet তথ্য লোড হচ্ছে...</div>
 
-<section class="history">
-<div style="font-size:30px;margin-bottom:10px">📊</div>
-<strong>No Transactions Yet</strong>
-<p>আপনার লেনদেন শুরু হলে এখানে দেখা যাবে।</p>
+<h2 class="section">Transaction History</h2>
+<section class="history" id="history">
+লোড হচ্ছে...
 </section>
 
 <section class="notice">
 🔒 <strong>Wallet Security</strong><br>
-আপনার ব্যালেন্স ও লেনদেনের তথ্য নিরাপদভাবে সংরক্ষণের ব্যবস্থা করা হবে। এই পেজের ব্যালেন্স আপাতত ডেমো; Supabase সংযোগ না হওয়া পর্যন্ত এটি প্রকৃত অর্থের হিসাব নয়।
+আপনার Wallet-এর তথ্য Supabase থেকে লোড করা হচ্ছে। অনুমোদিত লেনদেন ছাড়া ব্যালেন্স পরিবর্তন করা যাবে না।
 </section>
 
 <footer>GLOBAL EARNING 🌍 · USD WALLET</footer>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const money = value =>
+  "$" + Number(value || 0).toFixed(2);
+
+async function loadWallet() {
+  const message = document.getElementById("message");
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await db.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    const user = sessionData.session?.user;
+
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const { data: wallet, error: walletError } = await db
+      .from("wallets")
+      .select("balance,pending_balance")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (walletError) throw walletError;
+
+    if (!wallet) {
+      throw new Error("আপনার Wallet তৈরি হয়নি। Admin-এর সাহায্য নিন।");
+    }
+
+    const balance = Number(wallet.balance || 0);
+    const pending = Number(wallet.pending_balance || 0);
+
+    document.getElementById("totalBalance").textContent = money(balance);
+    document.getElementById("availableBalance").textContent = money(balance);
+    document.getElementById("pendingBalance").textContent = money(pending);
+
+    const { data: transactions, error: transactionError } = await db
+      .from("wallet_transactions")
+      .select("amount,type,status,description,created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    if (transactionError) throw transactionError;
+
+    const completed = (transactions || []).filter(
+      t => t.status === "completed"
+    );
+
+    const earnings = completed
+      .filter(t => t.type === "earning")
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+
+    const referrals = completed
+      .filter(t => t.type === "referral")
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+
+    document.getElementById("totalEarnings").textContent = money(earnings);
+    document.getElementById("referralEarnings").textContent = money(referrals);
+
+    const history = document.getElementById("history");
+
+    if (!transactions || transactions.length === 0) {
+      history.innerHTML = "📊<br><strong>No Transactions Yet</strong><br>আপনার লেনদেন শুরু হলে এখানে দেখা যাবে।";
+    } else {
+      history.style.textAlign = "left";
+      history.innerHTML = transactions.map(t => `
+        <div style="padding:12px 0;border-bottom:1px solid #26364e">
+          <strong>${String(t.type).toUpperCase()}</strong>
+          <div style="margin-top:5px">${money(t.amount)}</div>
+          <small>${t.status} · ${new Date(t.created_at).toLocaleDateString()}</small>
+          <div>${t.description || ""}</div>
+        </div>
+      `).join("");
+    }
+
+    message.textContent = "Wallet সফলভাবে লোড হয়েছে।";
+    message.style.color = "#4ade80";
+
+  } catch (error) {
+    console.error(error);
+    message.textContent = error.message || "Wallet লোড করা যায়নি।";
+    message.style.color = "#f87171";
+  }
+}
+
+loadWallet();
+</script>
 </body>
   </html>
   
