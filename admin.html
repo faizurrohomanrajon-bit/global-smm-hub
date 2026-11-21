@@ -80,13 +80,14 @@ async function start(){
 document.getElementById("adminStatus").textContent =
   "Logged-in User ID: " + user.id +
   " | Admin: " + isAdmin;
-    if(isAdmin !== true){
-      document.getElementById("adminStatus").textContent =
-        "এই অ্যাকাউন্টের Admin অনুমতি নেই।";
-      message.textContent = "Access denied.";
-      return;
-    }
-
+      if(isAdmin !== true){
+  document.getElementById("adminStatus").textContent =
+    "Your User ID: " + user.id +
+    " | Admin: " + isAdmin;
+  message.textContent = "Access denied.";
+  return;
+      }
+  
     document.getElementById("adminStatus").innerHTML =
       '<span class="status">Admin verified ✓</span>';
 
