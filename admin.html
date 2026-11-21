@@ -58,33 +58,43 @@ function safe(value){
 }
 
 async function start(){
-  const { data: { user }, error } =
-  await db.auth.getUser();
+  try {
+    const {data:{user},error} = await db.auth.getUser();
 
-if (error || !user) {
-  location.href = "login.html";
-  return;
-  }
+    if(error || !user){
+      document.getElementById("adminStatus").textContent =
+        "Login নেই। Login পেজে প্রবেশ করুন।";
+      message.textContent = "Please login first.";
+      return;
+    }
 
-  if(error || !session){
-    location.href = "login.html";
-    return;
-  }
+    const {data:isAdmin,error:adminError} =
+      await db.rpc("is_admin");
 
-  const {data:isAdmin,error:adminError} =
-    await db.rpc("is_admin");
+    if(adminError){
+      document.getElementById("adminStatus").textContent =
+        "Admin যাচাই Error: " + adminError.message;
+      message.textContent = "Admin check failed.";
+      return;
+    }
 
-  if(adminError || isAdmin !== true){
+    if(isAdmin !== true){
+      document.getElementById("adminStatus").textContent =
+        "এই অ্যাকাউন্টের Admin অনুমতি নেই।";
+      message.textContent = "Access denied.";
+      return;
+    }
+
+    document.getElementById("adminStatus").innerHTML =
+      '<span class="status">Admin verified ✓</span>';
+
+    await loadSubmissions();
+
+  } catch(error) {
     document.getElementById("adminStatus").textContent =
-      "এই অ্যাকাউন্টের Admin অনুমতি নেই।";
-    message.textContent = "Access denied.";
-    return;
+      "Error: " + error.message;
+    message.textContent = error.message;
   }
-
-  document.getElementById("adminStatus").innerHTML =
-    '<span class="status">Admin verified ✓</span>';
-
-  loadSubmissions();
 }
 
 async function loadSubmissions(){
@@ -162,7 +172,7 @@ async function approve(submissionId,button){
   }
 
   alert("Approved! Worker-এর নতুন USD balance: $" + data);
-  loadSubmissions();
+  await loadSubmissions();
 }
 
 async function logout(){
