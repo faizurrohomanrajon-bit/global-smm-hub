@@ -77,7 +77,9 @@ async function start(){
       message.textContent = "Admin check failed.";
       return;
     }
-
+document.getElementById("adminStatus").textContent =
+  "Logged-in User ID: " + user.id +
+  " | Admin: " + isAdmin;
     if(isAdmin !== true){
       document.getElementById("adminStatus").textContent =
         "এই অ্যাকাউন্টের Admin অনুমতি নেই।";
