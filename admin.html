@@ -58,7 +58,13 @@ function safe(value){
 }
 
 async function start(){
-  const {data:{session},error} = await db.auth.getSession();
+  const { data: { user }, error } =
+  await db.auth.getUser();
+
+if (error || !user) {
+  location.href = "login.html";
+  return;
+  }
 
   if(error || !session){
     location.href = "login.html";
