@@ -1,120 +1,191 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080f1d">
-<title>GLOBAL SMM HUB | Global Marketing Platform</title>
+<title>GLOBAL EARNING 🌍</title>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:#080f1d;color:#fff}
-header{height:75px;padding:0 7%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1d2a40}
-.logo{font-size:21px;font-weight:800;color:#4ade80}
-nav a{color:#cbd5e1;text-decoration:none;margin:0 12px;font-size:14px}
-.actions{display:flex;gap:10px}
-.btn{padding:12px 20px;border-radius:9px;text-decoration:none;font-weight:bold;font-size:14px}
-.login{border:1px solid #334155;color:white}
-.register{background:#16a34a;color:white}
-.hero{text-align:center;padding:100px 20px 75px;background:radial-gradient(ellipse at top,#173d3b 0%,#080f1d 65%)}
-.tag{display:inline-block;border:1px solid #276749;color:#4ade80;padding:9px 17px;border-radius:30px;font-size:12px}
-h1{font-size:clamp(36px,7vw,65px);line-height:1.15;margin:25px auto;max-width:850px}
-h1 span{color:#4ade80}
-.hero p{color:#a7b5c9;max-width:600px;margin:0 auto 30px;line-height:1.8}
-.hero-buttons{display:flex;justify-content:center;gap:13px;flex-wrap:wrap}
-.primary{background:#16a34a;color:white}
-.secondary{border:1px solid #475569;color:white}
-.section{padding:65px 7%;text-align:center}
-.section h2{font-size:32px;margin-bottom:12px}
-.sub{color:#94a3b8;margin-bottom:35px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.card{background:#111e30;border:1px solid #24354d;padding:27px 18px;border-radius:15px;text-align:left}
-.card .emoji{font-size:30px;margin-bottom:18px}
-.card h3{margin-bottom:10px}
-.card p{font-size:13px;color:#94a3b8;line-height:1.7}
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.feature{background:#101d2f;padding:25px;border-radius:13px;border:1px solid #23344a}
-.feature h3{margin-bottom:10px;color:#4ade80}
-.feature p{color:#94a3b8;font-size:13px;line-height:1.7}
-.cta{margin:20px 7% 65px;padding:55px 20px;background:linear-gradient(120deg,#123c35,#132b48);border-radius:20px;text-align:center}
-.cta h2{margin-bottom:15px}
-.cta p{color:#cbd5e1;margin-bottom:25px}
-footer{border-top:1px solid #1d2a40;padding:30px 7%;text-align:center;color:#718096;font-size:13px}
-@media(max-width:800px){
-nav{display:none}
-.grid{grid-template-columns:repeat(2,1fr)}
-.features{grid-template-columns:repeat(2,1fr)}
+body{
+ font-family:Arial,sans-serif;
+ background:#080f1d;color:white;
+ padding-bottom:25px;
 }
-@media(max-width:480px){
-header{padding:0 4%}
-.logo{font-size:16px}
-.btn{padding:10px 12px;font-size:12px}
-.hero{padding:75px 18px}
-.grid,.features{grid-template-columns:1fr}
-.section{padding:50px 5%}
+header{
+ padding:18px 5%;
+ display:flex;align-items:center;
+ justify-content:space-between;
+ border-bottom:1px solid #24354d;
+}
+.logo{font-size:21px;font-weight:bold;color:#4ade80}
+.actions{display:flex;gap:9px}
+.btn{
+ display:inline-block;padding:11px 17px;
+ border-radius:9px;text-decoration:none;
+ font-weight:bold;font-size:13px;
+}
+.login{border:1px solid #475569;color:white}
+.register,.green{background:#16a34a;color:white}
+.hero{
+ text-align:center;padding:65px 20px;
+ background:radial-gradient(ellipse at top,#17483b,#080f1d 70%);
+}
+.tag{
+ display:inline-block;padding:9px 16px;
+ border:1px solid #276749;border-radius:30px;
+ color:#4ade80;font-size:12px;
+}
+h1{font-size:clamp(32px,7vw,52px);margin:24px 0}
+h1 span{color:#4ade80}
+.hero p{
+ color:#a7b5c9;line-height:1.8;
+ max-width:600px;margin:0 auto 25px;
+}
+.section{padding:45px 5%;text-align:center}
+.section h2{font-size:27px;margin-bottom:12px}
+.sub{color:#94a3b8;margin-bottom:25px}
+.grid{
+ display:grid;grid-template-columns:repeat(2,1fr);
+ gap:14px;max-width:850px;margin:auto;
+}
+.card{
+ background:#111e30;border:1px solid #263b50;
+ border-radius:14px;padding:22px 15px;text-align:left;
+}
+.card .emoji{font-size:30px;margin-bottom:12px}
+.card h3{margin-bottom:8px}
+.card p{font-size:13px;color:#94a3b8;line-height:1.7}
+.features{
+ display:grid;grid-template-columns:repeat(2,1fr);
+ gap:13px;max-width:850px;margin:auto;
+}
+.feature{
+ background:#101d2f;border:1px solid #263b50;
+ border-radius:13px;padding:20px;text-align:left;
+}
+.feature h3{color:#4ade80;font-size:16px;margin-bottom:9px}
+.feature p{font-size:13px;color:#94a3b8;line-height:1.7}
+.cta{
+ margin:20px 5% 45px;padding:35px 20px;
+ background:linear-gradient(120deg,#123c35,#132b48);
+ border-radius:18px;text-align:center;
+}
+.cta p{color:#cbd5e1;margin:14px 0 22px}
+footer{
+ border-top:1px solid #24354d;
+ padding:25px;text-align:center;
+ color:#718096;font-size:12px;line-height:2;
+}
+@media(min-width:700px){
+ .grid{grid-template-columns:repeat(4,1fr)}
+ .features{grid-template-columns:repeat(3,1fr)}
 }
 </style>
 </head>
+
 <body>
 
 <header>
-<div class="logo">🌍 GLOBAL SMM HUB</div>
-<nav>
-<a href="#home">Home</a>
-<a href="#services">Services</a>
-<a href="#features">Features</a>
-</nav>
-<div class="actions">
-<a class="btn login" href="login.html">Login</a>
-<a class="btn register" href="register.html">Register</a>
-</div>
+ <div class="logo">🌍 GLOBAL EARNING</div>
+ <div class="actions">
+  <a class="btn login" href="login.html">Login</a>
+  <a class="btn register" href="register.html">Register</a>
+ </div>
 </header>
 
-<section class="hero" id="home">
-<div class="tag">🌍 YOUR GLOBAL MARKETING PARTNER</div>
-<h1>Grow Your Business With <span>Global SMM Hub</span></h1>
-<p>Discover digital marketing services, manage your orders and grow your online presence with one global platform.</p>
-<div class="hero-buttons">
-<a class="btn primary" href="register.html">Get Started →</a>
-<a class="btn secondary" href="#services">Explore Services</a>
-</div>
+<section class="hero">
+ <div class="tag">🌍 WORK • EARN • GROW</div>
+ <h1>Welcome to <span>GLOBAL EARNING</span></h1>
+ <p>
+ একটি অনলাইন মাইক্রো-টাস্ক মার্কেটপ্লেস।
+ Buyer কাজ প্রকাশ করবে, Worker কাজ সম্পন্ন করে
+ পুরস্কার অর্জন করবে।
+ </p>
+ <a class="btn green" href="register.html">Get Started →</a>
 </section>
 
-<section class="section" id="services">
-<h2>Our Services</h2>
-<p class="sub">Explore our digital marketing categories</p>
-<div class="grid">
-<div class="card"><div class="emoji">🎵</div><h3>TikTok Marketing</h3><p>Discover TikTok promotion and marketing services.</p></div>
-<div class="card"><div class="emoji">▶️</div><h3>YouTube Marketing</h3><p>Explore YouTube content promotion services.</p></div>
-<div class="card"><div class="emoji">📘</div><h3>Facebook Marketing</h3><p>Discover Facebook advertising and promotion.</p></div>
-<div class="card"><div class="emoji">✈️</div><h3>Telegram Marketing</h3><p>Explore Telegram community promotion services.</p></div>
-</div>
+<section class="section">
+ <h2>কাজের ক্যাটাগরি</h2>
+ <p class="sub">পছন্দের কাজ বেছে নিন</p>
+
+ <div class="grid">
+  <div class="card">
+   <div class="emoji">📢</div>
+   <h3>Promotion</h3>
+   <p>অনুমোদিত বিজ্ঞাপন ও কনটেন্ট প্রচারের কাজ।</p>
+  </div>
+
+  <div class="card">
+   <div class="emoji">🎬</div>
+   <h3>Video Tasks</h3>
+   <p>বিজ্ঞাপন ও ভিডিও কনটেন্ট সম্পর্কিত কাজ।</p>
+  </div>
+
+  <div class="card">
+   <div class="emoji">📝</div>
+   <h3>Content Tasks</h3>
+   <p>লেখা, ক্যাপশন ও কনটেন্ট তৈরির কাজ।</p>
+  </div>
+
+  <div class="card">
+   <div class="emoji">⭐</div>
+   <h3>Review Tasks</h3>
+   <p>সৎ মতামত ও পণ্য পর্যালোচনার কাজ।</p>
+  </div>
+ </div>
 </section>
 
-<section class="section" id="features">
-<h2>Powerful Platform Features</h2>
-<p class="sub">Everything you need in one place</p>
-<div class="features">
-<div class="feature"><h3>📊 Customer Dashboard</h3><p>Manage orders and view account balance.</p></div>
-<div class="feature"><h3>⚡ Auto Order</h3><p>Automated order processing through supported providers.</p></div>
-<div class="feature"><h3>🔌 API Integration</h3><p>Connect compatible service providers.</p></div>
-<div class="feature"><h3>🤝 Reseller System</h3><p>Manage your reseller account and services.</p></div>
-<div class="feature"><h3>💳 Wallet & Payment</h3><p>Manage BDT and USD balances.</p></div>
-<div class="feature"><h3>🛡️ Admin Panel</h3><p>Manage users, services, orders and payments.</p></div>
-</div>
+<section class="section">
+ <h2>Platform Features</h2>
+ <p class="sub">আপনার প্রয়োজনীয় সুবিধাগুলো এক জায়গায়</p>
+
+ <div class="features">
+  <div class="feature">
+   <h3>📊 Dashboard</h3>
+   <p>আপনার অ্যাকাউন্ট ও কাজের তথ্য দেখুন।</p>
+  </div>
+
+  <div class="feature">
+   <h3>⚡ Tasks</h3>
+   <p>উপলব্ধ কাজ খুঁজুন ও সম্পন্ন করুন।</p>
+  </div>
+
+  <div class="feature">
+   <h3>📋 My Tasks</h3>
+   <p>আপনার জমা দেওয়া কাজের অবস্থা দেখুন।</p>
+  </div>
+
+  <div class="feature">
+   <h3>💰 Wallet</h3>
+   <p>আয় ও লেনদেনের হিসাব দেখুন।</p>
+  </div>
+
+  <div class="feature">
+   <h3>🤝 Referral</h3>
+   <p>রেফারেল ব্যবস্থার মাধ্যমে পুরস্কার অর্জন করুন।</p>
+  </div>
+
+  <div class="feature">
+   <h3>🛡️ Secure System</h3>
+   <p>কাজ ও পেমেন্ট যাচাইয়ের ব্যবস্থা।</p>
+  </div>
+ </div>
 </section>
 
 <section class="cta">
-<h2>Ready to Get Started?</h2>
-<p>Create your account and explore Global SMM Hub.</p>
-<a class="btn primary" href="register.html">Create Account →</a>
+ <h2>Start Your Journey</h2>
+ <p>GLOBAL EARNING-এ অ্যাকাউন্ট তৈরি করুন।</p>
+ <a class="btn green" href="register.html">Create Account →</a>
 </section>
 
 <footer>
-<p>© 2026 GLOBAL SMM HUB. All rights reserved.</p>
-<p style="margin-top:10px">Bangladesh 🇧🇩 | Worldwide 🌍</p>
+ <p>© 2026 GLOBAL EARNING. All rights reserved.</p>
+ <p>Bangladesh 🇧🇩 | Worldwide 🌍</p>
 </footer>
 
 </body>
   </html>
-  
+                
