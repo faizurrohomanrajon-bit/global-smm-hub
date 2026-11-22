@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080f1d">
+<title>My Profile | GLOBAL EARNING</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080f1d;color:white;font-family:Arial,sans-serif;padding-bottom:90px}
+header{padding:18px;background:#0b1728;border-bottom:1px solid #263b50}
+.logo{color:#4ade80;font-size:20px;font-weight:bold}
+main{max-width:650px;margin:auto;padding:20px}
+.hero{text-align:center;padding:30px 15px;background:linear-gradient(130deg,#155c43,#142d4c);border:1px solid #267c58;border-radius:18px}
+.avatar{width:75px;height:75px;margin:0 auto 15px;border-radius:50%;background:#0b2b2b;display:grid;place-items:center;font-size:36px}
+.hero h2{margin-bottom:8px}
+.hero p{font-size:13px;color:#d1fae5}
+.card{margin-top:18px;padding:20px;background:#111f33;border:1px solid #263e59;border-radius:15px}
+.card h3{margin-bottom:18px;color:#4ade80}
+.info{padding:13px 0;border-bottom:1px solid #293c54}
+.info:last-child{border:0}
+.label{font-size:12px;color:#94a3b8;margin-bottom:7px}
+.value{font-size:14px;overflow-wrap:anywhere}
+input{width:100%;padding:13px;background:#081527;border:1px solid #34465d;border-radius:9px;color:white;margin:10px 0}
+button{width:100%;padding:13px;border:0;border-radius:9px;background:#4ade80;color:#052e20;font-weight:bold;margin-top:10px;cursor:pointer}
+.logout{background:#7f1d1d;color:white}
+.status{font-size:12px;color:#94a3b8;margin-top:12px;line-height:1.6}
+nav{position:fixed;bottom:0;left:0;right:0;background:#081221;border-top:1px solid #29415b;display:flex;justify-content:space-around;padding:12px 3px}
+nav a{color:#91a2b8;text-decoration:none;text-align:center;font-size:10px;flex:1}
+nav a span{display:block;font-size:20px;margin-bottom:5px}
+nav a.active{color:#4ade80}
+</style>
+</head>
+<body>
+
+<header><div class="logo">🌍 GLOBAL EARNING</div></header>
+
+<main>
+<section class="hero">
+ <div class="avatar">👤</div>
+ <h2 id="name">Loading Profile...</h2>
+ <p>GLOBAL EARNING Member</p>
+</section>
+
+<section class="card">
+ <h3>👤 Personal Information</h3>
+ <div class="info"><div class="label">Display Name</div><div class="value" id="displayName">Loading...</div></div>
+ <div class="info"><div class="label">Email Address</div><div class="value" id="email">Loading...</div></div>
+ <div class="info"><div class="label">User ID</div><div class="value" id="userId">Loading...</div></div>
+ <div class="info"><div class="label">Account Created</div><div class="value" id="createdAt">Loading...</div></div>
+</section>
+
+<section class="card">
+ <h3>🔐 Change Password</h3>
+ <input type="password" id="newPassword" placeholder="নতুন Password লিখুন" minlength="6">
+ <button onclick="changePassword()">Update Password</button>
+ <p class="status" id="passwordStatus"></p>
+</section>
+
+<section class="card">
+ <h3>⚙️ Account</h3>
+ <button class="logout" onclick="logout()">Logout</button>
+ <p class="status" id="status">Connecting Account...</p>
+</section>
+</main>
+
+<nav>
+ <a href="dashboard.html"><span>🏠</span>Home</a>
+ <a href="wallet.html"><span>💰</span>Wallet</a>
+ <a href="tasks.html"><span>📋</span>Tasks</a>
+ <a href="referral.html"><span>🤝</span>Referral</a>
+ <a href="profile.html" class="active"><span>👤</span>Profile</a>
+</nav>
+
+<script>
+const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let currentUser=null;
+
+async function loadProfile(){
+ const {data:{user},error}=await db.auth.getUser();
+ if(error||!user){
+  location.replace("login.html");
+  return;
+ }
+ currentUser=user;
+
+ const {data:profile}=await db.from("profiles")
+  .select("display_name")
+  .eq("id",user.id)
+  .maybeSingle();
+
+ const name=profile?.display_name||"Worker";
+ document.getElementById("name").textContent=name;
+ document.getElementById("displayName").textContent=name;
+ document.getElementById("email").textContent=user.email||"Not available";
+ document.getElementById("userId").textContent=user.id;
+ document.getElementById("createdAt").textContent=
+  user.created_at?new Date(user.created_at).toLocaleDateString():"Not available";
+
+ document.getElementById("status").textContent="● Account Connected";
+}
+
+async function changePassword(){
+ if(!currentUser)return;
+ const password=document.getElementById("newPassword").value;
+ const status=document.getElementById("passwordStatus");
+
+ if(password.length<6){
+  status.textContent="Password কমপক্ষে ৬ অক্ষরের হতে হবে।";
+  return;
+ }
+
+ const {error}=await db.auth.updateUser({password});
+ if(error){
+  status.textContent="Error: "+error.message;
+  return;
+ }
+ document.getElementById("newPassword").value="";
+ status.textContent="Password সফলভাবে পরিবর্তন হয়েছে।";
+}
+
+async function logout(){
+ if(!confirm("আপনি কি Logout করতে চান?"))return;
+ const {error}=await db.auth.signOut();
+ if(error){alert(error.message);return;}
+ location.replace("login.html");
+}
+
+loadProfile();
+</script>
+</body>
+                                                     </html>
