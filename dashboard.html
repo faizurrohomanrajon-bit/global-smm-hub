@@ -11,10 +11,8 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{
  font-family:Arial,sans-serif;
- background:#080f1d;
- color:#fff;
- padding:16px;
- padding-bottom:35px
+ background:#080f1d;color:#fff;
+ padding:16px;padding-bottom:35px
 }
 .container{max-width:650px;margin:auto}
 header{
@@ -59,14 +57,20 @@ header{
 .menu:active{border-color:#4ade80;transform:scale(.98)}
 .menu .emoji{font-size:27px;margin-bottom:13px}
 .menu strong{display:block;font-size:15px}
-.menu small{display:block;color:#94a3b8;margin-top:7px;line-height:1.4}
+.menu small{
+ display:block;color:#94a3b8;
+ margin-top:7px;line-height:1.4
+}
 .status{
  background:#111c2e;border:1px solid #263449;
  border-radius:12px;padding:13px;margin-top:20px;
  color:#94a3b8;font-size:12px
 }
 .status span{color:#4ade80}
-footer{text-align:center;color:#64748b;font-size:12px;margin:30px 0 15px}
+footer{
+ text-align:center;color:#64748b;
+ font-size:12px;margin:30px 0 15px
+}
 button{cursor:pointer}
 @media(max-width:350px){
  .menu-grid{grid-template-columns:1fr}
@@ -83,12 +87,12 @@ button{cursor:pointer}
 </header>
 
 <section class="welcome">
- <h2 id="welcomeName">Welcome 👋</h2>
+ <h2 id="welcomeName">Welcome to Dashboard 👋</h2>
  <p>আপনার কাজ ও আয়ের হিসাব এখানে দেখুন।</p>
 </section>
 
 <section class="balance">
- <p>💰 MY USD WALLET BALANCE</p>
+ <p>💰 MY WALLET BALANCE (USD)</p>
  <h1 id="balance">$0.00</h1>
  <small id="pendingBalance">Pending: $0.00</small>
 </section>
@@ -100,20 +104,9 @@ button{cursor:pointer}
   <h3 id="availableTasks">0</h3>
   <p>Available Tasks</p>
  </div>
-
  <div class="stat">
   <h3 id="myTasks">0</h3>
   <p>My Tasks</p>
- </div>
-
- <div class="stat">
-  <h3 id="referralCount">0</h3>
-  <p>My Referrals</p>
- </div>
-
- <div class="stat">
-  <h3 id="referralEarnings">$0.00</h3>
-  <p>Referral Earnings</p>
  </div>
 </section>
 
@@ -170,12 +163,11 @@ button{cursor:pointer}
 const SUPABASE_URL =
 "https://hbvtnlwwafmwdfaibrrz.supabase.co";
 
-// login.html-এর একই Publishable Key বসাবে
+// login.html-এর একই Publishable Key বসাবেন
 const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
 const db = window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY
+ SUPABASE_URL,SUPABASE_KEY
 );
 
 const el = id => document.getElementById(id);
@@ -184,15 +176,13 @@ async function loadDashboard(){
 
  el("status").textContent="Loading account...";
 
- const {data:{user},error:authError} =
- await db.auth.getUser();
+ const {data:{user},error} = await db.auth.getUser();
 
- if(authError || !user){
+ if(error || !user){
   window.location.replace("login.html");
   return;
  }
 
- // Profile
  const {data:profile} = await db
  .from("profiles")
  .select("display_name")
@@ -202,75 +192,39 @@ async function loadDashboard(){
  el("welcomeName").textContent =
  "Welcome "+(profile?.display_name || "Worker")+" 👋";
 
- // Wallet
- const {data:wallet,error:walletError} = await db
+ const {data:wallet} = await db
  .from("wallets")
  .select("balance,pending_balance")
  .eq("user_id",user.id)
  .maybeSingle();
 
- if(!walletError && wallet){
+ if(wallet){
   el("balance").textContent =
    "$"+Number(wallet.balance || 0).toFixed(2);
-
   el("pendingBalance").textContent =
    "Pending: $"+Number(wallet.pending_balance || 0).toFixed(2);
  }
 
- // Available USD Tasks
  const {count:taskCount,error:taskError} = await db
  .from("tasks")
  .select("id",{count:"exact",head:true})
  .eq("status","active")
  .eq("currency","USD");
 
- if(!taskError){
-  el("availableTasks").textContent=taskCount ?? 0;
- }
+ if(!taskError) el("availableTasks").textContent=taskCount ?? 0;
 
- // My Tasks
  const {count:myCount,error:myError} = await db
  .from("task_submissions")
  .select("id",{count:"exact",head:true})
  .eq("worker_id",user.id);
 
- if(!myError){
-  el("myTasks").textContent=myCount ?? 0;
- }
-
- // Referral Count
- const {count:refCount,error:refError} = await db
- .from("profiles")
- .select("id",{count:"exact",head:true})
- .eq("referred_by",user.id);
-
- if(!refError){
-  el("referralCount").textContent=refCount ?? 0;
- }
-
- // Referral Earnings
- const {data:refTransactions,error:refEarnError} = await db
- .from("wallet_transactions")
- .select("amount")
- .eq("user_id",user.id)
- .eq("type","referral")
- .eq("status","completed");
-
- if(!refEarnError){
-  const total=(refTransactions || []).reduce(
-   (sum,item)=>sum+Number(item.amount || 0),0
-  );
-
-  el("referralEarnings").textContent =
-   "$"+total.toFixed(2);
- }
+ if(!myError) el("myTasks").textContent=myCount ?? 0;
 
  el("status").innerHTML="<span>●</span> Account connected";
 }
 
 async function logout(){
- const confirmed=confirm("আপনি কি Logout করতে চান?");
- if(!confirmed)return;
+ if(!confirm("আপনি কি Logout করতে চান?"))return;
 
  const {error}=await db.auth.signOut();
 
@@ -286,4 +240,4 @@ loadDashboard();
 </script>
 
 </body>
-                                                   </html>
+                                    </html>
