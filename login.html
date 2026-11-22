@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,6 +77,21 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
     if (error) throw error;
 
+    // Referral link থেকে Referrer ID নেওয়া
+    const params = new URLSearchParams(window.location.search);
+    const referrerId = params.get("ref");
+
+    if (referrerId && data.user) {
+      const { error: referralError } = await supabaseClient.rpc(
+        "attach_referral",
+        { p_referrer: referrerId }
+      );
+
+      if (referralError) {
+        console.error("Referral save error:", referralError.message);
+      }
+    }
+
     message.textContent = "Login successful!";
     window.location.href = "dashboard.html";
 
@@ -89,3 +105,4 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 </script>
 </body>
   </html>
+  
