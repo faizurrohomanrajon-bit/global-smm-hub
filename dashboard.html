@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -6,104 +5,285 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080f1d">
 <title>Dashboard | GLOBAL EARNING</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:#080f1d;color:#fff;padding:16px}
-header{display:flex;justify-content:space-between;align-items:center;padding:14px 0;margin-bottom:22px}
-.logo{color:#4ade80;font-size:20px;font-weight:bold}
-.logout{background:#1e293b;color:#fff;padding:9px 13px;border-radius:8px;text-decoration:none}
-.welcome{margin-bottom:20px}
-.welcome h2{font-size:23px;margin-bottom:7px}
+body{
+ font-family:Arial,sans-serif;
+ background:#080f1d;
+ color:#fff;
+ padding:16px;
+ padding-bottom:35px
+}
+.container{max-width:650px;margin:auto}
+header{
+ display:flex;justify-content:space-between;
+ align-items:center;padding:15px 0 22px
+}
+.logo{color:#4ade80;font-size:20px;font-weight:900}
+.logout{
+ background:#263449;color:white;padding:10px 14px;
+ border:0;border-radius:9px;font-weight:bold
+}
+.welcome{margin:15px 0 20px}
+.welcome h2{font-size:25px;margin-bottom:8px}
 .welcome p{color:#94a3b8;font-size:14px}
-.balance{background:linear-gradient(135deg,#14532d,#166534);padding:22px;border-radius:15px;margin-bottom:22px}
+.balance{
+ background:linear-gradient(135deg,#14532d,#166534,#123d2b);
+ border:1px solid #287c4b;
+ padding:23px;border-radius:19px;margin-bottom:22px
+}
 .balance p{color:#bbf7d0;font-size:14px}
-.balance h1{font-size:32px;margin-top:9px}
-.section-title{font-size:18px;margin:22px 0 13px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stat,.menu{background:#111c2e;border:1px solid #263449;border-radius:12px;padding:17px}
-.stat h3{font-size:22px;color:#4ade80;margin-bottom:7px}
+.balance h1{font-size:36px;margin:12px 0}
+.balance small{color:#bbf7d0}
+.section-title{font-size:18px;margin:25px 0 13px}
+.stats{
+ display:grid;grid-template-columns:1fr 1fr;gap:12px
+}
+.stat{
+ background:#111c2e;border:1px solid #263449;
+ border-radius:14px;padding:18px;min-height:105px
+}
+.stat h3{font-size:25px;color:#4ade80;margin-bottom:8px}
 .stat p{font-size:13px;color:#94a3b8}
-.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.menu{display:block;text-decoration:none;color:#fff;min-height:105px}
-.menu .emoji{font-size:25px;margin-bottom:12px}
+.menu-grid{
+ display:grid;grid-template-columns:1fr 1fr;gap:12px
+}
+.menu{
+ display:block;text-decoration:none;color:white;
+ background:#111c2e;border:1px solid #263449;
+ border-radius:15px;padding:17px;min-height:125px;
+ transition:.2s
+}
+.menu:active{border-color:#4ade80;transform:scale(.98)}
+.menu .emoji{font-size:27px;margin-bottom:13px}
 .menu strong{display:block;font-size:15px}
-.menu small{display:block;color:#94a3b8;margin-top:6px}
-.menu:active{border-color:#4ade80}
+.menu small{display:block;color:#94a3b8;margin-top:7px;line-height:1.4}
+.status{
+ background:#111c2e;border:1px solid #263449;
+ border-radius:12px;padding:13px;margin-top:20px;
+ color:#94a3b8;font-size:12px
+}
+.status span{color:#4ade80}
 footer{text-align:center;color:#64748b;font-size:12px;margin:30px 0 15px}
+button{cursor:pointer}
+@media(max-width:350px){
+ .menu-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
+
 <body>
+<div class="container">
 
 <header>
-<div class="logo">🌍 GLOBAL EARNING</div>
-<a class="logout" href="login.html">Login</a>
+ <div class="logo">🌍 GLOBAL EARNING</div>
+ <button class="logout" onclick="logout()">Logout</button>
 </header>
 
 <section class="welcome">
-<h2>Welcome to Dashboard 👋</h2>
-<p>আপনার কাজ ও আয়ের হিসাব এখানে দেখুন।</p>
+ <h2 id="welcomeName">Welcome 👋</h2>
+ <p>আপনার কাজ ও আয়ের হিসাব এখানে দেখুন।</p>
 </section>
 
 <section class="balance">
-<p>💰 My Total Balance</p>
-<h1>৳ 0.00</h1>
+ <p>💰 MY USD WALLET BALANCE</p>
+ <h1 id="balance">$0.00</h1>
+ <small id="pendingBalance">Pending: $0.00</small>
 </section>
 
-<h3 class="section-title">My Overview</h3>
+<h3 class="section-title">📊 My Overview</h3>
+
 <section class="stats">
-<div class="stat">
-<h3>0</h3>
-<p>Available Tasks</p>
-</div>
-<div class="stat">
-<h3>0</h3>
-<p>My Tasks</p>
-</div>
+ <div class="stat">
+  <h3 id="availableTasks">0</h3>
+  <p>Available Tasks</p>
+ </div>
+
+ <div class="stat">
+  <h3 id="myTasks">0</h3>
+  <p>My Tasks</p>
+ </div>
+
+ <div class="stat">
+  <h3 id="referralCount">0</h3>
+  <p>My Referrals</p>
+ </div>
+
+ <div class="stat">
+  <h3 id="referralEarnings">$0.00</h3>
+  <p>Referral Earnings</p>
+ </div>
 </section>
 
-<h3 class="section-title">Dashboard Menu</h3>
+<h3 class="section-title">🚀 Dashboard Menu</h3>
+
 <section class="menu-grid">
 
-<a class="menu" href="tasks.html">
-<div class="emoji">📋</div>
-<strong>Available Tasks</strong>
-<small>নতুন কাজ খুঁজুন</small>
-</a>
+ <a class="menu" href="tasks.html">
+  <div class="emoji">📋</div>
+  <strong>Available Tasks</strong>
+  <small>নতুন কাজ খুঁজুন</small>
+ </a>
 
-<a class="menu" href="my-tasks.html">
-<div class="emoji">📝</div>
-<strong>My Tasks</strong>
-<small>আপনার নেওয়া কাজ</small>
-</a>
+ <a class="menu" href="my-tasks.html">
+  <div class="emoji">📝</div>
+  <strong>My Tasks</strong>
+  <small>আপনার জমা দেওয়া কাজ</small>
+ </a>
 
-<a class="menu" href="wallet.html">
-<div class="emoji">💰</div>
-<strong>Wallet</strong>
-<small>আপনার ব্যালেন্স</small>
-</a>
+ <a class="menu" href="wallet.html">
+  <div class="emoji">💰</div>
+  <strong>Wallet</strong>
+  <small>ব্যালেন্স ও লেনদেন</small>
+ </a>
 
-<a class="menu" href="referral.html">
-<div class="emoji">👥</div>
-<strong>Referral</strong>
-<small>বন্ধু আমন্ত্রণ</small>
-</a>
+ <a class="menu" href="referral.html">
+  <div class="emoji">👥</div>
+  <strong>Referral</strong>
+  <small>বন্ধু আমন্ত্রণ ও কমিশন</small>
+ </a>
 
-<a class="menu" href="profile.html">
-<div class="emoji">👤</div>
-<strong>My Profile</strong>
-<small>প্রোফাইল তথ্য</small>
-</a>
+ <a class="menu" href="profile.html">
+  <div class="emoji">👤</div>
+  <strong>My Profile</strong>
+  <small>প্রোফাইল তথ্য</small>
+ </a>
 
-<a class="menu" href="index.html">
-<div class="emoji">🏠</div>
-<strong>Home</strong>
-<small>হোমপেজে ফিরে যান</small>
-</a>
+ <a class="menu" href="index.html">
+  <div class="emoji">🏠</div>
+  <strong>Home</strong>
+  <small>হোমপেজে ফিরে যান</small>
+ </a>
 
 </section>
 
+<div class="status" id="status">
+ <span>●</span> Account connected
+</div>
+
 <footer>© 2026 GLOBAL EARNING 🌍</footer>
+</div>
+
+<script>
+const SUPABASE_URL =
+"https://hbvtnlwwafmwdfaibrrz.supabase.co";
+
+// login.html-এর একই Publishable Key বসাবে
+const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+
+const db = window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
+const el = id => document.getElementById(id);
+
+async function loadDashboard(){
+
+ el("status").textContent="Loading account...";
+
+ const {data:{user},error:authError} =
+ await db.auth.getUser();
+
+ if(authError || !user){
+  window.location.replace("login.html");
+  return;
+ }
+
+ // Profile
+ const {data:profile} = await db
+ .from("profiles")
+ .select("display_name")
+ .eq("id",user.id)
+ .maybeSingle();
+
+ el("welcomeName").textContent =
+ "Welcome "+(profile?.display_name || "Worker")+" 👋";
+
+ // Wallet
+ const {data:wallet,error:walletError} = await db
+ .from("wallets")
+ .select("balance,pending_balance")
+ .eq("user_id",user.id)
+ .maybeSingle();
+
+ if(!walletError && wallet){
+  el("balance").textContent =
+   "$"+Number(wallet.balance || 0).toFixed(2);
+
+  el("pendingBalance").textContent =
+   "Pending: $"+Number(wallet.pending_balance || 0).toFixed(2);
+ }
+
+ // Available USD Tasks
+ const {count:taskCount,error:taskError} = await db
+ .from("tasks")
+ .select("id",{count:"exact",head:true})
+ .eq("status","active")
+ .eq("currency","USD");
+
+ if(!taskError){
+  el("availableTasks").textContent=taskCount ?? 0;
+ }
+
+ // My Tasks
+ const {count:myCount,error:myError} = await db
+ .from("task_submissions")
+ .select("id",{count:"exact",head:true})
+ .eq("worker_id",user.id);
+
+ if(!myError){
+  el("myTasks").textContent=myCount ?? 0;
+ }
+
+ // Referral Count
+ const {count:refCount,error:refError} = await db
+ .from("profiles")
+ .select("id",{count:"exact",head:true})
+ .eq("referred_by",user.id);
+
+ if(!refError){
+  el("referralCount").textContent=refCount ?? 0;
+ }
+
+ // Referral Earnings
+ const {data:refTransactions,error:refEarnError} = await db
+ .from("wallet_transactions")
+ .select("amount")
+ .eq("user_id",user.id)
+ .eq("type","referral")
+ .eq("status","completed");
+
+ if(!refEarnError){
+  const total=(refTransactions || []).reduce(
+   (sum,item)=>sum+Number(item.amount || 0),0
+  );
+
+  el("referralEarnings").textContent =
+   "$"+total.toFixed(2);
+ }
+
+ el("status").innerHTML="<span>●</span> Account connected";
+}
+
+async function logout(){
+ const confirmed=confirm("আপনি কি Logout করতে চান?");
+ if(!confirmed)return;
+
+ const {error}=await db.auth.signOut();
+
+ if(error){
+  alert("Logout Error: "+error.message);
+  return;
+ }
+
+ window.location.replace("login.html");
+}
+
+loadDashboard();
+</script>
 
 </body>
-  </html>
-  
+                                                   </html>
