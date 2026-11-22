@@ -9,91 +9,38 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{
- font-family:Arial,sans-serif;
- background:#080f1d;color:white;
- padding-bottom:30px;
-}
+body{font-family:Arial,sans-serif;background:#080f1d;color:white;padding-bottom:30px}
 .container{max-width:1000px;margin:auto}
-header{
- padding:18px 5%;
- display:flex;align-items:center;
- justify-content:space-between;
- border-bottom:1px solid #24354d;
-}
+header{padding:18px 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #24354d}
 .logo{font-size:20px;font-weight:bold;color:#4ade80}
-.logout{
- padding:11px 17px;border:1px solid #475569;
- border-radius:9px;background:transparent;
- color:white;font-weight:bold;cursor:pointer
-}
-.hero{
- text-align:center;padding:45px 20px 40px;
- background:radial-gradient(ellipse at top,#17483b,#080f1d 70%);
-}
-.tag{
- display:inline-block;padding:9px 16px;
- border:1px solid #276749;border-radius:30px;
- color:#4ade80;font-size:12px;
-}
+.logout{padding:11px 17px;border:1px solid #475569;border-radius:9px;background:transparent;color:white;font-weight:bold;cursor:pointer}
+.hero{text-align:center;padding:45px 20px 40px;background:radial-gradient(ellipse at top,#17483b,#080f1d 70%)}
+.tag{display:inline-block;padding:9px 16px;border:1px solid #276749;border-radius:30px;color:#4ade80;font-size:12px}
 .hero h1{font-size:clamp(28px,6vw,42px);margin:22px 0 12px}
 .hero h1 span{color:#4ade80}
-.hero p{
- color:#a7b5c9;line-height:1.8;
- font-size:14px;
-}
+.hero p{color:#a7b5c9;line-height:1.8;font-size:14px}
 .section{padding:30px 5%;text-align:center}
 .section h2{font-size:25px;margin-bottom:10px}
 .sub{color:#94a3b8;font-size:13px;margin-bottom:22px}
-.balance-card{
- max-width:650px;margin:0 auto;
- padding:25px;text-align:left;
- border:1px solid #276749;border-radius:17px;
- background:linear-gradient(120deg,#123c35,#132b48);
-}
+.balance-card{max-width:650px;margin:0 auto;padding:25px;text-align:left;border:1px solid #276749;border-radius:17px;background:linear-gradient(120deg,#123c35,#132b48)}
 .balance-card p{color:#bbf7d0;font-size:13px}
 .balance-card h2{font-size:36px;color:#4ade80;margin:13px 0}
 .balance-card small{color:#cbd5e1}
-.grid{
- display:grid;grid-template-columns:repeat(2,1fr);
- gap:13px;max-width:850px;margin:auto;
-}
-.card{
- background:#111e30;border:1px solid #263b50;
- border-radius:14px;padding:20px 15px;text-align:left;
- min-height:110px;
-}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;max-width:850px;margin:auto}
+.card{background:#111e30;border:1px solid #263b50;border-radius:14px;padding:20px 15px;text-align:left;min-height:110px}
 .card .emoji{font-size:27px;margin-bottom:12px}
 .card h3{font-size:23px;color:#4ade80;margin-bottom:7px}
 .card p{font-size:13px;color:#94a3b8}
-.menu-card{
- display:block;text-decoration:none;color:white;
- background:#111e30;border:1px solid #263b50;
- border-radius:14px;padding:20px 15px;
- text-align:left;min-height:125px;
-}
+.menu-card{display:block;text-decoration:none;color:white;background:#111e30;border:1px solid #263b50;border-radius:14px;padding:20px 15px;text-align:left;min-height:125px}
 .menu-card:active{border-color:#4ade80}
 .menu-card .emoji{font-size:29px;margin-bottom:12px}
 .menu-card h3{font-size:16px;margin-bottom:8px}
 .menu-card p{font-size:12px;color:#94a3b8;line-height:1.6}
 .menu-card .arrow{color:#4ade80;float:right}
-.status{
- max-width:850px;margin:25px auto 0;
- padding:13px;background:#101d2f;
- border:1px solid #263b50;border-radius:10px;
- color:#94a3b8;font-size:12px;text-align:center;
-}
+.status{max-width:850px;margin:25px auto 0;padding:13px;background:#101d2f;border:1px solid #263b50;border-radius:10px;color:#94a3b8;font-size:12px;text-align:center}
 .status span{color:#4ade80}
-footer{
- border-top:1px solid #24354d;
- padding:25px;text-align:center;
- color:#718096;font-size:12px;line-height:2;
- margin-top:30px;
-}
-@media(min-width:650px){
- .grid{grid-template-columns:repeat(4,1fr)}
- .menu-grid{grid-template-columns:repeat(3,1fr)}
-}
+footer{border-top:1px solid #24354d;padding:25px;text-align:center;color:#718096;font-size:12px;line-height:2;margin-top:30px}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,1fr)}.menu-grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 
@@ -123,75 +70,31 @@ footer{
 <section class="section">
  <h2>📊 My Overview</h2>
  <p class="sub">আপনার অ্যাকাউন্টের বর্তমান অবস্থা</p>
-
  <div class="grid">
-  <div class="card">
-   <div class="emoji">📋</div>
-   <h3 id="availableTasks">0</h3>
-   <p>Available Tasks</p>
-  </div>
-
-  <div class="card">
-   <div class="emoji">📝</div>
-   <h3 id="myTasks">0</h3>
-   <p>My Tasks</p>
-  </div>
-
-  <div class="card">
-   <div class="emoji">👥</div>
-   <h3 id="referralCount">0</h3>
-   <p>My Referrals</p>
-  </div>
-
-  <div class="card">
-   <div class="emoji">🤝</div>
-   <h3 id="referralEarnings">$0.00</h3>
-   <p>Referral Earnings</p>
-  </div>
+  <div class="card"><div class="emoji">📋</div><h3 id="availableTasks">0</h3><p>Available Tasks</p></div>
+  <div class="card"><div class="emoji">📝</div><h3 id="myTasks">0</h3><p>My Tasks</p></div>
+  <div class="card"><div class="emoji">👥</div><h3 id="referralCount">0</h3><p>My Referrals</p></div>
+  <div class="card"><div class="emoji">🤝</div><h3 id="referralEarnings">$0.00</h3><p>Referral Earnings</p></div>
  </div>
 </section>
 
 <section class="section">
  <h2>🚀 Dashboard Menu</h2>
  <p class="sub">আপনার প্রয়োজনীয় পেজ বেছে নিন</p>
-
  <div class="grid menu-grid">
 
-  <a class="menu-card" href="tasks.html">
-   <div class="emoji">📋</div>
-   <h3>Available Tasks <span class="arrow">→</span></h3>
-   <p>নতুন কাজ খুঁজুন এবং কাজের বিস্তারিত দেখুন।</p>
-  </a>
+  <a class="menu-card" href="tasks.html"><div class="emoji">📋</div><h3>Available Tasks <span class="arrow">→</span></h3><p>নতুন কাজ খুঁজুন এবং কাজের বিস্তারিত দেখুন।</p></a>
 
-  <a class="menu-card" href="my-tasks.html">
-   <div class="emoji">📝</div>
-   <h3>My Tasks <span class="arrow">→</span></h3>
-   <p>আপনার জমা দেওয়া কাজের অবস্থা দেখুন।</p>
-  </a>
+  <a class="menu-card" href="my-tasks.html"><div class="emoji">📝</div><h3>My Tasks <span class="arrow">→</span></h3><p>আপনার জমা দেওয়া কাজের অবস্থা দেখুন।</p></a>
 
-  <a class="menu-card" href="wallet.html">
-   <div class="emoji">💰</div>
-   <h3>My Wallet <span class="arrow">→</span></h3>
-   <p>আপনার ব্যালেন্স ও লেনদেন দেখুন।</p>
-  </a>
+  <a class="menu-card" href="wallet.html"><div class="emoji">💰</div><h3>My Wallet <span class="arrow">→</span></h3><p>আপনার ব্যালেন্স ও লেনদেন দেখুন।</p></a>
 
-  <a class="menu-card" href="referral.html">
-   <div class="emoji">🤝</div>
-   <h3>Referral <span class="arrow">→</span></h3>
-   <p>আপনার Referral Link ও কমিশন দেখুন।</p>
-  </a>
+  <a class="menu-card" href="referral.html"><div class="emoji">🤝</div><h3>Referral <span class="arrow">→</span></h3><p>আপনার Referral Link ও কমিশন দেখুন।</p></a>
 
-  <a class="menu-card" href="index.html">
-   <div class="emoji">🏠</div>
-   <h3>Home <span class="arrow">→</span></h3>
-   <p>GLOBAL EARNING হোমপেজে ফিরে যান।</p>
-  </a>
+  <a class="menu-card" href="index.html"><div class="emoji">🏠</div><h3>Home <span class="arrow">→</span></h3><p>GLOBAL EARNING হোমপেজে ফিরে যান।</p></a>
 
  </div>
-
- <div class="status" id="status">
-  <span>●</span> Connecting Account...
- </div>
+ <div class="status" id="status"><span>●</span> Connecting Account...</div>
 </section>
 
 <footer>
@@ -202,117 +105,81 @@ footer{
 </div>
 
 <script>
-const SUPABASE_URL =
-"https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
 
 // login.html-এর একই Publishable Key বসাবেন
-const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
-const db = window.supabase.createClient(
- SUPABASE_URL,SUPABASE_KEY
-);
-
-const el = id => document.getElementById(id);
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const el=id=>document.getElementById(id);
 
 async function loadDashboard(){
-
  el("status").textContent="Connecting Account...";
 
- const {data:{user},error:authError} =
- await db.auth.getUser();
-
+ const {data:{user},error:authError}=await db.auth.getUser();
  if(authError || !user){
   window.location.replace("login.html");
   return;
  }
 
- const {data:profile} = await db
- .from("profiles")
- .select("display_name")
- .eq("id",user.id)
- .maybeSingle();
+ const {data:profile}=await db.from("profiles")
+  .select("display_name").eq("id",user.id).maybeSingle();
 
- el("welcomeName").textContent =
- "Welcome, "+(profile?.display_name || "Worker")+" 👋";
+ el("welcomeName").textContent=
+  "Welcome, "+(profile?.display_name || "Worker")+" 👋";
 
- const {data:wallet} = await db
- .from("wallets")
- .select("balance,pending_balance")
- .eq("user_id",user.id)
- .maybeSingle();
+ const {data:wallet}=await db.from("wallets")
+  .select("balance,pending_balance")
+  .eq("user_id",user.id).maybeSingle();
 
  if(wallet){
-  el("balance").textContent =
-   "$"+Number(wallet.balance || 0).toFixed(2);
-
-  el("pendingBalance").textContent =
-   "Pending Balance: $"+
-   Number(wallet.pending_balance || 0).toFixed(2);
+  el("balance").textContent="$"+Number(wallet.balance || 0).toFixed(2);
+  el("pendingBalance").textContent=
+   "Pending Balance: $"+Number(wallet.pending_balance || 0).toFixed(2);
  }
 
- const {count:taskCount,error:taskError} = await db
- .from("tasks")
- .select("id",{count:"exact",head:true})
- .eq("status","active")
- .eq("currency","USD");
+ const {count:taskCount,error:taskError}=await db.from("tasks")
+  .select("id",{count:"exact",head:true})
+  .eq("status","active").eq("currency","USD");
 
- if(!taskError){
-  el("availableTasks").textContent=taskCount ?? 0;
- }
+ if(!taskError)el("availableTasks").textContent=taskCount ?? 0;
 
- const {count:myCount,error:myError} = await db
- .from("task_submissions")
- .select("id",{count:"exact",head:true})
- .eq("worker_id",user.id);
+ const {count:myCount,error:myError}=await db.from("task_submissions")
+  .select("id",{count:"exact",head:true})
+  .eq("worker_id",user.id);
 
- if(!myError){
-  el("myTasks").textContent=myCount ?? 0;
- }
+ if(!myError)el("myTasks").textContent=myCount ?? 0;
 
- const {count:refCount,error:refError} = await db
- .from("profiles")
- .select("id",{count:"exact",head:true})
- .eq("referred_by",user.id);
+ const {count:refCount,error:refError}=await db.from("profiles")
+  .select("id",{count:"exact",head:true})
+  .eq("referred_by",user.id);
 
- if(!refError){
-  el("referralCount").textContent=refCount ?? 0;
- }
+ if(!refError)el("referralCount").textContent=refCount ?? 0;
 
- const {data:transactions,error:refEarnError} = await db
- .from("wallet_transactions")
- .select("amount")
- .eq("user_id",user.id)
- .eq("type","referral")
- .eq("status","completed");
+ const {data:transactions,error:refEarnError}=await db.from("wallet_transactions")
+  .select("amount")
+  .eq("user_id",user.id)
+  .eq("type","referral")
+  .eq("status","completed");
 
  if(!refEarnError){
   const total=(transactions || []).reduce(
    (sum,item)=>sum+Number(item.amount || 0),0
   );
-
-  el("referralEarnings").textContent =
-   "$"+total.toFixed(2);
+  el("referralEarnings").textContent="$"+total.toFixed(2);
  }
 
  el("status").innerHTML="<span>●</span> Account Connected";
 }
 
 async function logout(){
-
  if(!confirm("আপনি কি Logout করতে চান?"))return;
-
  const {error}=await db.auth.signOut();
-
- if(error){
-  alert("Logout Error: "+error.message);
-  return;
- }
-
+ if(error){alert("Logout Error: "+error.message);return;}
  window.location.replace("login.html");
 }
 
 loadDashboard();
 </script>
-
 </body>
  </html>
