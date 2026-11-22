@@ -16,51 +16,60 @@ h1{color:#4ade80}
 button{background:#4ade80;color:#07111d;border:0;border-radius:8px;padding:12px 18px;font-weight:bold;cursor:pointer;margin:5px}
 button:disabled{opacity:.5;cursor:not-allowed}
 .refresh{background:#26364d;color:white}
+.reject{background:#ef4444;color:white}
+.paid{background:#38bdf8;color:#07111d}
 .status{color:#4ade80}
 .proof{background:#081321;padding:12px;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere}
+.detail{font-size:13px;line-height:1.8;color:#d1d5db;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
 <div class="container">
 <h1>GLOBAL EARNING 🌍</h1>
 <h2>Admin Panel</h2>
-<p class="muted">Worker Submission Review</p>
+<p class="muted">Worker Submission & Withdrawal Review</p>
 
 <div class="card">
 <h3>Admin Status</h3>
 <p id="adminStatus">Checking...</p>
-<button class="refresh" onclick="loadSubmissions()">Refresh Data</button>
+<button class="refresh" onclick="refreshAll()">Refresh Data</button>
 <button class="refresh" onclick="logout()">Logout</button>
 </div>
 
 <h2>Pending Submissions</h2>
 <div id="message" class="muted">Loading...</div>
 <div id="submissions"></div>
+
+<h2>💸 Withdrawal Requests</h2>
+<p class="muted">Pending ও Approved Request এখানে দেখাবে।</p>
+<div id="withdrawalMessage" class="muted">Loading...</div>
+<div id="withdrawals"></div>
+
+<div id="buyerTasks"></div>
 </div>
 
 <script>
 const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
-
-// এখানে নিজের আগের Publishable Key বসাবে
 const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const message = document.getElementById("message");
 const submissions = document.getElementById("submissions");
+const withdrawalMessage = document.getElementById("withdrawalMessage");
+const withdrawals = document.getElementById("withdrawals");
+
+let adminVerified = false;
 
 function safe(value){
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
+  return String(value ?? "").replace(/[&<>"']/g,c=>({
     "&":"&amp;","<":"&lt;",">":"&gt;",
     '"':"&quot;","'":"&#039;"
   })[c]);
 }
 
 async function start(){
-  try {
+  try{
     const {data:{user},error} = await db.auth.getUser();
 
     if(error || !user){
@@ -75,28 +84,35 @@ async function start(){
 
     if(adminError){
       document.getElementById("adminStatus").textContent =
-        "Admin যাচাই Error: " + adminError.message;
-      message.textContent = "Admin check failed.";
+        "Admin যাচাই Error: "+adminError.message;
       return;
     }
 
     if(isAdmin !== true){
       document.getElementById("adminStatus").textContent =
-        "Access denied. User ID: " + user.id;
-      message.textContent = "Access denied.";
+        "Access denied. User ID: "+user.id;
       return;
     }
+
+    adminVerified = true;
 
     document.getElementById("adminStatus").innerHTML =
       '<span class="status">Admin verified ✓</span>';
 
-    await loadSubmissions();
+    await refreshAll();
 
-  } catch(error) {
+  }catch(error){
     document.getElementById("adminStatus").textContent =
-      "Error: " + error.message;
-    message.textContent = error.message;
+      "Error: "+error.message;
   }
+}
+
+async function refreshAll(){
+  if(!adminVerified)return;
+
+  await loadSubmissions();
+  await loadWithdrawalRequests();
+  await loadBuyerTasks();
 }
 
 async function loadSubmissions(){
@@ -112,26 +128,22 @@ async function loadSubmissions(){
       evidence,
       status,
       submitted_at,
-      tasks (
-        title,
-        reward_per_worker,
-        currency
-      )
+      tasks(title,reward_per_worker,currency)
     `)
     .eq("status","pending")
     .order("submitted_at",{ascending:true});
 
   if(error){
-    message.textContent = "Error: " + error.message;
+    message.textContent = "Error: "+error.message;
     return;
   }
 
-  if(!data || data.length === 0){
+  if(!data || data.length===0){
     message.textContent = "কোনো Pending Submission নেই।";
     return;
   }
 
-  message.textContent = data.length + "টি Pending Submission";
+  message.textContent = data.length+"টি Pending Submission";
 
   data.forEach(item=>{
     const task = item.tasks || {};
@@ -149,14 +161,16 @@ async function loadSubmissions(){
       <button class="approve">Approve & Pay</button>
     `;
 
-    const btn = card.querySelector(".approve");
-    btn.addEventListener("click",()=>approve(item.id,btn));
+    card.querySelector(".approve").addEventListener(
+      "click",()=>approve(item.id,card.querySelector(".approve"))
+    );
+
     submissions.appendChild(card);
   });
 }
 
 async function approve(submissionId,button){
-  if(!confirm("এই Submission অনুমোদন করে Worker-কে USD Reward দিতে চান?")) return;
+  if(!confirm("এই Submission অনুমোদন করে Worker-কে USD Reward দিতে চান?"))return;
 
   button.disabled = true;
   button.textContent = "Processing...";
@@ -167,22 +181,150 @@ async function approve(submissionId,button){
   );
 
   if(error){
-    alert("Approval failed: " + error.message);
+    alert("Approval failed: "+error.message);
     button.disabled = false;
     button.textContent = "Approve & Pay";
     return;
   }
 
-  alert("Approved! Worker-এর নতুন USD balance: $" + data);
+  alert("Approved! Worker-এর নতুন USD balance: $"+data);
   await loadSubmissions();
 }
 
-async function logout(){
-  await db.auth.signOut();
-  location.href = "login.html";
+async function loadWithdrawalRequests(){
+  withdrawalMessage.textContent = "Loading Withdrawal Requests...";
+  withdrawals.innerHTML = "";
+
+  const {data,error} = await db
+    .from("withdrawal_requests")
+    .select(`
+      id,
+      user_id,
+      amount,
+      currency,
+      method,
+      payout_address,
+      status,
+      created_at
+    `)
+    .in("status",["pending","approved"])
+    .order("created_at",{ascending:true});
+
+  if(error){
+    withdrawalMessage.textContent =
+      "Withdrawal Error: "+error.message;
+    return;
+  }
+
+  if(!data || data.length===0){
+    withdrawalMessage.textContent =
+      "কোনো Pending বা Approved Withdrawal নেই।";
+    return;
+  }
+
+  withdrawalMessage.textContent =
+    data.length+"টি Withdrawal Request";
+
+  data.forEach(item=>{
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <h3>💸 ${safe(item.method)}</h3>
+      <div class="detail">
+        <p>Request ID: ${safe(item.id)}</p>
+        <p>Worker ID: ${safe(item.user_id)}</p>
+        <p>Amount: $${safe(Number(item.amount).toFixed(2))} ${safe(item.currency)}</p>
+        <p>Payment Details: ${safe(item.payout_address)}</p>
+        <p>Status: <strong>${safe(item.status.toUpperCase())}</strong></p>
+        <p>Created: ${safe(new Date(item.created_at).toLocaleString())}</p>
+      </div>
+      <div class="actions"></div>
+    `;
+
+    const actions = card.querySelector(".actions");
+
+    if(item.status==="pending"){
+      const approveBtn = document.createElement("button");
+      approveBtn.textContent = "Approve";
+      approveBtn.onclick = ()=>reviewWithdrawal(
+        item.id,"approve",approveBtn
+      );
+
+      const rejectBtn = document.createElement("button");
+      rejectBtn.textContent = "Reject & Refund";
+      rejectBtn.className = "reject";
+      rejectBtn.onclick = ()=>reviewWithdrawal(
+        item.id,"reject",rejectBtn
+      );
+
+      actions.append(approveBtn,rejectBtn);
+    }
+
+    if(item.status==="approved"){
+      const paidBtn = document.createElement("button");
+      paidBtn.textContent = "Mark Paid";
+      paidBtn.className = "paid";
+      paidBtn.onclick = ()=>reviewWithdrawal(
+        item.id,"paid",paidBtn
+      );
+
+      const note = document.createElement("p");
+      note.className = "muted";
+      note.textContent =
+        "বাস্তবে টাকা পাঠানোর পরেই Mark Paid চাপুন।";
+
+      actions.append(note,paidBtn);
+    }
+
+    withdrawals.appendChild(card);
+  });
 }
-loadBuyerTasks();
-start();
+
+async function reviewWithdrawal(requestId,action,button){
+  let confirmation = "";
+
+  if(action==="approve"){
+    confirmation =
+      "এই Withdrawal Request অনুমোদন করবেন?";
+  }
+
+  if(action==="reject"){
+    confirmation =
+      "Request বাতিল করে Worker-এর ব্যালেন্স ফেরত দেবেন?";
+  }
+
+  if(action==="paid"){
+    confirmation =
+      "আপনি কি বাস্তবে টাকা পাঠিয়েছেন? পাঠানো হয়ে থাকলেই Paid করুন।";
+  }
+
+  if(!confirm(confirmation))return;
+
+  button.disabled = true;
+  button.textContent = "Processing...";
+
+  const {data,error} = await db.rpc(
+    "review_withdrawal_request",
+    {
+      p_request_id:requestId,
+      p_action:action
+    }
+  );
+
+  if(error){
+    alert("Withdrawal Error: "+error.message);
+    button.disabled = false;
+    button.textContent =
+      action==="approve" ? "Approve" :
+      action==="reject" ? "Reject & Refund" : "Mark Paid";
+    return;
+  }
+
+  alert(data || "Request updated successfully");
+  await loadWithdrawalRequests();
+}
+
 async function loadBuyerTasks(){
   const {data,error} = await db
     .from("tasks")
@@ -190,23 +332,18 @@ async function loadBuyerTasks(){
     .eq("status","draft")
     .order("created_at",{ascending:false});
 
+  const box = document.getElementById("buyerTasks");
+  box.innerHTML = "<h2>Buyer Pending Tasks</h2>";
+
   if(error){
-    alert("Buyer Tasks Error: " + error.message);
+    box.innerHTML +=
+      "<p class='muted'>Buyer Tasks Error: "+safe(error.message)+"</p>";
     return;
   }
 
-  let box = document.getElementById("buyerTasks");
-
-  if(!box){
-    box = document.createElement("div");
-    box.id = "buyerTasks";
-    document.querySelector(".container").appendChild(box);
-  }
-
-  box.innerHTML = "<h2>Buyer Pending Tasks</h2>";
-
-  if(!data || data.length === 0){
-    box.innerHTML += "<p class='muted'>কোনো Pending Buyer Task নেই।</p>";
+  if(!data || data.length===0){
+    box.innerHTML +=
+      "<p class='muted'>কোনো Pending Buyer Task নেই।</p>";
     return;
   }
 
@@ -215,19 +352,22 @@ async function loadBuyerTasks(){
     card.className = "card";
 
     const title = document.createElement("h3");
-    title.textContent = task.title;
+    title.textContent = task.title || "";
 
     const desc = document.createElement("p");
     desc.textContent = task.description || "";
 
     const reward = document.createElement("p");
-    reward.textContent = "Reward: " + task.reward_per_worker + " " + task.currency;
+    reward.textContent =
+      "Reward: "+task.reward_per_worker+" "+task.currency;
 
     const btn = document.createElement("button");
     btn.textContent = "Approve & Activate";
 
     btn.onclick = async ()=>{
-      if(!confirm("এই কাজটি Active করতে চান? পেমেন্ট যাচাই করা হয়েছে কি না নিশ্চিত করুন।")) return;
+      if(!confirm(
+        "এই কাজটি Active করতে চান? পেমেন্ট সত্যিই যাচাই করা হয়েছে কি না নিশ্চিত করুন।"
+      ))return;
 
       btn.disabled = true;
 
@@ -237,7 +377,7 @@ async function loadBuyerTasks(){
       );
 
       if(error){
-        alert("Error: " + error.message);
+        alert("Error: "+error.message);
         btn.disabled = false;
         return;
       }
@@ -249,7 +389,15 @@ async function loadBuyerTasks(){
     card.append(title,desc,reward,btn);
     box.appendChild(card);
   });
-  }  
+}
+
+async function logout(){
+  if(!confirm("Logout করতে চান?"))return;
+  await db.auth.signOut();
+  location.href = "login.html";
+}
+
+start();
 </script>
 </body>
   </html>
