@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -24,7 +25,6 @@ button{width:100%;padding:14px;border:0;border-radius:9px;background:#4ade80;col
 button:disabled{opacity:.5}
 .note{font-size:12px;color:#94a3b8;line-height:1.7;margin-top:12px}
 .item{padding:13px 0;border-bottom:1px solid #293c54;font-size:12px;line-height:1.8;overflow-wrap:anywhere}
-.item:last-child{border:0}
 .status{font-size:12px;color:#94a3b8;margin-top:12px;line-height:1.6}
 nav{position:fixed;bottom:0;left:0;right:0;background:#081221;border-top:1px solid #29415b;display:flex;justify-content:space-around;padding:11px 3px}
 nav a{color:#91a2b8;text-decoration:none;text-align:center;font-size:10px;flex:1}
@@ -57,7 +57,7 @@ nav a.active{color:#4ade80}
 <input id="amount" type="number" min="0.01" step="0.01" placeholder="যেমন 5.00">
 
 <label id="addressLabel">bKash Number</label>
-<input id="address" type="text" placeholder="আপনার bKash Number">
+<input id="address" type="text" maxlength="200" placeholder="আপনার bKash Number">
 
 <p class="note" id="networkNote">আপনার নিজের পেমেন্ট অ্যাকাউন্টের তথ্য দিন।</p>
 
@@ -86,15 +86,20 @@ const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let user=null;
 let walletBalance=0;
-
 const el=id=>document.getElementById(id);
+
+function escapeHtml(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
 
 function updateFields(){
  const method=el("method").value;
  if(method==="USDT BEP20"){
   el("addressLabel").textContent="USDT BEP20 Wallet Address";
   el("address").placeholder="আপনার BEP20 Address";
-  el("networkNote").textContent="শুধুমাত্র BNB Smart Chain (BEP20) Network। অন্য নেটওয়ার্কের ঠিকানা দেবেন না।";
+  el("networkNote").textContent="শুধুমাত্র BNB Smart Chain (BEP20) Network।";
  }else{
   el("addressLabel").textContent=method+" Number";
   el("address").placeholder="আপনার "+method+" Number";
@@ -102,32 +107,33 @@ function updateFields(){
  }
 }
 
-async function loadPage(){
- const {data:{user:u},error}=await db.auth.getUser();
- if(error||!u){location.replace("login.html");return;}
- user=u;
-
- const {data:wallet}=await db.from("wallets")
+async function loadWallet(){
+ const {data,error}=await db.from("wallets")
   .select("balance,pending_balance")
-  .eq("user_id",user.id).maybeSingle();
+  .eq("user_id",user.id)
+  .eq("currency","USD")
+  .maybeSingle();
 
- if(wallet){
-  walletBalance=Number(wallet.balance||0);
-  el("balance").textContent="$"+walletBalance.toFixed(2);
-  el("pending").textContent="Pending: $"+Number(wallet.pending_balance||0).toFixed(2);
+ if(error){
+  el("message").textContent="Wallet load failed.";
+  return;
  }
 
- await loadHistory();
+ walletBalance=Number(data?.balance||0);
+ el("balance").textContent="$"+walletBalance.toFixed(2);
+ el("pending").textContent="Pending: $"+Number(data?.pending_balance||0).toFixed(2);
 }
 
 async function loadHistory(){
- const {data,error}=await db.from("wallet_transactions")
-  .select("amount,type,status,description,created_at")
+ const {data,error}=await db.from("withdrawal_requests")
+  .select("amount,method,status,created_at")
   .eq("user_id",user.id)
-  .eq("type","withdrawal")
   .order("created_at",{ascending:false});
 
- if(error){el("history").textContent="History load failed.";return;}
+ if(error){
+  el("history").textContent="History load failed.";
+  return;
+ }
 
  if(!data||data.length===0){
   el("history").textContent="এখনো কোনো Withdrawal Request নেই।";
@@ -137,40 +143,77 @@ async function loadHistory(){
  el("history").innerHTML=data.map(item=>`
   <div class="item">
    <b>$${Number(item.amount).toFixed(2)}</b><br>
+   Method: ${escapeHtml(item.method)}<br>
    Status: ${escapeHtml(item.status)}<br>
-   ${escapeHtml(item.description||"Withdrawal")}<br>
    ${new Date(item.created_at).toLocaleString()}
   </div>
  `).join("");
 }
 
-function escapeHtml(value){
- return String(value).replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
+async function loadPage(){
+ const {data:{user:u},error}=await db.auth.getUser();
+ if(error||!u){
+  location.replace("login.html");
+  return;
+ }
+ user=u;
+ await loadWallet();
+ await loadHistory();
 }
 
 async function submitWithdrawal(){
- el("message").textContent="";
+ const btn=el("submitBtn");
+ const msg=el("message");
+ msg.textContent="";
+
  const amount=Number(el("amount").value);
  const method=el("method").value;
  const address=el("address").value.trim();
 
  if(!Number.isFinite(amount)||amount<=0){
-  el("message").textContent="সঠিক Amount লিখুন।";return;
+  msg.textContent="সঠিক Amount লিখুন।";
+  return;
  }
  if(amount>walletBalance){
-  el("message").textContent="আপনার Available Balance যথেষ্ট নয়।";return;
+  msg.textContent="আপনার Available Balance যথেষ্ট নয়।";
+  return;
  }
- if(!address){
-  el("message").textContent="Payment Address বা Number লিখুন।";return;
+ if(!address||address.length<5||address.length>200){
+  msg.textContent="সঠিক Payment Address বা Number লিখুন।";
+  return;
  }
 
- el("message").textContent="এই ফর্মের জন্য নিরাপদ Withdrawal Request Backend এখনো সংযুক্ত হয়নি। Admin-এর নিরাপদ যাচাই ও Balance Hold ব্যবস্থা তৈরি না হওয়া পর্যন্ত Request জমা দেওয়া বন্ধ রাখা হয়েছে।";
+ btn.disabled=true;
+ btn.textContent="Submitting...";
+ msg.textContent="Request জমা হচ্ছে...";
+
+ try{
+  const {data,error}=await db.rpc("create_withdrawal_request",{
+   p_amount:amount,
+   p_method:method,
+   p_payout_address:address
+  });
+
+  if(error) throw error;
+
+  msg.textContent="Withdrawal Request সফলভাবে জমা হয়েছে। Admin যাচাই করবেন।";
+  el("amount").value="";
+  el("address").value="";
+
+  await loadWallet();
+  await loadHistory();
+
+ }catch(error){
+  msg.textContent="Request ব্যর্থ: "+error.message;
+ }finally{
+  btn.disabled=false;
+  btn.textContent="Submit Withdrawal Request";
+ }
 }
 
 loadPage();
 updateFields();
 </script>
 </body>
-  </html>
+ </html>
+ 
