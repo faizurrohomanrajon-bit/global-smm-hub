@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -9,95 +10,40 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{
- font-family:Arial,sans-serif;
- background:#080f1d;color:#fff;
- padding-bottom:100px;
-}
+body{font-family:Arial,sans-serif;background:#080f1d;color:#fff;padding-bottom:100px}
 .container{max-width:1100px;margin:auto}
-header{
- display:flex;align-items:center;justify-content:space-between;
- padding:17px 18px;border-bottom:1px solid #23364e;
- background:#0b1728;
-}
+header{display:flex;align-items:center;justify-content:space-between;padding:17px 18px;border-bottom:1px solid #23364e;background:#0b1728}
 .logo{font-size:20px;font-weight:bold;color:#4ade80}
 .user-area{display:flex;align-items:center;gap:10px}
-.avatar{
- width:38px;height:38px;border-radius:50%;
- display:grid;place-items:center;
- background:#173d36;font-size:20px;
-}
-.logout{
- background:#18283c;color:#fff;border:1px solid #34465d;
- padding:9px 13px;border-radius:9px;cursor:pointer;
-}
+.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#173d36;font-size:20px}
+.logout{background:#18283c;color:#fff;border:1px solid #34465d;padding:9px 13px;border-radius:9px;cursor:pointer}
 main{padding:18px}
-.welcome{
- padding:25px 20px;border-radius:20px;
- background:linear-gradient(120deg,#155c43,#103d43,#142d4c);
- border:1px solid #267c58;
- position:relative;overflow:hidden;
-}
-.welcome:after{
- content:"🌍";position:absolute;right:15px;bottom:-15px;
- font-size:90px;opacity:.13;
-}
-.tag{
- color:#86efac;font-size:12px;letter-spacing:1px;
- margin-bottom:13px;
-}
+.welcome{padding:25px 20px;border-radius:20px;background:linear-gradient(120deg,#155c43,#103d43,#142d4c);border:1px solid #267c58;position:relative;overflow:hidden}
+.welcome:after{content:"🌍";position:absolute;right:15px;bottom:-15px;font-size:90px;opacity:.13}
+.tag{color:#86efac;font-size:12px;letter-spacing:1px;margin-bottom:13px}
 .welcome h1{font-size:27px;margin-bottom:9px}
 .welcome p{font-size:13px;color:#d1fae5;line-height:1.7}
-.balance{
- margin-top:18px;padding:20px;border-radius:17px;
- background:#0b2b2b;border:1px solid #28745a;
-}
+.balance{margin-top:18px;padding:20px;border-radius:17px;background:#0b2b2b;border:1px solid #28745a}
 .balance-label{font-size:12px;color:#a7f3d0}
-.balance-amount{
- font-size:36px;font-weight:bold;color:#4ade80;
- margin:10px 0;
-}
+.balance-amount{font-size:36px;font-weight:bold;color:#4ade80;margin:10px 0}
 .pending{font-size:12px;color:#cbd5e1}
-.section-title{
- font-size:19px;margin:27px 0 7px;
-}
+.section-title{font-size:19px;margin:27px 0 7px}
 .section-sub{font-size:12px;color:#94a3b8;margin-bottom:15px}
-.stats{
- display:grid;grid-template-columns:repeat(2,1fr);gap:11px;
-}
-.stat{
- background:#111f33;border:1px solid #263e59;
- padding:17px 13px;border-radius:15px;
- min-height:110px;
-}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.stat{background:#111f33;border:1px solid #263e59;padding:17px 13px;border-radius:15px;min-height:110px}
 .stat-icon{font-size:24px;margin-bottom:9px}
 .stat-number{font-size:23px;font-weight:bold;color:#4ade80}
 .stat-label{font-size:12px;color:#aab8ca;margin-top:5px}
-.quick-grid{
- display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
-}
-.quick{
- display:block;text-decoration:none;color:white;
- background:linear-gradient(145deg,#14263d,#101c2e);
- border:1px solid #2a405b;border-radius:15px;
- padding:17px;min-height:115px;
- transition:.2s;
-}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.quick{display:block;text-decoration:none;color:white;background:linear-gradient(145deg,#14263d,#101c2e);border:1px solid #2a405b;border-radius:15px;padding:17px;min-height:115px;transition:.2s}
 .quick:active{border-color:#4ade80;transform:scale(.98)}
 .quick-icon{font-size:27px;margin-bottom:10px}
 .quick h3{font-size:14px;margin-bottom:6px}
 .quick p{font-size:11px;color:#94a3b8;line-height:1.5}
-.activity{
- margin-top:25px;background:#111f33;
- border:1px solid #263e59;border-radius:15px;padding:17px;
-}
+.activity{margin-top:25px;background:#111f33;border:1px solid #263e59;border-radius:15px;padding:17px}
 .activity h3{font-size:16px;margin-bottom:13px}
 .activity p{font-size:12px;color:#94a3b8;line-height:1.8}
-.status{
- margin-top:20px;text-align:center;padding:12px;
- border-radius:10px;background:#10251f;
- border:1px solid #245b43;color:#4ade80;font-size:12px;
-}
+.status{margin-top:20px;text-align:center;padding:12px;border-radius:10px;background:#10251f;border:1px solid #245b43;color:#4ade80;font-size:12px}
 footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-height:2}
 
 /* Bottom Navigation */
@@ -105,14 +51,18 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
  position:fixed;bottom:0;left:0;right:0;z-index:100;
  background:rgba(8,18,33,.97);
  border-top:1px solid #29415b;
- display:flex;justify-content:space-around;
+ display:flex;justify-content:flex-start;
+ overflow-x:auto;white-space:nowrap;
  padding:9px 3px calc(9px + env(safe-area-inset-bottom));
  backdrop-filter:blur(12px);
+ scrollbar-width:none;
 }
+.bottom-nav::-webkit-scrollbar{display:none}
 .nav-item{
  text-decoration:none;color:#91a2b8;
  display:flex;flex-direction:column;align-items:center;
- gap:5px;font-size:10px;min-width:0;flex:1;
+ justify-content:center;gap:5px;font-size:10px;
+ flex:0 0 14.285%;min-width:0;
 }
 .nav-icon{font-size:21px}
 .nav-item.active{color:#4ade80;font-weight:bold}
@@ -140,13 +90,11 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </header>
 
 <main>
-
 <section class="welcome">
  <div class="tag">🌍 WORK • EARN • GROW</div>
  <h1>Welcome Back! 👋</h1>
  <p id="welcomeName">আপনার Earning Dashboard-এ স্বাগতম!</p>
  <p>আপনার কাজ ও আয়ের হিসাব এক জায়গায় দেখুন।</p>
-
  <div class="balance">
   <div class="balance-label">💰 MY WALLET BALANCE (USD)</div>
   <div class="balance-amount" id="balance">$0.00</div>
@@ -158,55 +106,22 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 <p class="section-sub">আপনার অ্যাকাউন্টের বর্তমান অবস্থা</p>
 
 <section class="stats">
- <div class="stat">
-  <div class="stat-icon">📋</div>
-  <div class="stat-number" id="availableTasks">0</div>
-  <div class="stat-label">Available Tasks</div>
- </div>
- <div class="stat">
-  <div class="stat-icon">📝</div>
-  <div class="stat-number" id="myTasks">0</div>
-  <div class="stat-label">My Tasks</div>
- </div>
- <div class="stat">
-  <div class="stat-icon">👥</div>
-  <div class="stat-number" id="referralCount">0</div>
-  <div class="stat-label">My Referrals</div>
- </div>
- <div class="stat">
-  <div class="stat-icon">🤝</div>
-  <div class="stat-number" id="referralEarnings">$0.00</div>
-  <div class="stat-label">Referral Earnings</div>
- </div>
+ <div class="stat"><div class="stat-icon">📋</div><div class="stat-number" id="availableTasks">0</div><div class="stat-label">Available Tasks</div></div>
+ <div class="stat"><div class="stat-icon">📝</div><div class="stat-number" id="myTasks">0</div><div class="stat-label">My Tasks</div></div>
+ <div class="stat"><div class="stat-icon">👥</div><div class="stat-number" id="referralCount">0</div><div class="stat-label">My Referrals</div></div>
+ <div class="stat"><div class="stat-icon">🤝</div><div class="stat-number" id="referralEarnings">$0.00</div><div class="stat-label">Referral Earnings</div></div>
 </section>
 
 <h2 class="section-title">🚀 Quick Access</h2>
 <p class="section-sub">আপনার প্রয়োজনীয় অপশন বেছে নিন</p>
 
 <section class="quick-grid">
- <a class="quick" href="tasks.html">
-  <div class="quick-icon">📋</div>
-  <h3>Available Tasks →</h3>
-  <p>নতুন কাজ খুঁজুন এবং কাজ শুরু করুন।</p>
- </a>
-
- <a class="quick" href="my-tasks.html">
-  <div class="quick-icon">📝</div>
-  <h3>My Tasks →</h3>
-  <p>আপনার জমা দেওয়া কাজের অবস্থা দেখুন।</p>
- </a>
-
- <a class="quick" href="wallet.html">
-  <div class="quick-icon">💰</div>
-  <h3>My Wallet →</h3>
-  <p>আপনার ব্যালেন্স ও লেনদেন দেখুন।</p>
- </a>
-
- <a class="quick" href="referral.html">
-  <div class="quick-icon">🤝</div>
-  <h3>Referral →</h3>
-  <p>বন্ধুদের আমন্ত্রণ ও কমিশন দেখুন।</p>
- </a>
+ <a class="quick" href="tasks.html"><div class="quick-icon">📋</div><h3>Available Tasks →</h3><p>নতুন কাজ খুঁজুন এবং কাজ শুরু করুন।</p></a>
+ <a class="quick" href="my-tasks.html"><div class="quick-icon">📝</div><h3>My Tasks →</h3><p>আপনার জমা দেওয়া কাজের অবস্থা দেখুন।</p></a>
+ <a class="quick" href="wallet.html"><div class="quick-icon">💰</div><h3>My Wallet →</h3><p>আপনার ব্যালেন্স ও লেনদেন দেখুন।</p></a>
+ <a class="quick" href="referral.html"><div class="quick-icon">🤝</div><h3>Referral →</h3><p>বন্ধুদের আমন্ত্রণ ও কমিশন দেখুন।</p></a>
+ <a class="quick" href="withdrawal.html"><div class="quick-icon">💸</div><h3>Withdrawal →</h3><p>উত্তোলনের পদ্ধতি ও তথ্য দেখুন।</p></a>
+ <a class="quick" href="profile.html"><div class="quick-icon">👤</div><h3>My Profile →</h3><p>আপনার অ্যাকাউন্টের তথ্য দেখুন।</p></a>
 </section>
 
 <section class="activity">
@@ -215,32 +130,22 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </section>
 
 <div class="status" id="status">● Connecting Account...</div>
-
 </main>
 
 <footer>
  © 2026 GLOBAL EARNING. All rights reserved.<br>
  Bangladesh 🇧🇩 | Worldwide 🌍
 </footer>
-
 </div>
 
 <nav class="bottom-nav">
- <a class="nav-item active" href="dashboard.html">
-  <span class="nav-icon">🏠</span><span>Home</span>
- </a>
- <a class="nav-item" href="wallet.html">
-  <span class="nav-icon">💰</span><span>Wallet</span>
- </a>
- <a class="nav-item" href="tasks.html">
-  <span class="nav-icon">📋</span><span>Tasks</span>
- </a>
- <a class="nav-item" href="my-tasks.html">
-  <span class="nav-icon">📝</span><span>My Tasks</span>
- </a>
- <a class="nav-item" href="referral.html">
-  <span class="nav-icon">🤝</span><span>Referral</span>
- </a>
+ <a class="nav-item active" href="dashboard.html"><span class="nav-icon">🏠</span><span>Home</span></a>
+ <a class="nav-item" href="wallet.html"><span class="nav-icon">💰</span><span>Wallet</span></a>
+ <a class="nav-item" href="tasks.html"><span class="nav-icon">📋</span><span>Tasks</span></a>
+ <a class="nav-item" href="my-tasks.html"><span class="nav-icon">📝</span><span>My Tasks</span></a>
+ <a class="nav-item" href="referral.html"><span class="nav-icon">🤝</span><span>Referral</span></a>
+ <a class="nav-item" href="withdrawal.html"><span class="nav-icon">💸</span><span>Withdraw</span></a>
+ <a class="nav-item" href="profile.html"><span class="nav-icon">👤</span><span>Profile</span></a>
 </nav>
 
 <script>
@@ -316,18 +221,16 @@ async function loadDashboard(){
 
 async function logout(){
  if(!confirm("আপনি কি Logout করতে চান?"))return;
-
  const {error}=await db.auth.signOut();
-
  if(error){
   alert("Logout Error: "+error.message);
   return;
  }
-
  window.location.replace("login.html");
 }
 
 loadDashboard();
 </script>
 </body>
-  </html>
+ </html>
+ 
