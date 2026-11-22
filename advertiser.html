@@ -5,7 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Buyer - Global Earning</title>
-
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#0b1120;color:white;font-family:Arial,sans-serif}
@@ -28,13 +27,11 @@ button:disabled{opacity:.5}
 .note{color:#aab7ca;font-size:13px;line-height:1.6}
 </style>
 </head>
-
 <body>
 <header>
 <h2>GLOBAL EARNING 🌍</h2>
 <p>Buyer Work Posting</p>
 </header>
-
 <main>
 <div class="card">
 <h3>নতুন কাজ পোস্ট করুন</h3>
@@ -43,7 +40,6 @@ button:disabled{opacity:.5}
 </p>
 
 <form id="taskForm">
-
 <label>কাজের নাম</label>
 <input id="title" required maxlength="100" placeholder="কাজের নাম লিখুন">
 
@@ -53,12 +49,28 @@ button:disabled{opacity:.5}
 <label>কাজের শর্ত</label>
 <textarea id="requirements" placeholder="কাজের শর্ত লিখুন"></textarea>
 
-<label>কাজের ধরন</label>
+<label>প্ল্যাটফর্ম নির্বাচন করুন</label>
 <select id="category" required>
 <option value="">নির্বাচন করুন</option>
-<option value="advertising">বিজ্ঞাপন প্রচারণা</option>
+<option value="facebook">Facebook</option>
+<option value="youtube">YouTube</option>
+<option value="instagram">Instagram</option>
+<option value="tiktok">TikTok</option>
+<option value="website">Website</option>
+<option value="survey">Survey</option>
+<option value="testing">Website / App Testing</option>
+<option value="other">অন্যান্য বৈধ কাজ</option>
+</select>
+
+<label>কাজের ধরন</label>
+<select id="workType" required>
+<option value="">নির্বাচন করুন</option>
 <option value="content">কনটেন্ট তৈরি</option>
-<option value="design">ডিজাইন</option>
+<option value="video_editing">ভিডিও এডিটিং</option>
+<option value="design">ডিজাইন / থাম্বনেইল</option>
+<option value="promotion">অনুমোদিত প্রচারণা</option>
+<option value="survey">সার্ভে</option>
+<option value="testing">ওয়েবসাইট / অ্যাপ পরীক্ষা</option>
 <option value="other">অন্যান্য বৈধ কাজ</option>
 </select>
 
@@ -74,25 +86,21 @@ button:disabled{opacity:.5}
 <label>কতজন Worker কাজ করবে?</label>
 <input id="workers" type="number" min="1" step="1" required>
 
-<label>কাজের শেষ তারিখ</label>
+<label>কাজের শেষ তারিখ (ঐচ্ছিক)</label>
 <input id="deadline" type="datetime-local">
 
 <div class="note" id="budget">মোট বাজেট: 0.00</div>
+<p class="note">নোট: পেমেন্ট যাচাই না হওয়া পর্যন্ত কাজ Worker-দের জন্য চালু হবে না।</p>
 
 <button type="submit" id="submitBtn">কাজ পোস্ট করুন</button>
 </form>
-
 <p id="message" class="note"></p>
 </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-// নিজের Supabase Project URL
 const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
-
-// নিজের Publishable Key এখানে বসাবে
 const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
 const supabaseClient = window.supabase.createClient(
@@ -110,7 +118,6 @@ function updateBudget(){
   const r = Number(reward.value);
   const w = Number(workers.value);
   const total = r * w;
-
   document.getElementById("budget").textContent =
     "মোট বাজেট: " +
     (Number.isFinite(total) ? total.toFixed(2) : "0.00") +
@@ -121,31 +128,25 @@ reward.addEventListener("input", updateBudget);
 workers.addEventListener("input", updateBudget);
 currency.addEventListener("change", updateBudget);
 
-// লগইন যাচাই
 async function checkLogin(){
-  const { data, error } = await supabaseClient.auth.getUser();
-
+  const {data,error} = await supabaseClient.auth.getUser();
   if(error || !data.user){
     message.textContent = "আগে Login করুন।";
     submitBtn.disabled = true;
     return;
   }
-
   submitBtn.disabled = false;
 }
-
 checkLogin();
 
-// কাজ জমা
 document.getElementById("taskForm").addEventListener("submit", async function(e){
   e.preventDefault();
-
   message.textContent = "";
   submitBtn.disabled = true;
   submitBtn.textContent = "জমা হচ্ছে...";
 
-  try {
-    const { data: authData, error: authError } =
+  try{
+    const {data:authData,error:authError} =
       await supabaseClient.auth.getUser();
 
     if(authError || !authData.user){
@@ -153,30 +154,31 @@ document.getElementById("taskForm").addEventListener("submit", async function(e)
     }
 
     const buyerId = authData.user.id;
-
     const title = document.getElementById("title").value.trim();
     const description = document.getElementById("description").value.trim();
     const requirements = document.getElementById("requirements").value.trim();
     const category = document.getElementById("category").value;
+    const workType = document.getElementById("workType").value;
     const selectedCurrency = currency.value;
     const r = Number(reward.value);
     const w = Number(workers.value);
     const deadlineValue = document.getElementById("deadline").value;
 
-    if(!title || !description || !category){
+    if(!title || !description || !category || !workType){
       throw new Error("সব প্রয়োজনীয় তথ্য পূরণ করুন।");
     }
 
-    if(!Number.isFinite(r) || r <= 0 || !Number.isInteger(w) || w <= 0){
+    if(!Number.isFinite(r) || r <= 0 ||
+       !Number.isInteger(w) || w <= 0){
       throw new Error("পুরস্কার ও Worker সংখ্যা সঠিকভাবে দিন।");
     }
 
-    const total = Number((r * w).toFixed(2));
+    const total = Number((r*w).toFixed(2));
 
     const taskData = {
       buyer_id: buyerId,
-      title: title,
-      description: description,
+      title,
+      description,
       requirements: requirements || null,
       category: category,
       currency: selectedCurrency,
@@ -189,28 +191,26 @@ document.getElementById("taskForm").addEventListener("submit", async function(e)
       status: "draft"
     };
 
-    const { error } = await supabaseClient
+    const {error} = await supabaseClient
       .from("tasks")
       .insert(taskData);
 
-    if(error){
-      throw error;
-    }
+    if(error) throw error;
 
     message.textContent =
-      "সফলভাবে কাজ জমা হয়েছে! কাজটি এখন Draft অবস্থায় আছে। Admin অনুমোদনের পর Worker-রা দেখতে পাবে।";
+      "সফলভাবে কাজ জমা হয়েছে! কাজটি Draft অবস্থায় আছে। পেমেন্ট যাচাই ও Admin অনুমোদনের পর চালু করা যাবে।";
 
     document.getElementById("taskForm").reset();
     updateBudget();
 
-  } catch(error) {
+  }catch(error){
     message.textContent = "সমস্যা: " + error.message;
-  } finally {
+  }finally{
     submitBtn.disabled = false;
     submitBtn.textContent = "কাজ পোস্ট করুন";
   }
 });
 </script>
 </body>
- </html>
- 
+  </html>
+                                                  
