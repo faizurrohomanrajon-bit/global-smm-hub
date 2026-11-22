@@ -10,96 +10,43 @@
 
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;background:#09090d;color:#f5f5f5;
- font-family:Arial,sans-serif;padding-bottom:95px
-}
+body{margin:0;background:#09090d;color:#f5f5f5;font-family:Arial,sans-serif;padding-bottom:95px}
 .container{max-width:700px;margin:auto;padding:18px 15px}
-header{
- display:flex;justify-content:space-between;align-items:center;
- padding:15px;background:#111116;border-bottom:1px solid #29242a
-}
+header{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#111116;border-bottom:1px solid #29242a}
 .brand{font-size:21px;font-weight:900}
 .brand span{color:#ff783e}
 .small{color:#999;font-size:12px}
 h1{font-size:27px;margin:24px 0}
 h2{font-size:19px}
-.orange{color:#ff783e}
-.card{
- background:linear-gradient(145deg,#17171d,#101015);
- border:1px solid #29262d;border-radius:20px;
- padding:17px;margin:14px 0;
-}
-button{
- border:0;border-radius:12px;padding:13px 17px;
- font-weight:bold;cursor:pointer
-}
+.card{background:linear-gradient(145deg,#17171d,#101015);border:1px solid #29262d;border-radius:20px;padding:17px;margin:14px 0}
+button{border:0;border-radius:12px;padding:13px 17px;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5;cursor:not-allowed}
-.orange-btn{
- background:linear-gradient(135deg,#ff9b42,#ff6332);
- color:white;box-shadow:0 5px 15px #ff663344
-}
+.orange-btn{background:linear-gradient(135deg,#ff9b42,#ff6332);color:white;box-shadow:0 5px 15px #ff663344}
 .dark-btn{background:#29272e;color:white}
 .topline{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.balance{
- background:linear-gradient(135deg,#402419,#171116 70%);
- border:1px solid #68402d;border-radius:22px;
- padding:20px;margin-top:20px
-}
+.balance{background:linear-gradient(135deg,#402419,#171116 70%);border:1px solid #68402d;border-radius:22px;padding:20px;margin-top:20px}
 .balance-number{font-size:35px;font-weight:900;margin:10px 0}
-.search{
- width:100%;padding:16px;border-radius:14px;
- background:#15151b;border:1px solid #292932;
- color:white;font-size:15px;margin:15px 0
-}
+.search{width:100%;padding:16px;border-radius:14px;background:#15151b;border:1px solid #292932;color:white;font-size:15px;margin:15px 0}
 .filters{display:flex;gap:9px;overflow-x:auto;padding:5px 0 12px}
-.filter{
- flex-shrink:0;background:#15151b;border:1px solid #302d34;
- color:#aaa;border-radius:25px;padding:12px 16px
-}
+.filter{flex-shrink:0;background:#15151b;border:1px solid #302d34;color:#aaa;border-radius:25px;padding:12px 16px}
 .filter.active{background:#46251a;color:#ff9a68;border-color:#ff783e}
 .tabs{display:flex;gap:8px;background:#15151a;padding:5px;border-radius:15px;margin:20px 0}
 .tabs button{flex:1;background:transparent;color:#999}
 .tabs button.active{background:#48271c;color:#fff;border:1px solid #a45131}
-.task-card{
- position:relative;background:linear-gradient(130deg,#1a191e,#101015);
- border:1px solid #29272e;border-radius:19px;
- padding:17px;margin:13px 0
-}
+.task-card{position:relative;background:linear-gradient(130deg,#1a191e,#101015);border:1px solid #29272e;border-radius:19px;padding:17px;margin:13px 0}
 .task-head{display:flex;align-items:center;gap:13px}
-.task-icon{
- width:52px;height:52px;border-radius:14px;
- background:#29221f;display:grid;place-items:center;
- font-size:25px;flex-shrink:0
-}
+.task-icon{width:52px;height:52px;border-radius:14px;background:#29221f;display:grid;place-items:center;font-size:25px;flex-shrink:0}
 .task-title{font-size:17px;font-weight:bold;line-height:1.4}
 .task-reward{display:flex;gap:15px;flex-wrap:wrap;margin:14px 0 10px}
 .reward{color:#4adea0;font-size:16px;font-weight:bold}
 .task-meta{font-size:12px;color:#888}
 .task-start{margin-left:auto;min-width:90px}
-.detail{
- display:none;background:#0c0c11;border:1px solid #45332d;
- border-radius:14px;padding:14px;margin-top:15px
-}
-.detail textarea{
- width:100%;min-height:100px;padding:13px;
- background:#17171d;color:white;border:1px solid #39333a;
- border-radius:10px;resize:vertical;margin:10px 0
-}
+.detail{display:none;background:#0c0c11;border:1px solid #45332d;border-radius:14px;padding:14px;margin-top:15px}
+.detail textarea{width:100%;min-height:100px;padding:13px;background:#17171d;color:white;border:1px solid #39333a;border-radius:10px;resize:vertical;margin:10px 0}
 .muted{color:#999;font-size:13px;line-height:1.5}
-.status{color:#4ade80}
 .empty{text-align:center;padding:25px;color:#999}
-.bottom-nav{
- position:fixed;bottom:0;left:0;right:0;
- background:#111116ed;border-top:1px solid #302d34;
- display:flex;justify-content:space-around;
- padding:10px 3px calc(10px + env(safe-area-inset-bottom));
- z-index:10
-}
-.nav-item{
- color:#888;text-decoration:none;text-align:center;
- font-size:11px;min-width:55px;background:none;padding:5px
-}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#111116ed;border-top:1px solid #302d34;display:flex;justify-content:space-around;padding:10px 3px calc(10px + env(safe-area-inset-bottom));z-index:10}
+.nav-item{color:#888;text-decoration:none;text-align:center;font-size:11px;min-width:55px;background:none;padding:5px}
 .nav-item span{display:block;font-size:21px;margin-bottom:5px}
 .nav-item.active{color:#ff783e}
 #userStatus{font-size:12px;color:#4ade80}
@@ -107,21 +54,19 @@ button:disabled{opacity:.5;cursor:not-allowed}
 </head>
 
 <body>
-
 <header>
  <div class="brand">GLOBAL<span> EARNING</span> 🌍</div>
  <div id="userStatus">Checking Login...</div>
 </header>
 
 <div class="container">
-
  <div class="topline">
   <h1>Task Center</h1>
   <button class="orange-btn" onclick="loadTasks()">↻ Refresh</button>
  </div>
 
  <div class="balance">
-  <div class="small">AVAILABLE TASK REWARDS</div>
+  <div class="small">AVAILABLE TASKS</div>
   <div class="balance-number" id="taskCount">0</div>
   <div class="muted">এখনকার Available Tasks</div>
  </div>
@@ -131,17 +76,18 @@ button:disabled{opacity:.5;cursor:not-allowed}
   <button id="highTab" onclick="setMode('high')">HIGH VALUE</button>
  </div>
 
- <input id="search" class="search"
- placeholder="⌕  Search tasks..."
- oninput="renderTasks()">
+ <input id="search" class="search" placeholder="⌕ Search tasks..." oninput="renderTasks()">
 
  <div class="filters" id="filters">
   <button class="filter active" data-category="all">ALL</button>
-  <button class="filter" data-category="community">COMMUNITY</button>
-  <button class="filter" data-category="content">CONTENT</button>
+  <button class="filter" data-category="facebook">FACEBOOK</button>
+  <button class="filter" data-category="youtube">YOUTUBE</button>
+  <button class="filter" data-category="instagram">INSTAGRAM</button>
+  <button class="filter" data-category="tiktok">TIKTOK</button>
   <button class="filter" data-category="website">WEBSITE</button>
   <button class="filter" data-category="survey">SURVEY</button>
   <button class="filter" data-category="testing">TESTING</button>
+  <button class="filter" data-category="other">OTHER</button>
  </div>
 
  <div class="topline">
@@ -157,7 +103,6 @@ button:disabled{opacity:.5;cursor:not-allowed}
   <div id="submissionMessage" class="muted">Loading...</div>
   <div id="mySubmissions"></div>
  </section>
-
 </div>
 
 <nav class="bottom-nav">
@@ -171,12 +116,10 @@ button:disabled{opacity:.5;cursor:not-allowed}
 <script>
 const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
 
-// এখানে নিজের আগের Publishable Key বসাবে
-const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+// নিজের আগের Publishable Key বসাবে
+const SUPABASE_KEY = "YOUR_EXISTING_PUBLISHABLE_KEY";
 
-const db = window.supabase.createClient(
- SUPABASE_URL,SUPABASE_KEY
-);
+const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let currentUser=null;
 let allTasks=[];
@@ -186,26 +129,37 @@ let selectedMode="quick";
 
 function safe(value){
  return String(value??"").replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",
- '"':"&quot;","'":"&#039;"
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
  })[c]);
 }
 
 function categoryName(value){
- const c=String(value||"").toLowerCase();
- if(c.includes("community"))return "community";
- if(c.includes("content"))return "content";
+ const c=String(value||"").toLowerCase().trim();
+
+ if(c==="facebook")return "facebook";
+ if(c==="youtube")return "youtube";
+ if(c==="instagram")return "instagram";
+ if(c==="tiktok")return "tiktok";
+ if(c.includes("community"))return "other";
+ if(c.includes("content"))return "other";
  if(c.includes("website"))return "website";
  if(c.includes("survey"))return "survey";
  if(c.includes("test"))return "testing";
+
  return "other";
 }
 
 function taskIcon(task){
  const c=categoryName(task.category);
  return {
- community:"🌐",content:"✍️",website:"💻",
- survey:"📋",testing:"🧪",other:"⭐"
+  facebook:"📘",
+  youtube:"▶️",
+  instagram:"📸",
+  tiktok:"🎵",
+  website:"💻",
+  survey:"📋",
+  testing:"🧪",
+  other:"⭐"
  }[c];
 }
 
@@ -248,7 +202,7 @@ async function loadTasks(){
 
  const {data,error}=await db
   .from("tasks")
-  .select("id,title,description,requirements,reward_per_worker,currency,workers_needed,category")
+  .select("id,title,description,requirements,reward_per_worker,currency,workers_needed,category,created_at")
   .eq("status","active")
   .eq("currency","USD")
   .order("created_at",{ascending:false});
@@ -292,7 +246,7 @@ function renderTasks(){
 
  msg.textContent=list.length+"টি Available Task";
 
- list.forEach((task,index)=>{
+ list.forEach(task=>{
   const card=document.createElement("div");
   card.className="task-card";
 
@@ -307,7 +261,7 @@ function renderTasks(){
    </div>
 
    <div class="task-reward">
-    <span class="reward">💵 +$${safe(task.reward_per_worker)}</span>
+    <span class="reward">💵 +$${safe(Number(task.reward_per_worker).toFixed(2))}</span>
     <span class="task-meta">👥 ${safe(task.workers_needed)} Workers</span>
    </div>
 
@@ -363,11 +317,8 @@ function renderTasks(){
    card.querySelector(".proofInput").disabled=true;
    submitBtn.textContent="SUBMITTED ✓";
 
-   allTasks=allTasks.filter(t=>t.id!==task.id);
-   document.getElementById("taskCount").textContent=allTasks.length;
-
+   await loadTasks();
    await loadMySubmissions();
-   renderTasks();
   });
 
   box.appendChild(card);
@@ -434,5 +385,5 @@ document.querySelectorAll(".filter").forEach(btn=>{
 start();
 </script>
 </body>
-  </html>
-    
+ </html>
+   
