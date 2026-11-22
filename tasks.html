@@ -4,236 +4,435 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GLOBAL EARNING - Worker Tasks</title>
+<meta name="theme-color" content="#09090d">
+<title>GLOBAL EARNING - Task Center</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#080f1d;color:#fff;font-family:Arial,sans-serif;padding:18px}
-.container{max-width:850px;margin:auto}
-h1{color:#4ade80}
-.card{background:#111d30;border:1px solid #26364d;border-radius:14px;padding:18px;margin:15px 0}
-.muted{color:#9aabc1;font-size:13px}
-.reward{color:#4ade80;font-size:20px;font-weight:bold}
-input,textarea{width:100%;padding:13px;margin:8px 0;background:#081321;color:white;border:1px solid #26364d;border-radius:8px}
-textarea{min-height:100px}
-button{background:#4ade80;color:#07111d;border:0;border-radius:8px;padding:12px 18px;font-weight:bold;cursor:pointer}
-.refresh{background:#26364d;color:white}
-button:disabled{opacity:.5}
+body{
+ margin:0;background:#09090d;color:#f5f5f5;
+ font-family:Arial,sans-serif;padding-bottom:95px
+}
+.container{max-width:700px;margin:auto;padding:18px 15px}
+header{
+ display:flex;justify-content:space-between;align-items:center;
+ padding:15px;background:#111116;border-bottom:1px solid #29242a
+}
+.brand{font-size:21px;font-weight:900}
+.brand span{color:#ff783e}
+.small{color:#999;font-size:12px}
+h1{font-size:27px;margin:24px 0}
+h2{font-size:19px}
+.orange{color:#ff783e}
+.card{
+ background:linear-gradient(145deg,#17171d,#101015);
+ border:1px solid #29262d;border-radius:20px;
+ padding:17px;margin:14px 0;
+}
+button{
+ border:0;border-radius:12px;padding:13px 17px;
+ font-weight:bold;cursor:pointer
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+.orange-btn{
+ background:linear-gradient(135deg,#ff9b42,#ff6332);
+ color:white;box-shadow:0 5px 15px #ff663344
+}
+.dark-btn{background:#29272e;color:white}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.balance{
+ background:linear-gradient(135deg,#402419,#171116 70%);
+ border:1px solid #68402d;border-radius:22px;
+ padding:20px;margin-top:20px
+}
+.balance-number{font-size:35px;font-weight:900;margin:10px 0}
+.search{
+ width:100%;padding:16px;border-radius:14px;
+ background:#15151b;border:1px solid #292932;
+ color:white;font-size:15px;margin:15px 0
+}
+.filters{display:flex;gap:9px;overflow-x:auto;padding:5px 0 12px}
+.filter{
+ flex-shrink:0;background:#15151b;border:1px solid #302d34;
+ color:#aaa;border-radius:25px;padding:12px 16px
+}
+.filter.active{background:#46251a;color:#ff9a68;border-color:#ff783e}
+.tabs{display:flex;gap:8px;background:#15151a;padding:5px;border-radius:15px;margin:20px 0}
+.tabs button{flex:1;background:transparent;color:#999}
+.tabs button.active{background:#48271c;color:#fff;border:1px solid #a45131}
+.task-card{
+ position:relative;background:linear-gradient(130deg,#1a191e,#101015);
+ border:1px solid #29272e;border-radius:19px;
+ padding:17px;margin:13px 0
+}
+.task-head{display:flex;align-items:center;gap:13px}
+.task-icon{
+ width:52px;height:52px;border-radius:14px;
+ background:#29221f;display:grid;place-items:center;
+ font-size:25px;flex-shrink:0
+}
+.task-title{font-size:17px;font-weight:bold;line-height:1.4}
+.task-reward{display:flex;gap:15px;flex-wrap:wrap;margin:14px 0 10px}
+.reward{color:#4adea0;font-size:16px;font-weight:bold}
+.task-meta{font-size:12px;color:#888}
+.task-start{margin-left:auto;min-width:90px}
+.detail{
+ display:none;background:#0c0c11;border:1px solid #45332d;
+ border-radius:14px;padding:14px;margin-top:15px
+}
+.detail textarea{
+ width:100%;min-height:100px;padding:13px;
+ background:#17171d;color:white;border:1px solid #39333a;
+ border-radius:10px;resize:vertical;margin:10px 0
+}
+.muted{color:#999;font-size:13px;line-height:1.5}
 .status{color:#4ade80}
+.empty{text-align:center;padding:25px;color:#999}
+.bottom-nav{
+ position:fixed;bottom:0;left:0;right:0;
+ background:#111116ed;border-top:1px solid #302d34;
+ display:flex;justify-content:space-around;
+ padding:10px 3px calc(10px + env(safe-area-inset-bottom));
+ z-index:10
+}
+.nav-item{
+ color:#888;text-decoration:none;text-align:center;
+ font-size:11px;min-width:55px;background:none;padding:5px
+}
+.nav-item span{display:block;font-size:21px;margin-bottom:5px}
+.nav-item.active{color:#ff783e}
+#userStatus{font-size:12px;color:#4ade80}
 </style>
 </head>
+
 <body>
+
+<header>
+ <div class="brand">GLOBAL<span> EARNING</span> 🌍</div>
+ <div id="userStatus">Checking Login...</div>
+</header>
+
 <div class="container">
 
-<h1>GLOBAL EARNING 🌍</h1>
-<h2>Worker Panel</h2>
-<p class="muted">Available Work & Task Submission</p>
+ <div class="topline">
+  <h1>Task Center</h1>
+  <button class="orange-btn" onclick="loadTasks()">↻ Refresh</button>
+ </div>
 
-<div class="card">
-<p id="userStatus">Checking Login...</p>
-<button class="refresh" onclick="loadTasks()">Refresh Tasks</button>
-<button class="refresh" onclick="location.href='dashboard.html'">Dashboard</button>
-<button class="refresh" onclick="logout()">Logout</button>
+ <div class="balance">
+  <div class="small">AVAILABLE TASK REWARDS</div>
+  <div class="balance-number" id="taskCount">0</div>
+  <div class="muted">এখনকার Available Tasks</div>
+ </div>
+
+ <div class="tabs">
+  <button id="quickTab" class="active" onclick="setMode('quick')">QUICK TASKS</button>
+  <button id="highTab" onclick="setMode('high')">HIGH VALUE</button>
+ </div>
+
+ <input id="search" class="search"
+ placeholder="⌕  Search tasks..."
+ oninput="renderTasks()">
+
+ <div class="filters" id="filters">
+  <button class="filter active" data-category="all">ALL</button>
+  <button class="filter" data-category="community">COMMUNITY</button>
+  <button class="filter" data-category="content">CONTENT</button>
+  <button class="filter" data-category="website">WEBSITE</button>
+  <button class="filter" data-category="survey">SURVEY</button>
+  <button class="filter" data-category="testing">TESTING</button>
+ </div>
+
+ <div class="topline">
+  <h2>◎ AVAILABLE TASKS</h2>
+  <span class="muted" id="availableCount">0</span>
+ </div>
+
+ <div id="taskMessage" class="muted">Loading tasks...</div>
+ <div id="taskList"></div>
+
+ <section id="myTaskSection">
+  <h2>MY TASK HISTORY</h2>
+  <div id="submissionMessage" class="muted">Loading...</div>
+  <div id="mySubmissions"></div>
+ </section>
+
 </div>
 
-<h2>Available Tasks</h2>
-<div id="taskMessage" class="muted">Loading...</div>
-<div id="taskList"></div>
-
-<h2>My Submissions</h2>
-<div id="submissionMessage" class="muted">Loading...</div>
-<div id="mySubmissions"></div>
-
-</div>
+<nav class="bottom-nav">
+ <a class="nav-item" href="dashboard.html"><span>⌂</span>HOME</a>
+ <a class="nav-item active" href="tasks.html"><span>◎</span>TASKS</a>
+ <a class="nav-item" href="#myTaskSection"><span>▤</span>MY TASKS</a>
+ <a class="nav-item" href="wallet.html"><span>▣</span>WALLET</a>
+ <a class="nav-item" href="profile.html"><span>☰</span>MORE</a>
+</nav>
 
 <script>
 const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
 
-// নিজের আগের Publishable Key বসাবে
+// এখানে নিজের আগের Publishable Key বসাবে
 const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
 const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+ SUPABASE_URL,SUPABASE_KEY
 );
 
-let currentUser = null;
+let currentUser=null;
+let allTasks=[];
+let myTaskIds=[];
+let selectedCategory="all";
+let selectedMode="quick";
 
 function safe(value){
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",
-    '"':"&quot;","'":"&#039;"
-  })[c]);
+ return String(value??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",
+ '"':"&quot;","'":"&#039;"
+ })[c]);
+}
+
+function categoryName(value){
+ const c=String(value||"").toLowerCase();
+ if(c.includes("community"))return "community";
+ if(c.includes("content"))return "content";
+ if(c.includes("website"))return "website";
+ if(c.includes("survey"))return "survey";
+ if(c.includes("test"))return "testing";
+ return "other";
+}
+
+function taskIcon(task){
+ const c=categoryName(task.category);
+ return {
+ community:"🌐",content:"✍️",website:"💻",
+ survey:"📋",testing:"🧪",other:"⭐"
+ }[c];
 }
 
 async function start(){
-  const {data,error} = await db.auth.getUser();
+ const {data,error}=await db.auth.getUser();
 
-  if(error || !data.user){
-    document.getElementById("userStatus").textContent =
-      "প্রথমে Login করুন।";
-    document.getElementById("taskMessage").textContent =
-      "Login প্রয়োজন।";
-    return;
-  }
+ if(error||!data.user){
+  document.getElementById("userStatus").textContent="Login Required";
+  document.getElementById("taskMessage").textContent="প্রথমে Login করুন।";
+  return;
+ }
 
-  currentUser = data.user;
+ currentUser=data.user;
+ document.getElementById("userStatus").textContent="● Worker Online";
 
-  document.getElementById("userStatus").innerHTML =
-    '<span class="status">Worker Login ✓</span>';
-
-  await loadTasks();
-  await loadMySubmissions();
+ await loadTasks();
+ await loadMySubmissions();
 }
 
 async function loadTasks(){
-  if(!currentUser) return;
+ if(!currentUser)return;
 
-  const box = document.getElementById("taskList");
-  const msg = document.getElementById("taskMessage");
+ const msg=document.getElementById("taskMessage");
+ const box=document.getElementById("taskList");
 
-  msg.textContent = "Loading tasks...";
-  box.innerHTML = "";
+ msg.textContent="Loading tasks...";
+ box.innerHTML="";
 
-  const {data:myData,error:myError} = await db
+ const {data:mine,error:mineError}=await db
+  .from("task_submissions")
+  .select("task_id")
+  .eq("worker_id",currentUser.id);
+
+ if(mineError){
+  msg.textContent="Error: "+mineError.message;
+  return;
+ }
+
+ myTaskIds=(mine||[]).map(x=>x.task_id);
+
+ const {data,error}=await db
+  .from("tasks")
+  .select("id,title,description,requirements,reward_per_worker,currency,workers_needed,category")
+  .eq("status","active")
+  .eq("currency","USD")
+  .order("created_at",{ascending:false});
+
+ if(error){
+  msg.textContent="Error: "+error.message;
+  return;
+ }
+
+ allTasks=(data||[]).filter(t=>!myTaskIds.includes(t.id));
+
+ document.getElementById("taskCount").textContent=allTasks.length;
+ renderTasks();
+}
+
+function renderTasks(){
+ const box=document.getElementById("taskList");
+ const msg=document.getElementById("taskMessage");
+ const search=document.getElementById("search").value.toLowerCase().trim();
+
+ box.innerHTML="";
+
+ let list=allTasks.filter(task=>{
+  const category=categoryName(task.category);
+  const matchesCategory=selectedCategory==="all"||category===selectedCategory;
+  const matchesSearch=(task.title+" "+(task.description||"")).toLowerCase().includes(search);
+  const matchesMode=selectedMode==="quick"
+   ? Number(task.reward_per_worker)<1
+   : Number(task.reward_per_worker)>=1;
+
+  return matchesCategory&&matchesSearch&&matchesMode;
+ });
+
+ document.getElementById("availableCount").textContent=list.length;
+
+ if(!list.length){
+  msg.textContent="";
+  box.innerHTML='<div class="card empty">কোনো কাজ পাওয়া যায়নি। পরে আবার দেখুন।</div>';
+  return;
+ }
+
+ msg.textContent=list.length+"টি Available Task";
+
+ list.forEach((task,index)=>{
+  const card=document.createElement("div");
+  card.className="task-card";
+
+  card.innerHTML=`
+   <div class="task-head">
+    <div class="task-icon">${taskIcon(task)}</div>
+    <div style="flex:1;min-width:0">
+     <div class="task-title">${safe(task.title)}</div>
+     <div class="task-meta">TASK #${safe(task.id.slice(0,8))}</div>
+    </div>
+    <button class="orange-btn task-start">START</button>
+   </div>
+
+   <div class="task-reward">
+    <span class="reward">💵 +$${safe(task.reward_per_worker)}</span>
+    <span class="task-meta">👥 ${safe(task.workers_needed)} Workers</span>
+   </div>
+
+   <div class="detail">
+    <h3>Task Details</h3>
+    <p>${safe(task.description)}</p>
+    <p class="muted">শর্ত: ${safe(task.requirements||"কোনো অতিরিক্ত শর্ত নেই")}</p>
+    <textarea class="proofInput" placeholder="কাজের প্রমাণ / Proof লিখুন"></textarea>
+    <button class="orange-btn submitBtn">SUBMIT WORK</button>
+    <p class="muted result"></p>
+   </div>
+  `;
+
+  const startBtn=card.querySelector(".task-start");
+  const detail=card.querySelector(".detail");
+
+  startBtn.addEventListener("click",()=>{
+   detail.style.display=detail.style.display==="block"?"none":"block";
+   startBtn.textContent=detail.style.display==="block"?"CLOSE":"START";
+  });
+
+  const submitBtn=card.querySelector(".submitBtn");
+
+  submitBtn.addEventListener("click",async()=>{
+   const proof=card.querySelector(".proofInput").value.trim();
+   const result=card.querySelector(".result");
+
+   if(proof.length<5){
+    result.textContent="কমপক্ষে ৫ অক্ষরের Proof লিখুন।";
+    return;
+   }
+
+   submitBtn.disabled=true;
+   submitBtn.textContent="SUBMITTING...";
+
+   const {error:submitError}=await db
     .from("task_submissions")
-    .select("task_id")
-    .eq("worker_id",currentUser.id);
-
-  if(myError){
-    msg.textContent = "Submission check Error: " + myError.message;
-    return;
-  }
-
-  const completedTaskIds = (myData || []).map(x=>x.task_id);
-
-  const {data,error} = await db
-    .from("tasks")
-    .select("id,title,description,requirements,reward_per_worker,currency,workers_needed")
-    .eq("status","active")
-    .order("created_at",{ascending:false});
-
-  if(error){
-    msg.textContent = "Error: " + error.message;
-    return;
-  }
-
-  const available = (data || []).filter(task =>
-    !completedTaskIds.includes(task.id)
-  );
-
-  if(available.length === 0){
-    msg.textContent = "এখন কোনো নতুন কাজ নেই। পরে আবার দেখুন।";
-    return;
-  }
-
-  msg.textContent = available.length + "টি Available Task";
-
-  available.forEach(task=>{
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <h3>${safe(task.title)}</h3>
-      <p>${safe(task.description)}</p>
-      <p class="muted">শর্ত: ${safe(task.requirements || "কোনো অতিরিক্ত শর্ত নেই")}</p>
-      <p class="reward">$${safe(task.reward_per_worker)} ${safe(task.currency)}</p>
-      <p class="muted">Workers Needed: ${safe(task.workers_needed)}</p>
-      <textarea class="proofInput" placeholder="কাজের প্রমাণ / Proof লিখুন"></textarea>
-      <button class="submitBtn">Submit Work</button>
-      <p class="muted result"></p>
-    `;
-
-    const btn = card.querySelector(".submitBtn");
-
-    btn.addEventListener("click",async ()=>{
-      const proof = card.querySelector(".proofInput").value.trim();
-      const result = card.querySelector(".result");
-
-      if(proof.length < 5){
-        result.textContent = "কমপক্ষে ৫ অক্ষরের Proof লিখুন।";
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = "Submitting...";
-      result.textContent = "";
-
-      const {error:submitError} = await db
-        .from("task_submissions")
-        .insert({
-          task_id:task.id,
-          worker_id:currentUser.id,
-          evidence:proof,
-          status:"pending"
-        });
-
-      if(submitError){
-        result.textContent = "Error: " + submitError.message;
-        btn.disabled = false;
-        btn.textContent = "Submit Work";
-        return;
-      }
-
-      result.textContent = "Proof জমা হয়েছে। Admin Review করবে।";
-      card.querySelector(".proofInput").disabled = true;
-      btn.textContent = "Submitted ✓";
-
-      await loadMySubmissions();
+    .insert({
+     task_id:task.id,
+     worker_id:currentUser.id,
+     evidence:proof,
+     status:"pending"
     });
 
-    box.appendChild(card);
+   if(submitError){
+    result.textContent="Error: "+submitError.message;
+    submitBtn.disabled=false;
+    submitBtn.textContent="SUBMIT WORK";
+    return;
+   }
+
+   result.textContent="✓ Proof জমা হয়েছে। Admin Review করবে।";
+   card.querySelector(".proofInput").disabled=true;
+   submitBtn.textContent="SUBMITTED ✓";
+
+   allTasks=allTasks.filter(t=>t.id!==task.id);
+   document.getElementById("taskCount").textContent=allTasks.length;
+
+   await loadMySubmissions();
+   renderTasks();
   });
+
+  box.appendChild(card);
+ });
 }
 
 async function loadMySubmissions(){
-  if(!currentUser) return;
+ if(!currentUser)return;
 
-  const msg = document.getElementById("submissionMessage");
-  const box = document.getElementById("mySubmissions");
+ const msg=document.getElementById("submissionMessage");
+ const box=document.getElementById("mySubmissions");
 
-  msg.textContent = "Loading...";
-  box.innerHTML = "";
+ msg.textContent="Loading...";
+ box.innerHTML="";
 
-  const {data,error} = await db
-    .from("task_submissions")
-    .select("id,task_id,status,submitted_at")
-    .eq("worker_id",currentUser.id)
-    .order("submitted_at",{ascending:false});
+ const {data,error}=await db
+  .from("task_submissions")
+  .select("id,task_id,status,submitted_at")
+  .eq("worker_id",currentUser.id)
+  .order("submitted_at",{ascending:false});
 
-  if(error){
-    msg.textContent = "Error: " + error.message;
-    return;
-  }
+ if(error){
+  msg.textContent="Error: "+error.message;
+  return;
+ }
 
-  if(!data || data.length === 0){
-    msg.textContent = "এখনো কোনো কাজ জমা দেননি।";
-    return;
-  }
+ if(!data||data.length===0){
+  msg.textContent="এখনো কোনো কাজ জমা দেননি।";
+  return;
+ }
 
-  msg.textContent = data.length + "টি Submission";
+ msg.textContent=data.length+"টি Submission";
 
-  data.forEach(item=>{
-    const card = document.createElement("div");
-    card.className = "card";
+ data.forEach(item=>{
+  const card=document.createElement("div");
+  card.className="card";
 
-    card.innerHTML = `
-      <p>Submission ID: ${safe(item.id)}</p>
-      <p>Status: <span class="status">${safe(item.status)}</span></p>
-      <p class="muted">Submitted: ${safe(item.submitted_at ? new Date(item.submitted_at).toLocaleString() : "")}</p>
-    `;
+  card.innerHTML=`
+   <div class="muted">Submission #${safe(item.id.slice(0,8))}</div>
+   <h3>${safe(item.status.toUpperCase())}</h3>
+   <p class="muted">জমা: ${safe(item.submitted_at?new Date(item.submitted_at).toLocaleString():"")}</p>
+  `;
 
-    box.appendChild(card);
-  });
+  box.appendChild(card);
+ });
 }
 
-async function logout(){
-  await db.auth.signOut();
-  location.href = "login.html";
+function setMode(mode){
+ selectedMode=mode;
+ document.getElementById("quickTab").classList.toggle("active",mode==="quick");
+ document.getElementById("highTab").classList.toggle("active",mode==="high");
+ renderTasks();
 }
+
+document.querySelectorAll(".filter").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+  document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  selectedCategory=btn.dataset.category;
+  renderTasks();
+ });
+});
 
 start();
 </script>
 </body>
   </html>
-  
+    
