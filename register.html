@@ -22,6 +22,10 @@ button:disabled{opacity:.6}
 .links{text-align:center;margin-top:22px;color:#94a3b8;font-size:14px}
 a{color:#4ade80;text-decoration:none}
 .home{text-align:center;margin-top:23px;color:#94a3b8;font-size:14px}
+.referral{display:none;background:#0b2a25;border:1px solid #176b4b;border-radius:10px;padding:14px;margin-bottom:22px}
+.referral small{display:block;color:#9ca3af;margin-bottom:7px}
+.referral strong{display:block;color:#4ade80;font-size:13px;overflow-wrap:anywhere}
+.referral .valid{color:#4ade80;font-size:12px;margin-top:8px}
 </style>
 </head>
 <body>
@@ -30,6 +34,12 @@ a{color:#4ade80;text-decoration:none}
 <div class="card">
 <h1>Create Account</h1>
 <p class="sub">Join our global marketing platform</p>
+
+<div class="referral" id="referralBox">
+<small>You were invited by</small>
+<strong id="referralId"></strong>
+<div class="valid">✓ Referral link detected</div>
+</div>
 
 <form id="registerForm">
 <label>Full Name</label>
@@ -65,6 +75,16 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_KEY
 );
 
+// Referral ID যাচাই ও দেখানো
+const referrerId = new URLSearchParams(location.search).get("ref");
+const validRef = referrerId &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(referrerId);
+
+if (validRef) {
+  document.getElementById("referralBox").style.display = "block";
+  document.getElementById("referralId").textContent = referrerId;
+}
+
 document.getElementById("registerForm").addEventListener("submit", async function(e) {
   e.preventDefault();
 
@@ -81,8 +101,6 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     return;
   }
 
-  const referrerId = new URLSearchParams(location.search).get("ref");
-
   button.disabled = true;
   button.textContent = "PLEASE WAIT...";
   message.textContent = "";
@@ -92,23 +110,23 @@ document.getElementById("registerForm").addEventListener("submit", async functio
       email: email,
       password: password,
       options: {
-        data: {
-          full_name: name
-        }
+        data: { full_name: name }
       }
     });
 
     if (error) throw error;
 
-    // Signup-এর সঙ্গে session থাকলে Referral সংরক্ষণ
-    if (referrerId && data.session && data.user) {
+    if (validRef && data.session && data.user) {
       const { error: refError } = await supabaseClient.rpc(
         "attach_referral",
         { p_referrer: referrerId }
       );
 
       if (refError) {
-        console.error("Referral error:", refError.message);
+        console.error("Referral save error:", refError.message);
+        message.style.color = "#f87171";
+        message.textContent = "Account created, but referral could not be saved.";
+        return;
       }
     }
 
@@ -117,8 +135,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
     document.getElementById("registerForm").reset();
 
-    // Email confirmation চালু থাকলে Login-এ Referral ID পাঠাবে
-    const loginUrl = referrerId
+    const loginUrl = validRef
       ? "login.html?ref=" + encodeURIComponent(referrerId)
       : "login.html";
 
