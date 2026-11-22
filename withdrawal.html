@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080f1d">
+<title>Withdrawal | GLOBAL EARNING</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080f1d;color:#fff;font-family:Arial,sans-serif;padding-bottom:90px}
+header{padding:18px;background:#0b1728;border-bottom:1px solid #263b50}
+.logo{font-size:20px;font-weight:bold;color:#4ade80}
+main{max-width:650px;margin:auto;padding:20px}
+.hero{padding:23px;background:linear-gradient(130deg,#155c43,#142d4c);border:1px solid #267c58;border-radius:17px}
+.hero h2{margin-bottom:10px}
+.hero p{font-size:13px;color:#d1fae5}
+.balance{font-size:34px;color:#4ade80;font-weight:bold;margin-top:15px}
+.card{margin-top:18px;background:#111f33;border:1px solid #263e59;border-radius:15px;padding:19px}
+.card h3{color:#4ade80;margin-bottom:17px}
+label{display:block;font-size:13px;color:#cbd5e1;margin:15px 0 7px}
+input,select{width:100%;padding:13px;background:#081527;border:1px solid #34465d;border-radius:9px;color:white;font-size:14px}
+button{width:100%;padding:14px;border:0;border-radius:9px;background:#4ade80;color:#052e20;font-weight:bold;margin-top:17px;cursor:pointer}
+button:disabled{opacity:.5}
+.note{font-size:12px;color:#94a3b8;line-height:1.7;margin-top:12px}
+.item{padding:13px 0;border-bottom:1px solid #293c54;font-size:12px;line-height:1.8;overflow-wrap:anywhere}
+.item:last-child{border:0}
+.status{font-size:12px;color:#94a3b8;margin-top:12px;line-height:1.6}
+nav{position:fixed;bottom:0;left:0;right:0;background:#081221;border-top:1px solid #29415b;display:flex;justify-content:space-around;padding:11px 3px}
+nav a{color:#91a2b8;text-decoration:none;text-align:center;font-size:10px;flex:1}
+nav a span{display:block;font-size:20px;margin-bottom:5px}
+nav a.active{color:#4ade80}
+</style>
+</head>
+<body>
+<header><div class="logo">🌍 GLOBAL EARNING</div></header>
+
+<main>
+<section class="hero">
+<h2>💸 Withdraw Your Earnings</h2>
+<p>আপনার উপলব্ধ USD Wallet Balance</p>
+<div class="balance" id="balance">$0.00</div>
+<p id="pending">Pending: $0.00</p>
+</section>
+
+<section class="card">
+<h3>📝 Withdrawal Request</h3>
+
+<label>Payment Method</label>
+<select id="method" onchange="updateFields()">
+<option value="bKash">bKash</option>
+<option value="Nagad">Nagad</option>
+<option value="USDT BEP20">USDT BEP20</option>
+</select>
+
+<label>Withdrawal Amount (USD)</label>
+<input id="amount" type="number" min="0.01" step="0.01" placeholder="যেমন 5.00">
+
+<label id="addressLabel">bKash Number</label>
+<input id="address" type="text" placeholder="আপনার bKash Number">
+
+<p class="note" id="networkNote">আপনার নিজের পেমেন্ট অ্যাকাউন্টের তথ্য দিন।</p>
+
+<button id="submitBtn" onclick="submitWithdrawal()">Submit Withdrawal Request</button>
+<p class="status" id="message"></p>
+</section>
+
+<section class="card">
+<h3>📋 Withdrawal History</h3>
+<div id="history">Loading history...</div>
+</section>
+</main>
+
+<nav>
+<a href="dashboard.html"><span>🏠</span>Home</a>
+<a href="wallet.html"><span>💰</span>Wallet</a>
+<a href="tasks.html"><span>📋</span>Tasks</a>
+<a href="referral.html"><span>🤝</span>Referral</a>
+<a href="profile.html"><span>👤</span>Profile</a>
+</nav>
+
+<script>
+const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let user=null;
+let walletBalance=0;
+
+const el=id=>document.getElementById(id);
+
+function updateFields(){
+ const method=el("method").value;
+ if(method==="USDT BEP20"){
+  el("addressLabel").textContent="USDT BEP20 Wallet Address";
+  el("address").placeholder="আপনার BEP20 Address";
+  el("networkNote").textContent="শুধুমাত্র BNB Smart Chain (BEP20) Network। অন্য নেটওয়ার্কের ঠিকানা দেবেন না।";
+ }else{
+  el("addressLabel").textContent=method+" Number";
+  el("address").placeholder="আপনার "+method+" Number";
+  el("networkNote").textContent="আপনার নিজের "+method+" অ্যাকাউন্টের তথ্য দিন।";
+ }
+}
+
+async function loadPage(){
+ const {data:{user:u},error}=await db.auth.getUser();
+ if(error||!u){location.replace("login.html");return;}
+ user=u;
+
+ const {data:wallet}=await db.from("wallets")
+  .select("balance,pending_balance")
+  .eq("user_id",user.id).maybeSingle();
+
+ if(wallet){
+  walletBalance=Number(wallet.balance||0);
+  el("balance").textContent="$"+walletBalance.toFixed(2);
+  el("pending").textContent="Pending: $"+Number(wallet.pending_balance||0).toFixed(2);
+ }
+
+ await loadHistory();
+}
+
+async function loadHistory(){
+ const {data,error}=await db.from("wallet_transactions")
+  .select("amount,type,status,description,created_at")
+  .eq("user_id",user.id)
+  .eq("type","withdrawal")
+  .order("created_at",{ascending:false});
+
+ if(error){el("history").textContent="History load failed.";return;}
+
+ if(!data||data.length===0){
+  el("history").textContent="এখনো কোনো Withdrawal Request নেই।";
+  return;
+ }
+
+ el("history").innerHTML=data.map(item=>`
+  <div class="item">
+   <b>$${Number(item.amount).toFixed(2)}</b><br>
+   Status: ${escapeHtml(item.status)}<br>
+   ${escapeHtml(item.description||"Withdrawal")}<br>
+   ${new Date(item.created_at).toLocaleString()}
+  </div>
+ `).join("");
+}
+
+function escapeHtml(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+async function submitWithdrawal(){
+ el("message").textContent="";
+ const amount=Number(el("amount").value);
+ const method=el("method").value;
+ const address=el("address").value.trim();
+
+ if(!Number.isFinite(amount)||amount<=0){
+  el("message").textContent="সঠিক Amount লিখুন।";return;
+ }
+ if(amount>walletBalance){
+  el("message").textContent="আপনার Available Balance যথেষ্ট নয়।";return;
+ }
+ if(!address){
+  el("message").textContent="Payment Address বা Number লিখুন।";return;
+ }
+
+ el("message").textContent="এই ফর্মের জন্য নিরাপদ Withdrawal Request Backend এখনো সংযুক্ত হয়নি। Admin-এর নিরাপদ যাচাই ও Balance Hold ব্যবস্থা তৈরি না হওয়া পর্যন্ত Request জমা দেওয়া বন্ধ রাখা হয়েছে।";
+}
+
+loadPage();
+updateFields();
+</script>
+</body>
+  </html>
