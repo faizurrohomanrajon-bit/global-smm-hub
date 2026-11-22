@@ -4,43 +4,127 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080f1d">
-<title>Dashboard | GLOBAL EARNING</title>
+<title>GLOBAL EARNING | Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:#080f1d;color:white;padding-bottom:30px}
-.container{max-width:1000px;margin:auto}
-header{padding:18px 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #24354d}
+body{
+ font-family:Arial,sans-serif;
+ background:#080f1d;color:#fff;
+ padding-bottom:100px;
+}
+.container{max-width:1100px;margin:auto}
+header{
+ display:flex;align-items:center;justify-content:space-between;
+ padding:17px 18px;border-bottom:1px solid #23364e;
+ background:#0b1728;
+}
 .logo{font-size:20px;font-weight:bold;color:#4ade80}
-.logout{padding:11px 17px;border:1px solid #475569;border-radius:9px;background:transparent;color:white;font-weight:bold;cursor:pointer}
-.hero{text-align:center;padding:45px 20px 40px;background:radial-gradient(ellipse at top,#17483b,#080f1d 70%)}
-.tag{display:inline-block;padding:9px 16px;border:1px solid #276749;border-radius:30px;color:#4ade80;font-size:12px}
-.hero h1{font-size:clamp(28px,6vw,42px);margin:22px 0 12px}
-.hero h1 span{color:#4ade80}
-.hero p{color:#a7b5c9;line-height:1.8;font-size:14px}
-.section{padding:30px 5%;text-align:center}
-.section h2{font-size:25px;margin-bottom:10px}
-.sub{color:#94a3b8;font-size:13px;margin-bottom:22px}
-.balance-card{max-width:650px;margin:0 auto;padding:25px;text-align:left;border:1px solid #276749;border-radius:17px;background:linear-gradient(120deg,#123c35,#132b48)}
-.balance-card p{color:#bbf7d0;font-size:13px}
-.balance-card h2{font-size:36px;color:#4ade80;margin:13px 0}
-.balance-card small{color:#cbd5e1}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;max-width:850px;margin:auto}
-.card{background:#111e30;border:1px solid #263b50;border-radius:14px;padding:20px 15px;text-align:left;min-height:110px}
-.card .emoji{font-size:27px;margin-bottom:12px}
-.card h3{font-size:23px;color:#4ade80;margin-bottom:7px}
-.card p{font-size:13px;color:#94a3b8}
-.menu-card{display:block;text-decoration:none;color:white;background:#111e30;border:1px solid #263b50;border-radius:14px;padding:20px 15px;text-align:left;min-height:125px}
-.menu-card:active{border-color:#4ade80}
-.menu-card .emoji{font-size:29px;margin-bottom:12px}
-.menu-card h3{font-size:16px;margin-bottom:8px}
-.menu-card p{font-size:12px;color:#94a3b8;line-height:1.6}
-.menu-card .arrow{color:#4ade80;float:right}
-.status{max-width:850px;margin:25px auto 0;padding:13px;background:#101d2f;border:1px solid #263b50;border-radius:10px;color:#94a3b8;font-size:12px;text-align:center}
-.status span{color:#4ade80}
-footer{border-top:1px solid #24354d;padding:25px;text-align:center;color:#718096;font-size:12px;line-height:2;margin-top:30px}
-@media(min-width:650px){.grid{grid-template-columns:repeat(4,1fr)}.menu-grid{grid-template-columns:repeat(3,1fr)}}
+.user-area{display:flex;align-items:center;gap:10px}
+.avatar{
+ width:38px;height:38px;border-radius:50%;
+ display:grid;place-items:center;
+ background:#173d36;font-size:20px;
+}
+.logout{
+ background:#18283c;color:#fff;border:1px solid #34465d;
+ padding:9px 13px;border-radius:9px;cursor:pointer;
+}
+main{padding:18px}
+.welcome{
+ padding:25px 20px;border-radius:20px;
+ background:linear-gradient(120deg,#155c43,#103d43,#142d4c);
+ border:1px solid #267c58;
+ position:relative;overflow:hidden;
+}
+.welcome:after{
+ content:"🌍";position:absolute;right:15px;bottom:-15px;
+ font-size:90px;opacity:.13;
+}
+.tag{
+ color:#86efac;font-size:12px;letter-spacing:1px;
+ margin-bottom:13px;
+}
+.welcome h1{font-size:27px;margin-bottom:9px}
+.welcome p{font-size:13px;color:#d1fae5;line-height:1.7}
+.balance{
+ margin-top:18px;padding:20px;border-radius:17px;
+ background:#0b2b2b;border:1px solid #28745a;
+}
+.balance-label{font-size:12px;color:#a7f3d0}
+.balance-amount{
+ font-size:36px;font-weight:bold;color:#4ade80;
+ margin:10px 0;
+}
+.pending{font-size:12px;color:#cbd5e1}
+.section-title{
+ font-size:19px;margin:27px 0 7px;
+}
+.section-sub{font-size:12px;color:#94a3b8;margin-bottom:15px}
+.stats{
+ display:grid;grid-template-columns:repeat(2,1fr);gap:11px;
+}
+.stat{
+ background:#111f33;border:1px solid #263e59;
+ padding:17px 13px;border-radius:15px;
+ min-height:110px;
+}
+.stat-icon{font-size:24px;margin-bottom:9px}
+.stat-number{font-size:23px;font-weight:bold;color:#4ade80}
+.stat-label{font-size:12px;color:#aab8ca;margin-top:5px}
+.quick-grid{
+ display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
+}
+.quick{
+ display:block;text-decoration:none;color:white;
+ background:linear-gradient(145deg,#14263d,#101c2e);
+ border:1px solid #2a405b;border-radius:15px;
+ padding:17px;min-height:115px;
+ transition:.2s;
+}
+.quick:active{border-color:#4ade80;transform:scale(.98)}
+.quick-icon{font-size:27px;margin-bottom:10px}
+.quick h3{font-size:14px;margin-bottom:6px}
+.quick p{font-size:11px;color:#94a3b8;line-height:1.5}
+.activity{
+ margin-top:25px;background:#111f33;
+ border:1px solid #263e59;border-radius:15px;padding:17px;
+}
+.activity h3{font-size:16px;margin-bottom:13px}
+.activity p{font-size:12px;color:#94a3b8;line-height:1.8}
+.status{
+ margin-top:20px;text-align:center;padding:12px;
+ border-radius:10px;background:#10251f;
+ border:1px solid #245b43;color:#4ade80;font-size:12px;
+}
+footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-height:2}
+
+/* Bottom Navigation */
+.bottom-nav{
+ position:fixed;bottom:0;left:0;right:0;z-index:100;
+ background:rgba(8,18,33,.97);
+ border-top:1px solid #29415b;
+ display:flex;justify-content:space-around;
+ padding:9px 3px calc(9px + env(safe-area-inset-bottom));
+ backdrop-filter:blur(12px);
+}
+.nav-item{
+ text-decoration:none;color:#91a2b8;
+ display:flex;flex-direction:column;align-items:center;
+ gap:5px;font-size:10px;min-width:0;flex:1;
+}
+.nav-icon{font-size:21px}
+.nav-item.active{color:#4ade80;font-weight:bold}
+.nav-item.active .nav-icon{filter:drop-shadow(0 0 5px #4ade80)}
+@media(min-width:650px){
+ main{padding:25px}
+ .welcome{padding:35px}
+ .welcome h1{font-size:34px}
+ .stats{grid-template-columns:repeat(4,1fr)}
+ .quick-grid{grid-template-columns:repeat(4,1fr)}
+ .bottom-nav{left:50%;transform:translateX(-50%);width:min(100%,700px);border-radius:16px 16px 0 0}
+}
 </style>
 </head>
 
@@ -49,65 +133,118 @@ footer{border-top:1px solid #24354d;padding:25px;text-align:center;color:#718096
 
 <header>
  <div class="logo">🌍 GLOBAL EARNING</div>
- <button class="logout" onclick="logout()">Logout</button>
+ <div class="user-area">
+  <div class="avatar">👤</div>
+  <button class="logout" onclick="logout()">Logout</button>
+ </div>
 </header>
 
-<section class="hero">
+<main>
+
+<section class="welcome">
  <div class="tag">🌍 WORK • EARN • GROW</div>
- <h1>Welcome to <span>Dashboard</span></h1>
+ <h1>Welcome Back! 👋</h1>
  <p id="welcomeName">আপনার Earning Dashboard-এ স্বাগতম!</p>
- <p>আপনার কাজ, Wallet ও অ্যাকাউন্টের তথ্য এক জায়গায় দেখুন।</p>
-</section>
+ <p>আপনার কাজ ও আয়ের হিসাব এক জায়গায় দেখুন।</p>
 
-<section class="section">
- <div class="balance-card">
-  <p>💰 MY WALLET BALANCE (USD)</p>
-  <h2 id="balance">$0.00</h2>
-  <small id="pendingBalance">Pending Balance: $0.00</small>
+ <div class="balance">
+  <div class="balance-label">💰 MY WALLET BALANCE (USD)</div>
+  <div class="balance-amount" id="balance">$0.00</div>
+  <div class="pending" id="pendingBalance">Pending Balance: $0.00</div>
  </div>
 </section>
 
-<section class="section">
- <h2>📊 My Overview</h2>
- <p class="sub">আপনার অ্যাকাউন্টের বর্তমান অবস্থা</p>
- <div class="grid">
-  <div class="card"><div class="emoji">📋</div><h3 id="availableTasks">0</h3><p>Available Tasks</p></div>
-  <div class="card"><div class="emoji">📝</div><h3 id="myTasks">0</h3><p>My Tasks</p></div>
-  <div class="card"><div class="emoji">👥</div><h3 id="referralCount">0</h3><p>My Referrals</p></div>
-  <div class="card"><div class="emoji">🤝</div><h3 id="referralEarnings">$0.00</h3><p>Referral Earnings</p></div>
+<h2 class="section-title">📊 My Overview</h2>
+<p class="section-sub">আপনার অ্যাকাউন্টের বর্তমান অবস্থা</p>
+
+<section class="stats">
+ <div class="stat">
+  <div class="stat-icon">📋</div>
+  <div class="stat-number" id="availableTasks">0</div>
+  <div class="stat-label">Available Tasks</div>
+ </div>
+ <div class="stat">
+  <div class="stat-icon">📝</div>
+  <div class="stat-number" id="myTasks">0</div>
+  <div class="stat-label">My Tasks</div>
+ </div>
+ <div class="stat">
+  <div class="stat-icon">👥</div>
+  <div class="stat-number" id="referralCount">0</div>
+  <div class="stat-label">My Referrals</div>
+ </div>
+ <div class="stat">
+  <div class="stat-icon">🤝</div>
+  <div class="stat-number" id="referralEarnings">$0.00</div>
+  <div class="stat-label">Referral Earnings</div>
  </div>
 </section>
 
-<section class="section">
- <h2>🚀 Dashboard Menu</h2>
- <p class="sub">আপনার প্রয়োজনীয় পেজ বেছে নিন</p>
- <div class="grid menu-grid">
+<h2 class="section-title">🚀 Quick Access</h2>
+<p class="section-sub">আপনার প্রয়োজনীয় অপশন বেছে নিন</p>
 
-  <a class="menu-card" href="tasks.html"><div class="emoji">📋</div><h3>Available Tasks <span class="arrow">→</span></h3><p>নতুন কাজ খুঁজুন এবং কাজের বিস্তারিত দেখুন।</p></a>
+<section class="quick-grid">
+ <a class="quick" href="tasks.html">
+  <div class="quick-icon">📋</div>
+  <h3>Available Tasks →</h3>
+  <p>নতুন কাজ খুঁজুন এবং কাজ শুরু করুন।</p>
+ </a>
 
-  <a class="menu-card" href="my-tasks.html"><div class="emoji">📝</div><h3>My Tasks <span class="arrow">→</span></h3><p>আপনার জমা দেওয়া কাজের অবস্থা দেখুন।</p></a>
+ <a class="quick" href="my-tasks.html">
+  <div class="quick-icon">📝</div>
+  <h3>My Tasks →</h3>
+  <p>আপনার জমা দেওয়া কাজের অবস্থা দেখুন।</p>
+ </a>
 
-  <a class="menu-card" href="wallet.html"><div class="emoji">💰</div><h3>My Wallet <span class="arrow">→</span></h3><p>আপনার ব্যালেন্স ও লেনদেন দেখুন।</p></a>
+ <a class="quick" href="wallet.html">
+  <div class="quick-icon">💰</div>
+  <h3>My Wallet →</h3>
+  <p>আপনার ব্যালেন্স ও লেনদেন দেখুন।</p>
+ </a>
 
-  <a class="menu-card" href="referral.html"><div class="emoji">🤝</div><h3>Referral <span class="arrow">→</span></h3><p>আপনার Referral Link ও কমিশন দেখুন।</p></a>
-
-  <a class="menu-card" href="index.html"><div class="emoji">🏠</div><h3>Home <span class="arrow">→</span></h3><p>GLOBAL EARNING হোমপেজে ফিরে যান।</p></a>
-
- </div>
- <div class="status" id="status"><span>●</span> Connecting Account...</div>
+ <a class="quick" href="referral.html">
+  <div class="quick-icon">🤝</div>
+  <h3>Referral →</h3>
+  <p>বন্ধুদের আমন্ত্রণ ও কমিশন দেখুন।</p>
+ </a>
 </section>
+
+<section class="activity">
+ <h3>✨ Account Information</h3>
+ <p>আপনার অ্যাকাউন্ট সংযুক্ত থাকলে এখানে আপনার তথ্য দেখাবে। কাজের পুরস্কার Admin যাচাই ও অনুমোদনের পর Wallet-এ যোগ হবে।</p>
+</section>
+
+<div class="status" id="status">● Connecting Account...</div>
+
+</main>
 
 <footer>
- <p>© 2026 GLOBAL EARNING. All rights reserved.</p>
- <p>Bangladesh 🇧🇩 | Worldwide 🌍</p>
+ © 2026 GLOBAL EARNING. All rights reserved.<br>
+ Bangladesh 🇧🇩 | Worldwide 🌍
 </footer>
 
 </div>
 
+<nav class="bottom-nav">
+ <a class="nav-item active" href="dashboard.html">
+  <span class="nav-icon">🏠</span><span>Home</span>
+ </a>
+ <a class="nav-item" href="wallet.html">
+  <span class="nav-icon">💰</span><span>Wallet</span>
+ </a>
+ <a class="nav-item" href="tasks.html">
+  <span class="nav-icon">📋</span><span>Tasks</span>
+ </a>
+ <a class="nav-item" href="my-tasks.html">
+  <span class="nav-icon">📝</span><span>My Tasks</span>
+ </a>
+ <a class="nav-item" href="referral.html">
+  <span class="nav-icon">🤝</span><span>Referral</span>
+ </a>
+</nav>
+
 <script>
 const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
-
-// login.html-এর একই Publishable Key বসাবেন
 const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -117,20 +254,24 @@ async function loadDashboard(){
  el("status").textContent="Connecting Account...";
 
  const {data:{user},error:authError}=await db.auth.getUser();
+
  if(authError || !user){
   window.location.replace("login.html");
   return;
  }
 
  const {data:profile}=await db.from("profiles")
-  .select("display_name").eq("id",user.id).maybeSingle();
+  .select("display_name")
+  .eq("id",user.id)
+  .maybeSingle();
 
  el("welcomeName").textContent=
   "Welcome, "+(profile?.display_name || "Worker")+" 👋";
 
  const {data:wallet}=await db.from("wallets")
   .select("balance,pending_balance")
-  .eq("user_id",user.id).maybeSingle();
+  .eq("user_id",user.id)
+  .maybeSingle();
 
  if(wallet){
   el("balance").textContent="$"+Number(wallet.balance || 0).toFixed(2);
@@ -140,7 +281,8 @@ async function loadDashboard(){
 
  const {count:taskCount,error:taskError}=await db.from("tasks")
   .select("id",{count:"exact",head:true})
-  .eq("status","active").eq("currency","USD");
+  .eq("status","active")
+  .eq("currency","USD");
 
  if(!taskError)el("availableTasks").textContent=taskCount ?? 0;
 
@@ -169,17 +311,23 @@ async function loadDashboard(){
   el("referralEarnings").textContent="$"+total.toFixed(2);
  }
 
- el("status").innerHTML="<span>●</span> Account Connected";
+ el("status").textContent="● Account Connected";
 }
 
 async function logout(){
  if(!confirm("আপনি কি Logout করতে চান?"))return;
+
  const {error}=await db.auth.signOut();
- if(error){alert("Logout Error: "+error.message);return;}
+
+ if(error){
+  alert("Logout Error: "+error.message);
+  return;
+ }
+
  window.location.replace("login.html");
 }
 
 loadDashboard();
 </script>
 </body>
- </html>
+  </html>
