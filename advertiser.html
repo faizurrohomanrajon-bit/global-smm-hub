@@ -1,216 +1,213 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Buyer - Global Earning</title>
+<title>Buyer Packages - Global Earning</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#0b1120;color:white;font-family:Arial,sans-serif}
 header{padding:20px;background:#111c30}
 h2{color:#4ade80;margin:0}
-main{max-width:600px;margin:auto;padding:18px}
-.card{background:#172338;padding:20px;border-radius:15px;margin-top:18px}
-label{display:block;margin:15px 0 7px}
+main{max-width:650px;margin:auto;padding:18px}
+.card{background:#172338;padding:20px;border-radius:15px;margin-top:18px;border:1px solid #26364d}
+label{display:block;margin:15px 0 7px;font-weight:bold;color:#cbd5e1}
 input,textarea,select{
 width:100%;padding:13px;border-radius:8px;
-border:1px solid #34445e;background:#0b1120;color:white
+border:1px solid #34445e;background:#0b1120;color:white;font-size:15px
 }
-textarea{min-height:90px;resize:vertical}
 button{
 width:100%;padding:15px;margin-top:20px;
-background:#4ade80;border:0;border-radius:9px;
-font-weight:bold;font-size:16px
+background:#4ade80;color:#07111d;border:0;border-radius:9px;
+font-weight:bold;font-size:16px;cursor:pointer
 }
-button:disabled{opacity:.5}
+button:disabled{opacity:.5;cursor:not-allowed}
 .note{color:#aab7ca;font-size:13px;line-height:1.6}
+.pkg-box{background:#0f172a;padding:15px;border-radius:10px;margin-top:15px;border:1px solid #334155;display:none}
+.price-tag{font-size:22px;font-weight:bold;color:#4ade80;margin:10px 0}
+.payment-info{background:#1e293b;padding:14px;border-radius:8px;border-left:4px solid #fbbf24;margin-top:15px}
+.wallet-address{background:#0b1120;padding:10px;border-radius:6px;font-family:monospace;color:#38bdf8;word-break:break-all;margin-top:8px;border:1px dashed #334155;font-size:13px}
 </style>
 </head>
 <body>
 <header>
 <h2>GLOBAL EARNING 🌍</h2>
-<p>Buyer Work Posting</p>
+<p style="margin:5px 0 0;color:#94a3b8">Global SMM Packages (USD)</p>
 </header>
 <main>
 <div class="card">
-<h3>নতুন কাজ পোস্ট করুন</h3>
+<h3 style="margin-top:0">প্যাকেজ নির্বাচন ও অর্ডার করুন</h3>
 <p class="note">
-আপনার কাজের তথ্য দিন। Admin অনুমোদনের পর কাজটি Worker-দের কাছে দেখানো হবে।
+প্ল্যাটফর্ম ও প্যাকেজ সিলেক্ট করে আপনার লিংক ও পেমেন্ট তথ্য দিন। Admin পেমেন্ট যাচাই করার সাথে সাথে কাজটি চালু হয়ে যাবে।
 </p>
 
-<form id="taskForm">
-<label>কাজের নাম</label>
-<input id="title" required maxlength="100" placeholder="কাজের নাম লিখুন">
-
-<label>কাজের বিবরণ</label>
-<textarea id="description" required placeholder="কাজের বিস্তারিত লিখুন"></textarea>
-
-<label>কাজের শর্ত</label>
-<textarea id="requirements" placeholder="কাজের শর্ত লিখুন"></textarea>
-
-<label>প্ল্যাটফর্ম নির্বাচন করুন</label>
-<select id="category" required>
-<option value="">নির্বাচন করুন</option>
-<option value="facebook">Facebook</option>
-<option value="youtube">YouTube</option>
-<option value="instagram">Instagram</option>
-<option value="tiktok">TikTok</option>
-<option value="website">Website</option>
-<option value="survey">Survey</option>
-<option value="testing">Website / App Testing</option>
-<option value="other">অন্যান্য বৈধ কাজ</option>
+<form id="orderForm">
+<label>১. প্ল্যাটফর্ম নির্বাচন করুন</label>
+<select id="platform" required>
+<option value="">-- প্ল্যাটফর্ম বেছে নিন --</option>
+<option value="facebook">Facebook (Likes / Followers / Comments)</option>
+<option value="youtube">YouTube (Subscribers / Likes / Views)</option>
+<option value="instagram">Instagram (Followers / Likes)</option>
+<option value="tiktok">TikTok (Followers / Likes)</option>
 </select>
 
-<label>কাজের ধরন</label>
-<select id="workType" required>
-<option value="">নির্বাচন করুন</option>
-<option value="content">কনটেন্ট তৈরি</option>
-<option value="video_editing">ভিডিও এডিটিং</option>
-<option value="design">ডিজাইন / থাম্বনেইল</option>
-<option value="promotion">অনুমোদিত প্রচারণা</option>
-<option value="survey">সার্ভে</option>
-<option value="testing">ওয়েবসাইট / অ্যাপ পরীক্ষা</option>
-<option value="other">অন্যান্য বৈধ কাজ</option>
+<label>২. প্যাকেজ বেছে নিন</label>
+<select id="packageSelect" required disabled>
+<option value="">আগে প্ল্যাটফর্ম নির্বাচন করুন</option>
 </select>
 
-<label>মুদ্রা</label>
-<select id="currency">
-<option value="BDT">BDT (টাকা)</option>
-<option value="USD">USD (ডলার)</option>
-</select>
+<div id="packageDetails" class="pkg-box">
+<div id="pkgTitle" style="font-weight:bold;font-size:16px;color:#38bdf8"></div>
+<p id="pkgDesc" class="note" style="margin:5px 0"></p>
+<div class="price-tag" id="pkgPrice">$0.00 USD</div>
+</div>
 
-<label>প্রতি Worker-এর পুরস্কার</label>
-<input id="reward" type="number" min="0.01" step="0.01" required>
+<label>৩. আপনার পেজ / ভিডিও / প্রোফাইল লিংক দিন</label>
+<input id="targetLink" type="url" required placeholder="https://...">
 
-<label>কতজন Worker কাজ করবে?</label>
-<input id="workers" type="number" min="1" step="1" required>
+<div class="payment-info">
+<strong style="color:#fbbf24">💳 পেমেন্ট নির্দেশনা (USD - BEP20):</strong>
+<p class="note" style="margin:6px 0 0">
+নিচের <b>BEP20 (BNB Smart Chain)</b> ওয়ালেট অ্যাড্রেসে নির্ধারিত <b>USD (USDT/USDC)</b> পাঠিয়ে নিচে TxHash / Transaction ID দিন:
+</p>
+<div class="wallet-address">0x834b1fd8d69772678116a7ee2e760e8d0676745b</div>
+</div>
 
-<label>কাজের শেষ তারিখ (ঐচ্ছিক)</label>
-<input id="deadline" type="datetime-local">
+<label>৪. পেমেন্ট মেথড</label>
+<input id="payMethod" value="USD (BEP20)" readonly style="color:#4ade80;font-weight:bold">
 
-<div class="note" id="budget">মোট বাজেট: 0.00</div>
-<p class="note">নোট: পেমেন্ট যাচাই না হওয়া পর্যন্ত কাজ Worker-দের জন্য চালু হবে না।</p>
+<label>৫. Transaction Hash (TxHash / TrxID) দিন</label>
+<input id="trxId" required placeholder="পেমেন্টের TxHash বা Transaction ID লিখুন">
 
-<button type="submit" id="submitBtn">কাজ পোস্ট করুন</button>
+<button type="submit" id="submitBtn">অর্ডার সাবমিট করুন</button>
 </form>
-<p id="message" class="note"></p>
+<p id="message" class="note" style="margin-top:15px;font-weight:bold"></p>
 </div>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://jsdelivr.net"></script>
 <script>
-const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_URL = "https://supabase.co";
 const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+// সব প্যাকেজ ও রেট ডলারে (USD) সেট করা আছে
+const PACKAGES = [
+  // Facebook
+  { id: "fb1", platform: "facebook", title: "1000 Facebook Page Likes & Followers", desc: "পেজ লিংকে গিয়ে লাইক এবং ফলো করতে হবে।", req: "ফলো ও লাইক করার পর স্ক্রিনশট দিন। আনফলো করলে পেমেন্ট বাতিল।", qty: 1000, buyerPrice: 1.50, workerReward: 0.001 },
+  { id: "fb2", platform: "facebook", title: "500 Facebook Post Comments & Likes", desc: "পোস্টে লাইক ও গঠনমূলক কমেন্ট করতে হবে।", req: "কমেন্ট ও লাইক দিয়ে স্ক্রিনশট জমা দিন।", qty: 500, buyerPrice: 1.20, workerReward: 0.0015 },
+  
+  // YouTube
+  { id: "yt1", platform: "youtube", title: "500 YouTube Subscribers & Video Like", desc: "চ্যানেল সাবস্ক্রাইব করে ভিডিওতে লাইক দিতে হবে।", req: "কমপক্ষে ১ মিনিট ভিডিও দেখে সাবস্ক্রাইব করে স্ক্রিনশট দিন।", qty: 500, buyerPrice: 2.50, workerReward: 0.003 },
+  { id: "yt2", platform: "youtube", title: "1000 YouTube Video Views & Likes", desc: "ভিডিওটি সম্পূর্ণ দেখে লাইক দিতে হবে।", req: "ভিডিও দেখার পর লাইক দিয়ে স্ক্রিনশট দিন।", qty: 1000, buyerPrice: 1.80, workerReward: 0.001 },
 
-const reward = document.getElementById("reward");
-const workers = document.getElementById("workers");
-const currency = document.getElementById("currency");
-const message = document.getElementById("message");
+  // Instagram
+  { id: "ig1", platform: "instagram", title: "1000 Instagram Followers", desc: "ইনস্টাগ্রাম প্রোফাইল ফলো করতে হবে।", req: "রিয়েল আইডি থেকে ফলো করে স্ক্রিনশট জমা দিন।", qty: 1000, buyerPrice: 1.20, workerReward: 0.0008 },
+
+  // TikTok
+  { id: "tt1", platform: "tiktok", title: "1000 TikTok Likes & Followers", desc: "টিকটক আইডি ফলো ও শেষ ভিডিওতে লাইক দিন।", req: "ফলো ও লাইক দিয়ে স্ক্রিনশট দিন।", qty: 1000, buyerPrice: 1.00, workerReward: 0.0006 }
+];
+
+let selectedPkg = null;
+
+const platformSelect = document.getElementById("platform");
+const packageSelect = document.getElementById("packageSelect");
+const packageDetails = document.getElementById("packageDetails");
 const submitBtn = document.getElementById("submitBtn");
+const message = document.getElementById("message");
 
-function updateBudget(){
-  const r = Number(reward.value);
-  const w = Number(workers.value);
-  const total = r * w;
-  document.getElementById("budget").textContent =
-    "মোট বাজেট: " +
-    (Number.isFinite(total) ? total.toFixed(2) : "0.00") +
-    " " + currency.value;
+async function init(){
+  const {data, error} = await supabaseClient.auth.getUser();
+  if(error || !data.user){
+    message.style.color = "#ef4444";
+    message.textContent = "অর্ডার করার জন্য আগে Login করুন।";
+    submitBtn.disabled = true;
+  }
 }
 
-reward.addEventListener("input", updateBudget);
-workers.addEventListener("input", updateBudget);
-currency.addEventListener("change", updateBudget);
+platformSelect.addEventListener("change", function(){
+  const plat = this.value;
+  packageSelect.innerHTML = '<option value="">-- প্যাকেজ নির্বাচন করুন --</option>';
+  packageDetails.style.display = "none";
+  selectedPkg = null;
 
-async function checkLogin(){
-  const {data,error} = await supabaseClient.auth.getUser();
-  if(error || !data.user){
-    message.textContent = "আগে Login করুন।";
-    submitBtn.disabled = true;
+  if(!plat){
+    packageSelect.disabled = true;
     return;
   }
-  submitBtn.disabled = false;
-}
-checkLogin();
 
-document.getElementById("taskForm").addEventListener("submit", async function(e){
+  const filtered = PACKAGES.filter(p => p.platform === plat);
+  filtered.forEach(pkg => {
+    const opt = document.createElement("option");
+    opt.value = pkg.id;
+    opt.textContent = `${pkg.title} — $${pkg.buyerPrice.toFixed(2)} USD`;
+    packageSelect.appendChild(opt);
+  });
+  packageSelect.disabled = false;
+});
+
+packageSelect.addEventListener("change", function(){
+  const id = this.value;
+  selectedPkg = PACKAGES.find(p => p.id === id);
+  if(!selectedPkg){
+    packageDetails.style.display = "none";
+    return;
+  }
+  document.getElementById("pkgTitle").textContent = selectedPkg.title;
+  document.getElementById("pkgDesc").textContent = selectedPkg.desc;
+  document.getElementById("pkgPrice").textContent = `মোট মূল্য: $${selectedPkg.buyerPrice.toFixed(2)} USD (${selectedPkg.qty} জন Worker)`;
+  packageDetails.style.display = "block";
+});
+
+document.getElementById("orderForm").addEventListener("submit", async function(e){
   e.preventDefault();
-  message.textContent = "";
+  if(!selectedPkg) return;
+
   submitBtn.disabled = true;
-  submitBtn.textContent = "জমা হচ্ছে...";
+  submitBtn.textContent = "অর্ডার জমা হচ্ছে...";
+  message.textContent = "";
 
   try{
-    const {data:authData,error:authError} =
-      await supabaseClient.auth.getUser();
+    const {data: authData} = await supabaseClient.auth.getUser();
+    const link = document.getElementById("targetLink").value.trim();
+    const payMethod = document.getElementById("payMethod").value;
+    const trxId = document.getElementById("trxId").value.trim();
 
-    if(authError || !authData.user){
-      throw new Error("আপনাকে আগে Login করতে হবে।");
-    }
-
-    const buyerId = authData.user.id;
-    const title = document.getElementById("title").value.trim();
-    const description = document.getElementById("description").value.trim();
-    const requirements = document.getElementById("requirements").value.trim();
-    const category = document.getElementById("category").value;
-    const workType = document.getElementById("workType").value;
-    const selectedCurrency = currency.value;
-    const r = Number(reward.value);
-    const w = Number(workers.value);
-    const deadlineValue = document.getElementById("deadline").value;
-
-    if(!title || !description || !category || !workType){
-      throw new Error("সব প্রয়োজনীয় তথ্য পূরণ করুন।");
-    }
-
-    if(!Number.isFinite(r) || r <= 0 ||
-       !Number.isInteger(w) || w <= 0){
-      throw new Error("পুরস্কার ও Worker সংখ্যা সঠিকভাবে দিন।");
-    }
-
-    const total = Number((r*w).toFixed(2));
+    const workerTotalBudget = Number((selectedPkg.workerReward * selectedPkg.qty).toFixed(4));
 
     const taskData = {
-      buyer_id: buyerId,
-      title,
-      description,
-      requirements: requirements || null,
-      category: category,
-      currency: selectedCurrency,
-      reward_per_worker: r,
-      total_budget: total,
-      workers_needed: w,
-      deadline: deadlineValue
-        ? new Date(deadlineValue).toISOString()
-        : null,
+      buyer_id: authData.user.id,
+      title: selectedPkg.title,
+      description: `${selectedPkg.desc}\n\n🔗 কাজের লিংক: ${link}\n💳 পেমেন্ট: ${payMethod} | TxHash: ${trxId} | Paid: $${selectedPkg.buyerPrice.toFixed(2)} USD`,
+      requirements: selectedPkg.req,
+      category: selectedPkg.platform,
+      currency: "USD",
+      reward_per_worker: selectedPkg.workerReward,
+      total_budget: workerTotalBudget,
+      workers_needed: selectedPkg.qty,
       status: "draft"
     };
 
-    const {error} = await supabaseClient
-      .from("tasks")
-      .insert(taskData);
-
+    const {error} = await supabaseClient.from("tasks").insert(taskData);
     if(error) throw error;
 
-    message.textContent =
-      "সফলভাবে কাজ জমা হয়েছে! কাজটি Draft অবস্থায় আছে। পেমেন্ট যাচাই ও Admin অনুমোদনের পর চালু করা যাবে।";
-
-    document.getElementById("taskForm").reset();
-    updateBudget();
-
-  }catch(error){
-    message.textContent = "সমস্যা: " + error.message;
+    message.style.color = "#4ade80";
+    message.textContent = "✅ অর্ডার সফলভাবে জমা হয়েছে! Admin পেমেন্ট যাচাই করার পর কাজটি চালু হবে।";
+    document.getElementById("orderForm").reset();
+    document.getElementById("payMethod").value = "USD (BEP20)";
+    packageDetails.style.display = "none";
+    packageSelect.disabled = true;
+  }catch(err){
+    message.style.color = "#ef4444";
+    message.textContent = "সমস্যা: " + err.message;
   }finally{
     submitBtn.disabled = false;
-    submitBtn.textContent = "কাজ পোস্ট করুন";
+    submitBtn.textContent = "অর্ডার সাবমিট করুন";
   }
 });
+
+init();
 </script>
 </body>
   </html>
-                                                  
+  
