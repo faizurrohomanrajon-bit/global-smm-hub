@@ -1,218 +1,164 @@
-
-<!DOCTYPE html>
-<html lang="bn">
+<!DOCTYPE html><html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#080f1d">
-<title>Buyer Job Post | GLOBAL EARNING</title>
+<title>Buyer Job Post - GLOBAL EARNING</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#080f1d;color:#fff;font-family:Arial,sans-serif}
-header{padding:19px;background:#0d192b;border-bottom:1px solid #34445b}
-.logo{font-size:20px;font-weight:bold;color:#f5c76b}
-header p{color:#9aabc0;font-size:12px;margin:7px 0 0}
-main{max-width:700px;margin:auto;padding:18px}
-.hero{padding:22px;border-radius:18px;background:linear-gradient(130deg,#183d36,#172b43);border:1px solid #52775d}
-.hero h1{font-size:24px;margin:0 0 10px}
-.hero p{font-size:13px;color:#d2e6dc;line-height:1.7}
-.card{background:#111e31;border:1px solid #30445d;padding:20px;border-radius:17px;margin-top:18px}
-.card h2{font-size:18px;color:#f5c76b;margin:0 0 8px}
-.note{font-size:12px;color:#9aabc0;line-height:1.7}
-label{display:block;margin:16px 0 7px;font-size:13px;font-weight:bold;color:#dbe5ef}
-input,textarea,select{
- width:100%;padding:13px;border-radius:9px;
- border:1px solid #3a4c64;background:#091525;color:white;
- font-size:14px;outline:none
-}
+body{margin:0;background:#0b1120;color:#fff;font-family:Arial,sans-serif}
+header{padding:20px;background:#111c30;border-bottom:1px solid #26364e}
+header h2{margin:0;color:#f5c76b}
+.container{max-width:650px;margin:25px auto;padding:16px}
+.card{background:#111c30;border:1px solid #26364e;border-radius:16px;padding:20px}
+h3{margin-top:0;color:#f5c76b}
+label{display:block;margin:15px 0 7px;color:#dce5f3}
+input,textarea{width:100%;padding:13px;border-radius:9px;border:1px solid #35465f;background:#0b1628;color:white;font-size:15px}
 textarea{min-height:100px;resize:vertical}
-input:focus,textarea:focus,select:focus{border-color:#f5c76b}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-button{
- width:100%;padding:15px;margin-top:20px;border:0;
- border-radius:10px;background:linear-gradient(100deg,#f5c76b,#e6a83f);
- color:#172033;font-weight:bold;font-size:15px;cursor:pointer
-}
-button:disabled{opacity:.5}
-.message{margin-top:15px;font-size:13px;line-height:1.7}
-.back{display:inline-block;margin-top:16px;color:#f5c76b;text-decoration:none;font-size:13px}
-footer{text-align:center;color:#64748b;font-size:11px;padding:25px}
-@media(max-width:480px){.row{grid-template-columns:1fr}.hero h1{font-size:21px}}
+button{width:100%;padding:14px;margin-top:20px;background:#f5c76b;color:#111827;border:0;border-radius:9px;font-size:16px;font-weight:bold}
+button:disabled{opacity:.6}
+.info{background:#172943;padding:13px;border-radius:9px;color:#cbd5e1;font-size:14px;line-height:1.6}
+#message{margin-top:15px;line-height:1.6}
+.total{font-size:18px;color:#4ade80;font-weight:bold;margin-top:15px}
+.back{display:inline-block;margin-top:18px;color:#f5c76b;text-decoration:none}
 </style>
 </head>
-<body>
-<header>
- <div class="logo">🌍 GLOBAL EARNING</div>
- <p>BUYER WORKSPACE · JOB POSTING</p>
-</header>
+<body><header>
+<h2>GLOBAL EARNING 🌍</h2>
+<p>Buyer Job Posting</p>
+</header><div class="container">
+<div class="card">
+<h3>নতুন কাজ পোস্ট করুন</h3><div class="info">
+আপনি যেকোনো বৈধ কাজ পোস্ট করতে পারবেন। কাজটি Admin যাচাই ও অনুমোদন না করা পর্যন্ত Worker-দের কাছে প্রকাশ হবে না।
+</div><form id="jobForm"><label>কাজের ক্যাটাগরি</label>
+<input id="category" type="text" placeholder="যেমন: Graphic Design, Translation, Typing" required>
 
-<main>
-<section class="hero">
- <h1>📢 Post a New Job</h1>
- <p>আপনার বৈধ কাজের বিবরণ দিন। Admin কাজটি যাচাই করার পর অনুমোদন করলে Worker-রা কাজটি দেখতে পারবে।</p>
-</section>
+<label>কাজের শিরোনাম</label>
+<input id="title" type="text" placeholder="কাজের নাম লিখুন" required>
 
-<section class="card">
- <h2>নতুন কাজের তথ্য</h2>
- <p class="note">সঠিক তথ্য দিন। বাজেট Worker-প্রতি পুরস্কার ও কর্মীর সংখ্যা অনুযায়ী হিসাব হবে।</p>
+<label>কাজের বিস্তারিত বিবরণ</label>
 
- <form id="jobForm">
-  <label>১. কাজের ক্যাটাগরি</label>
-  <select id="category" required>
-   <option value="">ক্যাটাগরি নির্বাচন করুন</option>
-   <option value="typing">Typing</option>
-   <option value="data-entry">Data Entry</option>
-   <option value="pdf-to-word">PDF to Word</option>
-   <option value="product-listing">Product Listing</option>
-   <option value="website-testing">Website Testing</option>
-  </select>
+<textarea id="description" placeholder="কী কাজ করতে হবে বিস্তারিত লিখুন" required></textarea><label>কাজের নির্দেশনা ও শর্ত</label>
 
-  <label>২. কাজের শিরোনাম</label>
-  <input id="title" maxlength="100" required placeholder="যেমন: ১০ পৃষ্ঠা টাইপিং করতে হবে">
+<textarea id="requirements" placeholder="Worker-কে কীভাবে কাজ জমা দিতে হবে লিখুন"></textarea><label>প্রতি Worker-এর পারিশ্রমিক (USD)</label>
+<input id="reward" type="number" min="0.01" step="0.01" placeholder="যেমন: 2.00" required>
 
-  <label>৩. কাজের বিস্তারিত বিবরণ</label>
-  <textarea id="description" maxlength="3000" required placeholder="কী কাজ করতে হবে বিস্তারিত লিখুন"></textarea>
+<label>কতজন Worker প্রয়োজন?</label>
+<input id="workers" type="number" min="1" step="1" value="1" required>
 
-  <label>৪. Worker-এর জন্য নির্দেশনা</label>
-  <textarea id="requirements" maxlength="2000" required placeholder="কাজ জমা দেওয়ার নিয়ম ও প্রয়োজনীয় নির্দেশনা"></textarea>
+<div class="total">
+মোট বাজেট: $<span id="totalBudget">0.00</span>
+</div><button type="submit" id="submitBtn">কাজ পোস্ট করুন</button>
 
-  <div class="row">
-   <div>
-    <label>৫. প্রতি Worker-এর পুরস্কার (USD)</label>
-    <input id="reward" type="number" min="0.01" step="0.01" required placeholder="যেমন 2.00">
-   </div>
-   <div>
-    <label>৬. Worker সংখ্যা</label>
-    <input id="workers" type="number" min="1" max="1000" step="1" required placeholder="যেমন 5">
-   </div>
-  </div>
+</form><div id="message"></div>
+<a class="back" href="dashboard.html">← Dashboard-এ ফিরে যান</a>
+</div>
+</div><script>
+const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
-  <label>৭. কাজের শেষ তারিখ (ঐচ্ছিক)</label>
-  <input id="deadline" type="date">
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-  <div class="card" style="background:#0b2b2b;border-color:#39745c">
-   <div class="note">আনুমানিক মোট Worker Budget</div>
-   <div id="total" style="font-size:27px;font-weight:bold;color:#4ade80;margin-top:8px">$0.00 USD</div>
-   <p class="note">মোট বাজেট = প্রতি Worker-এর পুরস্কার × Worker সংখ্যা।</p>
-  </div>
+const rewardInput = document.getElementById("reward");
+const workersInput = document.getElementById("workers");
+const totalBudget = document.getElementById("totalBudget");
+const message = document.getElementById("message");
+const submitBtn = document.getElementById("submitBtn");
 
-  <button type="submit" id="submitBtn">Submit Job for Admin Review</button>
- </form>
-
- <div id="message" class="message"></div>
- <a class="back" href="dashboard.html">← Dashboard-এ ফিরে যান</a>
-</section>
-</main>
-
-<footer>© 2026 GLOBAL EARNING · Worldwide 🌍</footer>
-
-<script>
-const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
-const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
-const el=id=>document.getElementById(id);
-const reward=el("reward");
-const workers=el("workers");
-const form=el("jobForm");
-const btn=el("submitBtn");
-const message=el("message");
-
-function updateTotal(){
- const r=Number(reward.value)||0;
- const w=Number(workers.value)||0;
- el("total").textContent="$"+(r*w).toFixed(2)+" USD";
+function calculateBudget(){
+  const reward = Number(rewardInput.value) || 0;
+  const workers = Number(workersInput.value) || 0;
+  totalBudget.textContent = (reward * workers).toFixed(2);
 }
-reward.addEventListener("input",updateTotal);
-workers.addEventListener("input",updateTotal);
+
+rewardInput.addEventListener("input", calculateBudget);
+workersInput.addEventListener("input", calculateBudget);
 
 async function checkLogin(){
- const {data,error}=await db.auth.getUser();
- if(error || !data.user){
-  message.style.color="#f87171";
-  message.textContent="কাজ পোস্ট করতে আগে Login করুন।";
-  btn.disabled=true;
-  return false;
- }
- return true;
+  const {data,error} = await supabaseClient.auth.getSession();
+
+  if(error || !data.session){
+    message.textContent = "কাজ পোস্ট করতে আগে Login করুন।";
+    message.style.color = "#fca5a5";
+    submitBtn.disabled = true;
+    return null;
+  }
+
+  return data.session.user;
 }
 
-form.addEventListener("submit",async function(e){
- e.preventDefault();
- message.textContent="";
+document.getElementById("jobForm").addEventListener("submit", async function(e){
+  e.preventDefault();
 
- const {data:authData,error:authError}=await db.auth.getUser();
- if(authError || !authData.user){
-  message.style.color="#f87171";
-  message.textContent="আপনার Login সেশন পাওয়া যায়নি। আবার Login করুন।";
-  return;
- }
+  const user = await checkLogin();
+  if(!user) return;
 
- const category=el("category").value;
- const title=el("title").value.trim();
- const description=el("description").value.trim();
- const requirements=el("requirements").value.trim();
- const r=Number(reward.value);
- const w=Number(workers.value);
- const deadline=el("deadline").value;
+  const category = document.getElementById("category").value.trim();
+  const title = document.getElementById("title").value.trim();
+  const description = document.getElementById("description").value.trim();
+  const requirements = document.getElementById("requirements").value.trim();
+  const reward = Number(rewardInput.value);
+  const workers = Number(workersInput.value);
 
- if(!category || !title || !description || !requirements ||
-    !Number.isFinite(r) || r<0.01 ||
-    !Number.isInteger(w) || w<1 || w>1000){
-  message.style.color="#f87171";
-  message.textContent="সব তথ্য সঠিকভাবে পূরণ করুন।";
-  return;
- }
+  if(!category || !title || !description || reward < 0.01 ||
+     !Number.isInteger(workers) || workers < 1){
+    message.textContent = "সব তথ্য সঠিকভাবে পূরণ করুন।";
+    message.style.color = "#fca5a5";
+    return;
+  }
 
- const total=Number((r*w).toFixed(2));
- if(!Number.isFinite(total) || total<=0){
-  message.style.color="#f87171";
-  message.textContent="বাজেটের হিসাব সঠিক নয়।";
-  return;
- }
+  const budget = Number((reward * workers).toFixed(2));
 
- btn.disabled=true;
- btn.textContent="Submitting...";
+  if(!Number.isFinite(budget) || budget <= 0){
+    message.textContent = "বাজেটের হিসাব সঠিক নয়।";
+    message.style.color = "#fca5a5";
+    return;
+  }
 
- try{
-  const taskData={
-   buyer_id:authData.user.id,
-   title:title,
-   description:description,
-   requirements:requirements,
-   category:category,
-   currency:"USD",
-   reward_per_worker:r,
-   total_budget:total,
-   workers_needed:w,
-   status:"draft",
-   payment_verified:false
-  };
+  submitBtn.disabled = true;
+  submitBtn.textContent = "জমা হচ্ছে...";
+  message.textContent = "";
 
-  if(deadline)taskData.deadline=deadline;
+  const {data,error} = await supabaseClient
+    .from("tasks")
+    .insert({
+      buyer_id: user.id,
+      category: category,
+      title: title,
+      description: description,
+      requirements: requirements,
+      reward_per_worker: reward,
+      workers_needed: workers,
+      total_budget: budget,
+      currency: "USD",
+      status: "draft",
+      payment_verified: false
+    })
+    .select("id")
+    .single();
 
-  const {error}=await db.from("tasks").insert(taskData);
-  if(error)throw error;
+  if(error){
+    message.textContent = "কাজ জমা হয়নি: " + error.message;
+    message.style.color = "#fca5a5";
+    submitBtn.disabled = false;
+    submitBtn.textContent = "কাজ পোস্ট করুন";
+    return;
+  }
 
-  message.style.color="#4ade80";
-  message.textContent="✅ Job সফলভাবে জমা হয়েছে। এটি Admin Review-এর জন্য অপেক্ষা করছে।";
+  message.innerHTML =
+    "কাজের পোস্ট জমা হয়েছে!<br>এটি এখন Admin Review-এর অপেক্ষায় আছে। অনুমোদন ও প্রয়োজনীয় যাচাইয়ের আগে Worker-রা কাজটি দেখতে পারবে না।";
 
-  form.reset();
-  updateTotal();
+  message.style.color = "#4ade80";
+  document.getElementById("jobForm").reset();
+  workersInput.value = "1";
+  calculateBudget();
 
- }catch(error){
-  console.error(error);
-  message.style.color="#f87171";
-  message.textContent="Job জমা হয়নি: "+error.message;
- }finally{
-  btn.disabled=false;
-  btn.textContent="Submit Job for Admin Review";
- }
+  submitBtn.textContent = "জমা হয়েছে";
 });
 
 checkLogin();
-</script>
-</body>
-                                            </html>
-     
+</script></body>
+ </html>
