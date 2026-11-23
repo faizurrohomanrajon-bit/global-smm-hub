@@ -5,82 +5,133 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080f1d">
-<title>GLOBAL EARNING | Dashboard</title>
+<title>GLOBAL EARNING | Premium Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:#080f1d;color:#fff;padding-bottom:100px}
+:root{
+ --bg:#080f1d;--card:#111e31;--border:#293b53;
+ --gold:#f5c76b;--green:#4ade80;--muted:#9aabc0;
+}
+body{
+ font-family:Arial,sans-serif;background:var(--bg);color:#fff;
+ padding-bottom:100px;
+}
 .container{max-width:1100px;margin:auto}
-header{display:flex;align-items:center;justify-content:space-between;padding:17px 18px;border-bottom:1px solid #23364e;background:#0b1728}
-.logo{font-size:20px;font-weight:bold;color:#4ade80}
+header{
+ display:flex;align-items:center;justify-content:space-between;
+ padding:17px 18px;background:#0c1829;
+ border-bottom:1px solid var(--border);
+}
+.logo{font-size:19px;font-weight:bold;color:var(--gold)}
 .user-area{display:flex;align-items:center;gap:10px}
-.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#173d36;font-size:20px}
-.logout{background:#18283c;color:#fff;border:1px solid #34465d;padding:9px 13px;border-radius:9px;cursor:pointer}
+.avatar{
+ width:39px;height:39px;border-radius:50%;
+ display:grid;place-items:center;background:#253c45;
+ border:1px solid var(--gold);font-size:20px;
+}
+.logout{
+ background:#1b2b40;color:white;border:1px solid #42536a;
+ padding:9px 13px;border-radius:9px;cursor:pointer;
+}
 main{padding:18px}
-.welcome{padding:25px 20px;border-radius:20px;background:linear-gradient(120deg,#155c43,#103d43,#142d4c);border:1px solid #267c58;position:relative;overflow:hidden}
-.welcome:after{content:"🌍";position:absolute;right:15px;bottom:-15px;font-size:90px;opacity:.13}
-.tag{color:#86efac;font-size:12px;letter-spacing:1px;margin-bottom:13px}
-.welcome h1{font-size:27px;margin-bottom:9px}
-.welcome p{font-size:13px;color:#d1fae5;line-height:1.7}
-.balance{margin-top:18px;padding:20px;border-radius:17px;background:#0b2b2b;border:1px solid #28745a}
-.balance-label{font-size:12px;color:#a7f3d0}
-.balance-amount{font-size:36px;font-weight:bold;color:#4ade80;margin:10px 0}
+.hero{
+ position:relative;overflow:hidden;padding:25px 20px;
+ border-radius:21px;
+ background:linear-gradient(130deg,#173c35,#142b3e,#17243c);
+ border:1px solid #557b60;
+ box-shadow:0 12px 35px #0005;
+}
+.hero:after{
+ content:"🌍";position:absolute;right:12px;top:35px;
+ font-size:100px;opacity:.12;
+}
+.eyebrow{font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:14px}
+.hero h1{font-size:27px;margin-bottom:9px}
+.hero p{font-size:13px;color:#d5e8df;line-height:1.7}
+.member-tag{
+ display:inline-block;margin-top:15px;padding:7px 12px;
+ border-radius:20px;background:#ffffff12;
+ border:1px solid #ffffff25;color:#d9fbe7;font-size:11px;
+}
+.balance-card{
+ position:relative;z-index:1;margin-top:22px;padding:19px;
+ border-radius:16px;background:linear-gradient(120deg,#102c2a,#102c3b);
+ border:1px solid #43836a;
+}
+.balance-label{font-size:11px;color:#b9e8d0}
+.balance-amount{font-size:36px;font-weight:bold;color:var(--green);margin:11px 0}
 .pending{font-size:12px;color:#cbd5e1}
-.section-title{font-size:19px;margin:27px 0 7px}
-.section-sub{font-size:12px;color:#94a3b8;margin-bottom:15px}
+.section-head{margin:28px 0 14px}
+.section-head h2{font-size:19px;color:var(--gold)}
+.section-head p{font-size:12px;color:var(--muted);margin-top:6px}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
-.stat{background:#111f33;border:1px solid #263e59;padding:17px 13px;border-radius:15px;min-height:110px}
-.stat-icon{font-size:24px;margin-bottom:9px}
-.stat-number{font-size:23px;font-weight:bold;color:#4ade80}
-.stat-label{font-size:12px;color:#aab8ca;margin-top:5px}
-.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.quick{display:block;text-decoration:none;color:white;background:linear-gradient(145deg,#14263d,#101c2e);border:1px solid #2a405b;border-radius:15px;padding:17px;min-height:115px;transition:.2s}
-.quick:active{border-color:#4ade80;transform:scale(.98)}
-.quick-icon{font-size:27px;margin-bottom:10px}
-.quick h3{font-size:14px;margin-bottom:6px}
-.quick p{font-size:11px;color:#94a3b8;line-height:1.5}
-.activity{margin-top:25px;background:#111f33;border:1px solid #263e59;border-radius:15px;padding:17px}
-.activity h3{font-size:16px;margin-bottom:13px}
-.activity p{font-size:12px;color:#94a3b8;line-height:1.8}
-.status{margin-top:20px;text-align:center;padding:12px;border-radius:10px;background:#10251f;border:1px solid #245b43;color:#4ade80;font-size:12px}
+.stat{
+ padding:17px 14px;min-height:112px;border-radius:15px;
+ background:linear-gradient(145deg,#17283d,#101b2c);
+ border:1px solid var(--border);
+}
+.stat-icon{font-size:23px;margin-bottom:9px}
+.stat-number{font-size:23px;font-weight:bold;color:var(--green)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.quick{
+ display:block;text-decoration:none;color:white;
+ padding:17px 14px;min-height:125px;border-radius:15px;
+ background:linear-gradient(145deg,#17283d,#101b2c);
+ border:1px solid var(--border);transition:.2s;
+}
+.quick:active{transform:scale(.98);border-color:var(--gold)}
+.quick-icon{font-size:27px;margin-bottom:11px}
+.quick h3{font-size:13px;margin-bottom:7px}
+.quick p{font-size:11px;color:var(--muted);line-height:1.6}
+.quick.gold{border-color:#80683d;background:linear-gradient(145deg,#342b1c,#172235)}
+.quick.gold h3{color:var(--gold)}
+.activity{
+ margin-top:25px;padding:18px;border-radius:16px;
+ background:#111e31;border:1px solid var(--border);
+}
+.activity h3{font-size:15px;color:var(--gold);margin-bottom:12px}
+.activity p{font-size:12px;color:var(--muted);line-height:1.8}
+.status{
+ margin-top:18px;text-align:center;padding:12px;
+ border-radius:10px;background:#10251f;border:1px solid #245b43;
+ color:var(--green);font-size:12px;
+}
 footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-height:2}
-
-/* Bottom Navigation */
 .bottom-nav{
  position:fixed;bottom:0;left:0;right:0;z-index:100;
- background:rgba(8,18,33,.97);
- border-top:1px solid #29415b;
- display:flex;justify-content:flex-start;
- overflow-x:auto;white-space:nowrap;
- padding:9px 3px calc(9px + env(safe-area-inset-bottom));
- backdrop-filter:blur(12px);
- scrollbar-width:none;
+ display:flex;justify-content:flex-start;overflow-x:auto;
+ white-space:nowrap;padding:9px 3px calc(9px + env(safe-area-inset-bottom));
+ background:#091525f5;border-top:1px solid #35445b;
+ backdrop-filter:blur(14px);scrollbar-width:none;
 }
 .bottom-nav::-webkit-scrollbar{display:none}
 .nav-item{
- text-decoration:none;color:#91a2b8;
+ text-decoration:none;color:#9aabc0;
  display:flex;flex-direction:column;align-items:center;
  justify-content:center;gap:5px;font-size:10px;
- flex:0 0 14.285%;min-width:0;
+ flex:0 0 14.285%;
 }
 .nav-icon{font-size:21px}
-.nav-item.active{color:#4ade80;font-weight:bold}
-.nav-item.active .nav-icon{filter:drop-shadow(0 0 5px #4ade80)}
+.nav-item.active{color:var(--gold);font-weight:bold}
 @media(min-width:650px){
- main{padding:25px}
- .welcome{padding:35px}
- .welcome h1{font-size:34px}
+ main{padding:26px}
+ .hero{padding:36px}
+ .hero h1{font-size:35px}
  .stats{grid-template-columns:repeat(4,1fr)}
- .quick-grid{grid-template-columns:repeat(4,1fr)}
- .bottom-nav{left:50%;transform:translateX(-50%);width:min(100%,700px);border-radius:16px 16px 0 0}
+ .grid{grid-template-columns:repeat(3,1fr)}
+ .bottom-nav{
+  left:50%;transform:translateX(-50%);
+  width:min(100%,700px);border-radius:16px 16px 0 0;
+ }
 }
 </style>
 </head>
 
 <body>
 <div class="container">
-
 <header>
  <div class="logo">🌍 GLOBAL EARNING</div>
  <div class="user-area">
@@ -90,43 +141,127 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </header>
 
 <main>
-<section class="welcome">
- <div class="tag">🌍 WORK • EARN • GROW</div>
- <h1>Welcome Back! 👋</h1>
- <p id="welcomeName">আপনার Earning Dashboard-এ স্বাগতম!</p>
- <p>আপনার কাজ ও আয়ের হিসাব এক জায়গায় দেখুন।</p>
- <div class="balance">
-  <div class="balance-label">💰 MY WALLET BALANCE (USD)</div>
+<section class="hero">
+ <div class="eyebrow">✦ GLOBAL WORKSPACE</div>
+ <h1>Welcome Back!</h1>
+ <p id="welcomeName">আপনার Premium Dashboard-এ স্বাগতম।</p>
+ <p>কাজ খুঁজুন, কাজ জমা দিন এবং আপনার অ্যাকাউন্টের হিসাব দেখুন।</p>
+ <div class="member-tag">✦ MEMBER DASHBOARD</div>
+
+ <div class="balance-card">
+  <div class="balance-label">💰 AVAILABLE WALLET BALANCE · USD</div>
   <div class="balance-amount" id="balance">$0.00</div>
   <div class="pending" id="pendingBalance">Pending Balance: $0.00</div>
  </div>
 </section>
 
-<h2 class="section-title">📊 My Overview</h2>
-<p class="section-sub">আপনার অ্যাকাউন্টের বর্তমান অবস্থা</p>
+<div class="section-head">
+ <h2>📊 Account Overview</h2>
+ <p>আপনার অ্যাকাউন্টের বর্তমান পরিসংখ্যান</p>
+</div>
 
 <section class="stats">
- <div class="stat"><div class="stat-icon">📋</div><div class="stat-number" id="availableTasks">0</div><div class="stat-label">Available Tasks</div></div>
- <div class="stat"><div class="stat-icon">📝</div><div class="stat-number" id="myTasks">0</div><div class="stat-label">My Tasks</div></div>
- <div class="stat"><div class="stat-icon">👥</div><div class="stat-number" id="referralCount">0</div><div class="stat-label">My Referrals</div></div>
- <div class="stat"><div class="stat-icon">🤝</div><div class="stat-number" id="referralEarnings">$0.00</div><div class="stat-label">Referral Earnings</div></div>
+ <div class="stat">
+  <div class="stat-icon">📋</div>
+  <div class="stat-number" id="availableTasks">0</div>
+  <div class="stat-label">Available Tasks</div>
+ </div>
+ <div class="stat">
+  <div class="stat-icon">📝</div>
+  <div class="stat-number" id="myTasks">0</div>
+  <div class="stat-label">My Submissions</div>
+ </div>
+ <div class="stat">
+  <div class="stat-icon">👥</div>
+  <div class="stat-number" id="referralCount">0</div>
+  <div class="stat-label">My Referrals</div>
+ </div>
+ <div class="stat">
+  <div class="stat-icon">🤝</div>
+  <div class="stat-number" id="referralEarnings">$0.00</div>
+  <div class="stat-label">Referral Earnings</div>
+ </div>
 </section>
 
-<h2 class="section-title">🚀 Quick Access</h2>
-<p class="section-sub">আপনার প্রয়োজনীয় অপশন বেছে নিন</p>
+<div class="section-head">
+ <h2>🚀 Work Categories</h2>
+ <p>আপনার পছন্দের বৈধ কাজের বিভাগ নির্বাচন করুন</p>
+</div>
 
-<section class="quick-grid">
- <a class="quick" href="tasks.html"><div class="quick-icon">📋</div><h3>Available Tasks →</h3><p>নতুন কাজ খুঁজুন এবং কাজ শুরু করুন।</p></a>
- <a class="quick" href="my-tasks.html"><div class="quick-icon">📝</div><h3>My Tasks →</h3><p>আপনার জমা দেওয়া কাজের অবস্থা দেখুন।</p></a>
- <a class="quick" href="wallet.html"><div class="quick-icon">💰</div><h3>My Wallet →</h3><p>আপনার ব্যালেন্স ও লেনদেন দেখুন।</p></a>
- <a class="quick" href="referral.html"><div class="quick-icon">🤝</div><h3>Referral →</h3><p>বন্ধুদের আমন্ত্রণ ও কমিশন দেখুন।</p></a>
- <a class="quick" href="withdrawal.html"><div class="quick-icon">💸</div><h3>Withdrawal →</h3><p>উত্তোলনের পদ্ধতি ও তথ্য দেখুন।</p></a>
- <a class="quick" href="profile.html"><div class="quick-icon">👤</div><h3>My Profile →</h3><p>আপনার অ্যাকাউন্টের তথ্য দেখুন।</p></a>
+<section class="grid">
+ <a class="quick" href="tasks.html?category=typing">
+  <div class="quick-icon">⌨️</div>
+  <h3>Typing</h3>
+  <p>টাইপিং সংক্রান্ত কাজ খুঁজুন</p>
+ </a>
+ <a class="quick" href="tasks.html?category=data-entry">
+  <div class="quick-icon">📊</div>
+  <h3>Data Entry</h3>
+  <p>ডেটা এন্ট্রির কাজ খুঁজুন</p>
+ </a>
+ <a class="quick" href="tasks.html?category=pdf-to-word">
+  <div class="quick-icon">📄</div>
+  <h3>PDF to Word</h3>
+  <p>ডকুমেন্ট কনভার্সনের কাজ</p>
+ </a>
+ <a class="quick" href="tasks.html?category=product-listing">
+  <div class="quick-icon">🛍️</div>
+  <h3>Product Listing</h3>
+  <p>পণ্য তালিকাভুক্তির কাজ</p>
+ </a>
+ <a class="quick" href="tasks.html?category=website-testing">
+  <div class="quick-icon">🌐</div>
+  <h3>Website Testing</h3>
+  <p>ওয়েবসাইট পরীক্ষা ও ফিডব্যাক</p>
+ </a>
+</section>
+
+<div class="section-head">
+ <h2>⚡ Quick Access</h2>
+ <p>আপনার অন্যান্য অ্যাকাউন্ট অপশন</p>
+</div>
+
+<section class="grid">
+ <a class="quick" href="tasks.html">
+  <div class="quick-icon">📋</div>
+  <h3>Available Tasks →</h3>
+  <p>সব উপলভ্য কাজ দেখুন</p>
+ </a>
+ <a class="quick" href="my-tasks.html">
+  <div class="quick-icon">📝</div>
+  <h3>My Tasks →</h3>
+  <p>জমা দেওয়া কাজের অবস্থা</p>
+ </a>
+ <a class="quick" href="wallet.html">
+  <div class="quick-icon">💰</div>
+  <h3>My Wallet →</h3>
+  <p>ব্যালেন্স ও লেনদেন</p>
+ </a>
+ <a class="quick" href="referral.html">
+  <div class="quick-icon">🤝</div>
+  <h3>Referral →</h3>
+  <p>রেফারেল ও কমিশন</p>
+ </a>
+ <a class="quick" href="withdrawal.html">
+  <div class="quick-icon">💸</div>
+  <h3>Withdrawal →</h3>
+  <p>উত্তোলনের তথ্য</p>
+ </a>
+ <a class="quick" href="profile.html">
+  <div class="quick-icon">👤</div>
+  <h3>My Profile →</h3>
+  <p>অ্যাকাউন্টের তথ্য</p>
+ </a>
+ <a class="quick gold" href="advertiser.html">
+  <div class="quick-icon">➕</div>
+  <h3>Buyer Job Post →</h3>
+  <p>বৈধ কাজ পোস্ট করার পেজ</p>
+ </a>
 </section>
 
 <section class="activity">
  <h3>✨ Account Information</h3>
- <p>আপনার অ্যাকাউন্ট সংযুক্ত থাকলে এখানে আপনার তথ্য দেখাবে। কাজের পুরস্কার Admin যাচাই ও অনুমোদনের পর Wallet-এ যোগ হবে।</p>
+ <p>কাজের পুরস্কার Admin যাচাই ও অনুমোদনের পর Wallet-এ যোগ হবে। এখানে প্রদর্শিত হিসাব Supabase থেকে লোড হয়।</p>
 </section>
 
 <div class="status" id="status">● Connecting Account...</div>
@@ -156,71 +291,81 @@ const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const el=id=>document.getElementById(id);
 
 async function loadDashboard(){
- el("status").textContent="Connecting Account...";
+ try{
+  el("status").textContent="● Connecting Account...";
 
- const {data:{user},error:authError}=await db.auth.getUser();
+  const {data:authData,error:authError}=await db.auth.getUser();
+  const user=authData?.user;
 
- if(authError || !user){
-  window.location.replace("login.html");
-  return;
+  if(authError || !user){
+   window.location.replace("login.html");
+   return;
+  }
+
+  const {data:profile,error:profileError}=await db.from("profiles")
+   .select("display_name")
+   .eq("id",user.id)
+   .maybeSingle();
+
+  if(!profileError){
+   el("welcomeName").textContent=
+    "Welcome, "+(profile?.display_name || "Worker")+" 👋";
+  }
+
+  const {data:wallet,error:walletError}=await db.from("wallets")
+   .select("balance,pending_balance")
+   .eq("user_id",user.id)
+   .maybeSingle();
+
+  if(!walletError && wallet){
+   el("balance").textContent=
+    "$"+Number(wallet.balance || 0).toFixed(2);
+   el("pendingBalance").textContent=
+    "Pending Balance: $"+Number(wallet.pending_balance || 0).toFixed(2);
+  }
+
+  const {count:taskCount,error:taskError}=await db.from("tasks")
+   .select("id",{count:"exact",head:true})
+   .eq("status","active")
+   .eq("currency","USD");
+
+  if(!taskError)el("availableTasks").textContent=taskCount ?? 0;
+
+  const {count:myCount,error:myError}=await db.from("task_submissions")
+   .select("id",{count:"exact",head:true})
+   .eq("worker_id",user.id);
+
+  if(!myError)el("myTasks").textContent=myCount ?? 0;
+
+  const {count:refCount,error:refError}=await db.from("profiles")
+   .select("id",{count:"exact",head:true})
+   .eq("referred_by",user.id);
+
+  if(!refError)el("referralCount").textContent=refCount ?? 0;
+
+  const {data:transactions,error:refEarnError}=await db.from("wallet_transactions")
+   .select("amount")
+   .eq("user_id",user.id)
+   .eq("type","referral")
+   .eq("status","completed");
+
+  if(!refEarnError){
+   const total=(transactions || []).reduce(
+    (sum,item)=>sum+Number(item.amount || 0),0
+   );
+   el("referralEarnings").textContent="$"+total.toFixed(2);
+  }
+
+  el("status").textContent="● Account Connected";
+ }catch(error){
+  console.error(error);
+  el("status").textContent="● কিছু তথ্য লোড হয়নি। আবার চেষ্টা করুন।";
  }
-
- const {data:profile}=await db.from("profiles")
-  .select("display_name")
-  .eq("id",user.id)
-  .maybeSingle();
-
- el("welcomeName").textContent=
-  "Welcome, "+(profile?.display_name || "Worker")+" 👋";
-
- const {data:wallet}=await db.from("wallets")
-  .select("balance,pending_balance")
-  .eq("user_id",user.id)
-  .maybeSingle();
-
- if(wallet){
-  el("balance").textContent="$"+Number(wallet.balance || 0).toFixed(2);
-  el("pendingBalance").textContent=
-   "Pending Balance: $"+Number(wallet.pending_balance || 0).toFixed(2);
- }
-
- const {count:taskCount,error:taskError}=await db.from("tasks")
-  .select("id",{count:"exact",head:true})
-  .eq("status","active")
-  .eq("currency","USD");
-
- if(!taskError)el("availableTasks").textContent=taskCount ?? 0;
-
- const {count:myCount,error:myError}=await db.from("task_submissions")
-  .select("id",{count:"exact",head:true})
-  .eq("worker_id",user.id);
-
- if(!myError)el("myTasks").textContent=myCount ?? 0;
-
- const {count:refCount,error:refError}=await db.from("profiles")
-  .select("id",{count:"exact",head:true})
-  .eq("referred_by",user.id);
-
- if(!refError)el("referralCount").textContent=refCount ?? 0;
-
- const {data:transactions,error:refEarnError}=await db.from("wallet_transactions")
-  .select("amount")
-  .eq("user_id",user.id)
-  .eq("type","referral")
-  .eq("status","completed");
-
- if(!refEarnError){
-  const total=(transactions || []).reduce(
-   (sum,item)=>sum+Number(item.amount || 0),0
-  );
-  el("referralEarnings").textContent="$"+total.toFixed(2);
- }
-
- el("status").textContent="● Account Connected";
 }
 
 async function logout(){
  if(!confirm("আপনি কি Logout করতে চান?"))return;
+
  const {error}=await db.auth.signOut();
  if(error){
   alert("Logout Error: "+error.message);
@@ -233,4 +378,4 @@ loadDashboard();
 </script>
 </body>
  </html>
- 
+                                                   
