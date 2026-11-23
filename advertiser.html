@@ -1,213 +1,218 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Buyer Packages - Global Earning</title>
+<meta name="theme-color" content="#080f1d">
+<title>Buyer Job Post | GLOBAL EARNING</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#0b1120;color:white;font-family:Arial,sans-serif}
-header{padding:20px;background:#111c30}
-h2{color:#4ade80;margin:0}
-main{max-width:650px;margin:auto;padding:18px}
-.card{background:#172338;padding:20px;border-radius:15px;margin-top:18px;border:1px solid #26364d}
-label{display:block;margin:15px 0 7px;font-weight:bold;color:#cbd5e1}
+body{margin:0;background:#080f1d;color:#fff;font-family:Arial,sans-serif}
+header{padding:19px;background:#0d192b;border-bottom:1px solid #34445b}
+.logo{font-size:20px;font-weight:bold;color:#f5c76b}
+header p{color:#9aabc0;font-size:12px;margin:7px 0 0}
+main{max-width:700px;margin:auto;padding:18px}
+.hero{padding:22px;border-radius:18px;background:linear-gradient(130deg,#183d36,#172b43);border:1px solid #52775d}
+.hero h1{font-size:24px;margin:0 0 10px}
+.hero p{font-size:13px;color:#d2e6dc;line-height:1.7}
+.card{background:#111e31;border:1px solid #30445d;padding:20px;border-radius:17px;margin-top:18px}
+.card h2{font-size:18px;color:#f5c76b;margin:0 0 8px}
+.note{font-size:12px;color:#9aabc0;line-height:1.7}
+label{display:block;margin:16px 0 7px;font-size:13px;font-weight:bold;color:#dbe5ef}
 input,textarea,select{
-width:100%;padding:13px;border-radius:8px;
-border:1px solid #34445e;background:#0b1120;color:white;font-size:15px
+ width:100%;padding:13px;border-radius:9px;
+ border:1px solid #3a4c64;background:#091525;color:white;
+ font-size:14px;outline:none
 }
+textarea{min-height:100px;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:#f5c76b}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 button{
-width:100%;padding:15px;margin-top:20px;
-background:#4ade80;color:#07111d;border:0;border-radius:9px;
-font-weight:bold;font-size:16px;cursor:pointer
+ width:100%;padding:15px;margin-top:20px;border:0;
+ border-radius:10px;background:linear-gradient(100deg,#f5c76b,#e6a83f);
+ color:#172033;font-weight:bold;font-size:15px;cursor:pointer
 }
-button:disabled{opacity:.5;cursor:not-allowed}
-.note{color:#aab7ca;font-size:13px;line-height:1.6}
-.pkg-box{background:#0f172a;padding:15px;border-radius:10px;margin-top:15px;border:1px solid #334155;display:none}
-.price-tag{font-size:22px;font-weight:bold;color:#4ade80;margin:10px 0}
-.payment-info{background:#1e293b;padding:14px;border-radius:8px;border-left:4px solid #fbbf24;margin-top:15px}
-.wallet-address{background:#0b1120;padding:10px;border-radius:6px;font-family:monospace;color:#38bdf8;word-break:break-all;margin-top:8px;border:1px dashed #334155;font-size:13px}
+button:disabled{opacity:.5}
+.message{margin-top:15px;font-size:13px;line-height:1.7}
+.back{display:inline-block;margin-top:16px;color:#f5c76b;text-decoration:none;font-size:13px}
+footer{text-align:center;color:#64748b;font-size:11px;padding:25px}
+@media(max-width:480px){.row{grid-template-columns:1fr}.hero h1{font-size:21px}}
 </style>
 </head>
 <body>
 <header>
-<h2>GLOBAL EARNING 🌍</h2>
-<p style="margin:5px 0 0;color:#94a3b8">Global SMM Packages (USD)</p>
+ <div class="logo">🌍 GLOBAL EARNING</div>
+ <p>BUYER WORKSPACE · JOB POSTING</p>
 </header>
+
 <main>
-<div class="card">
-<h3 style="margin-top:0">প্যাকেজ নির্বাচন ও অর্ডার করুন</h3>
-<p class="note">
-প্ল্যাটফর্ম ও প্যাকেজ সিলেক্ট করে আপনার লিংক ও পেমেন্ট তথ্য দিন। Admin পেমেন্ট যাচাই করার সাথে সাথে কাজটি চালু হয়ে যাবে।
-</p>
+<section class="hero">
+ <h1>📢 Post a New Job</h1>
+ <p>আপনার বৈধ কাজের বিবরণ দিন। Admin কাজটি যাচাই করার পর অনুমোদন করলে Worker-রা কাজটি দেখতে পারবে।</p>
+</section>
 
-<form id="orderForm">
-<label>১. প্ল্যাটফর্ম নির্বাচন করুন</label>
-<select id="platform" required>
-<option value="">-- প্ল্যাটফর্ম বেছে নিন --</option>
-<option value="facebook">Facebook (Likes / Followers / Comments)</option>
-<option value="youtube">YouTube (Subscribers / Likes / Views)</option>
-<option value="instagram">Instagram (Followers / Likes)</option>
-<option value="tiktok">TikTok (Followers / Likes)</option>
-</select>
+<section class="card">
+ <h2>নতুন কাজের তথ্য</h2>
+ <p class="note">সঠিক তথ্য দিন। বাজেট Worker-প্রতি পুরস্কার ও কর্মীর সংখ্যা অনুযায়ী হিসাব হবে।</p>
 
-<label>২. প্যাকেজ বেছে নিন</label>
-<select id="packageSelect" required disabled>
-<option value="">আগে প্ল্যাটফর্ম নির্বাচন করুন</option>
-</select>
+ <form id="jobForm">
+  <label>১. কাজের ক্যাটাগরি</label>
+  <select id="category" required>
+   <option value="">ক্যাটাগরি নির্বাচন করুন</option>
+   <option value="typing">Typing</option>
+   <option value="data-entry">Data Entry</option>
+   <option value="pdf-to-word">PDF to Word</option>
+   <option value="product-listing">Product Listing</option>
+   <option value="website-testing">Website Testing</option>
+  </select>
 
-<div id="packageDetails" class="pkg-box">
-<div id="pkgTitle" style="font-weight:bold;font-size:16px;color:#38bdf8"></div>
-<p id="pkgDesc" class="note" style="margin:5px 0"></p>
-<div class="price-tag" id="pkgPrice">$0.00 USD</div>
-</div>
+  <label>২. কাজের শিরোনাম</label>
+  <input id="title" maxlength="100" required placeholder="যেমন: ১০ পৃষ্ঠা টাইপিং করতে হবে">
 
-<label>৩. আপনার পেজ / ভিডিও / প্রোফাইল লিংক দিন</label>
-<input id="targetLink" type="url" required placeholder="https://...">
+  <label>৩. কাজের বিস্তারিত বিবরণ</label>
+  <textarea id="description" maxlength="3000" required placeholder="কী কাজ করতে হবে বিস্তারিত লিখুন"></textarea>
 
-<div class="payment-info">
-<strong style="color:#fbbf24">💳 পেমেন্ট নির্দেশনা (USD - BEP20):</strong>
-<p class="note" style="margin:6px 0 0">
-নিচের <b>BEP20 (BNB Smart Chain)</b> ওয়ালেট অ্যাড্রেসে নির্ধারিত <b>USD (USDT/USDC)</b> পাঠিয়ে নিচে TxHash / Transaction ID দিন:
-</p>
-<div class="wallet-address">0x834b1fd8d69772678116a7ee2e760e8d0676745b</div>
-</div>
+  <label>৪. Worker-এর জন্য নির্দেশনা</label>
+  <textarea id="requirements" maxlength="2000" required placeholder="কাজ জমা দেওয়ার নিয়ম ও প্রয়োজনীয় নির্দেশনা"></textarea>
 
-<label>৪. পেমেন্ট মেথড</label>
-<input id="payMethod" value="USD (BEP20)" readonly style="color:#4ade80;font-weight:bold">
+  <div class="row">
+   <div>
+    <label>৫. প্রতি Worker-এর পুরস্কার (USD)</label>
+    <input id="reward" type="number" min="0.01" step="0.01" required placeholder="যেমন 2.00">
+   </div>
+   <div>
+    <label>৬. Worker সংখ্যা</label>
+    <input id="workers" type="number" min="1" max="1000" step="1" required placeholder="যেমন 5">
+   </div>
+  </div>
 
-<label>৫. Transaction Hash (TxHash / TrxID) দিন</label>
-<input id="trxId" required placeholder="পেমেন্টের TxHash বা Transaction ID লিখুন">
+  <label>৭. কাজের শেষ তারিখ (ঐচ্ছিক)</label>
+  <input id="deadline" type="date">
 
-<button type="submit" id="submitBtn">অর্ডার সাবমিট করুন</button>
-</form>
-<p id="message" class="note" style="margin-top:15px;font-weight:bold"></p>
-</div>
+  <div class="card" style="background:#0b2b2b;border-color:#39745c">
+   <div class="note">আনুমানিক মোট Worker Budget</div>
+   <div id="total" style="font-size:27px;font-weight:bold;color:#4ade80;margin-top:8px">$0.00 USD</div>
+   <p class="note">মোট বাজেট = প্রতি Worker-এর পুরস্কার × Worker সংখ্যা।</p>
+  </div>
+
+  <button type="submit" id="submitBtn">Submit Job for Admin Review</button>
+ </form>
+
+ <div id="message" class="message"></div>
+ <a class="back" href="dashboard.html">← Dashboard-এ ফিরে যান</a>
+</section>
 </main>
 
-<script src="https://jsdelivr.net"></script>
+<footer>© 2026 GLOBAL EARNING · Worldwide 🌍</footer>
+
 <script>
-const SUPABASE_URL = "https://supabase.co";
-const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-// সব প্যাকেজ ও রেট ডলারে (USD) সেট করা আছে
-const PACKAGES = [
-  // Facebook
-  { id: "fb1", platform: "facebook", title: "1000 Facebook Page Likes & Followers", desc: "পেজ লিংকে গিয়ে লাইক এবং ফলো করতে হবে।", req: "ফলো ও লাইক করার পর স্ক্রিনশট দিন। আনফলো করলে পেমেন্ট বাতিল।", qty: 1000, buyerPrice: 1.50, workerReward: 0.001 },
-  { id: "fb2", platform: "facebook", title: "500 Facebook Post Comments & Likes", desc: "পোস্টে লাইক ও গঠনমূলক কমেন্ট করতে হবে।", req: "কমেন্ট ও লাইক দিয়ে স্ক্রিনশট জমা দিন।", qty: 500, buyerPrice: 1.20, workerReward: 0.0015 },
-  
-  // YouTube
-  { id: "yt1", platform: "youtube", title: "500 YouTube Subscribers & Video Like", desc: "চ্যানেল সাবস্ক্রাইব করে ভিডিওতে লাইক দিতে হবে।", req: "কমপক্ষে ১ মিনিট ভিডিও দেখে সাবস্ক্রাইব করে স্ক্রিনশট দিন।", qty: 500, buyerPrice: 2.50, workerReward: 0.003 },
-  { id: "yt2", platform: "youtube", title: "1000 YouTube Video Views & Likes", desc: "ভিডিওটি সম্পূর্ণ দেখে লাইক দিতে হবে।", req: "ভিডিও দেখার পর লাইক দিয়ে স্ক্রিনশট দিন।", qty: 1000, buyerPrice: 1.80, workerReward: 0.001 },
+const el=id=>document.getElementById(id);
+const reward=el("reward");
+const workers=el("workers");
+const form=el("jobForm");
+const btn=el("submitBtn");
+const message=el("message");
 
-  // Instagram
-  { id: "ig1", platform: "instagram", title: "1000 Instagram Followers", desc: "ইনস্টাগ্রাম প্রোফাইল ফলো করতে হবে।", req: "রিয়েল আইডি থেকে ফলো করে স্ক্রিনশট জমা দিন।", qty: 1000, buyerPrice: 1.20, workerReward: 0.0008 },
+function updateTotal(){
+ const r=Number(reward.value)||0;
+ const w=Number(workers.value)||0;
+ el("total").textContent="$"+(r*w).toFixed(2)+" USD";
+}
+reward.addEventListener("input",updateTotal);
+workers.addEventListener("input",updateTotal);
 
-  // TikTok
-  { id: "tt1", platform: "tiktok", title: "1000 TikTok Likes & Followers", desc: "টিকটক আইডি ফলো ও শেষ ভিডিওতে লাইক দিন।", req: "ফলো ও লাইক দিয়ে স্ক্রিনশট দিন।", qty: 1000, buyerPrice: 1.00, workerReward: 0.0006 }
-];
-
-let selectedPkg = null;
-
-const platformSelect = document.getElementById("platform");
-const packageSelect = document.getElementById("packageSelect");
-const packageDetails = document.getElementById("packageDetails");
-const submitBtn = document.getElementById("submitBtn");
-const message = document.getElementById("message");
-
-async function init(){
-  const {data, error} = await supabaseClient.auth.getUser();
-  if(error || !data.user){
-    message.style.color = "#ef4444";
-    message.textContent = "অর্ডার করার জন্য আগে Login করুন।";
-    submitBtn.disabled = true;
-  }
+async function checkLogin(){
+ const {data,error}=await db.auth.getUser();
+ if(error || !data.user){
+  message.style.color="#f87171";
+  message.textContent="কাজ পোস্ট করতে আগে Login করুন।";
+  btn.disabled=true;
+  return false;
+ }
+ return true;
 }
 
-platformSelect.addEventListener("change", function(){
-  const plat = this.value;
-  packageSelect.innerHTML = '<option value="">-- প্যাকেজ নির্বাচন করুন --</option>';
-  packageDetails.style.display = "none";
-  selectedPkg = null;
+form.addEventListener("submit",async function(e){
+ e.preventDefault();
+ message.textContent="";
 
-  if(!plat){
-    packageSelect.disabled = true;
-    return;
-  }
+ const {data:authData,error:authError}=await db.auth.getUser();
+ if(authError || !authData.user){
+  message.style.color="#f87171";
+  message.textContent="আপনার Login সেশন পাওয়া যায়নি। আবার Login করুন।";
+  return;
+ }
 
-  const filtered = PACKAGES.filter(p => p.platform === plat);
-  filtered.forEach(pkg => {
-    const opt = document.createElement("option");
-    opt.value = pkg.id;
-    opt.textContent = `${pkg.title} — $${pkg.buyerPrice.toFixed(2)} USD`;
-    packageSelect.appendChild(opt);
-  });
-  packageSelect.disabled = false;
+ const category=el("category").value;
+ const title=el("title").value.trim();
+ const description=el("description").value.trim();
+ const requirements=el("requirements").value.trim();
+ const r=Number(reward.value);
+ const w=Number(workers.value);
+ const deadline=el("deadline").value;
+
+ if(!category || !title || !description || !requirements ||
+    !Number.isFinite(r) || r<0.01 ||
+    !Number.isInteger(w) || w<1 || w>1000){
+  message.style.color="#f87171";
+  message.textContent="সব তথ্য সঠিকভাবে পূরণ করুন।";
+  return;
+ }
+
+ const total=Number((r*w).toFixed(2));
+ if(!Number.isFinite(total) || total<=0){
+  message.style.color="#f87171";
+  message.textContent="বাজেটের হিসাব সঠিক নয়।";
+  return;
+ }
+
+ btn.disabled=true;
+ btn.textContent="Submitting...";
+
+ try{
+  const taskData={
+   buyer_id:authData.user.id,
+   title:title,
+   description:description,
+   requirements:requirements,
+   category:category,
+   currency:"USD",
+   reward_per_worker:r,
+   total_budget:total,
+   workers_needed:w,
+   status:"draft",
+   payment_verified:false
+  };
+
+  if(deadline)taskData.deadline=deadline;
+
+  const {error}=await db.from("tasks").insert(taskData);
+  if(error)throw error;
+
+  message.style.color="#4ade80";
+  message.textContent="✅ Job সফলভাবে জমা হয়েছে। এটি Admin Review-এর জন্য অপেক্ষা করছে।";
+
+  form.reset();
+  updateTotal();
+
+ }catch(error){
+  console.error(error);
+  message.style.color="#f87171";
+  message.textContent="Job জমা হয়নি: "+error.message;
+ }finally{
+  btn.disabled=false;
+  btn.textContent="Submit Job for Admin Review";
+ }
 });
 
-packageSelect.addEventListener("change", function(){
-  const id = this.value;
-  selectedPkg = PACKAGES.find(p => p.id === id);
-  if(!selectedPkg){
-    packageDetails.style.display = "none";
-    return;
-  }
-  document.getElementById("pkgTitle").textContent = selectedPkg.title;
-  document.getElementById("pkgDesc").textContent = selectedPkg.desc;
-  document.getElementById("pkgPrice").textContent = `মোট মূল্য: $${selectedPkg.buyerPrice.toFixed(2)} USD (${selectedPkg.qty} জন Worker)`;
-  packageDetails.style.display = "block";
-});
-
-document.getElementById("orderForm").addEventListener("submit", async function(e){
-  e.preventDefault();
-  if(!selectedPkg) return;
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "অর্ডার জমা হচ্ছে...";
-  message.textContent = "";
-
-  try{
-    const {data: authData} = await supabaseClient.auth.getUser();
-    const link = document.getElementById("targetLink").value.trim();
-    const payMethod = document.getElementById("payMethod").value;
-    const trxId = document.getElementById("trxId").value.trim();
-
-    const workerTotalBudget = Number((selectedPkg.workerReward * selectedPkg.qty).toFixed(4));
-
-    const taskData = {
-      buyer_id: authData.user.id,
-      title: selectedPkg.title,
-      description: `${selectedPkg.desc}\n\n🔗 কাজের লিংক: ${link}\n💳 পেমেন্ট: ${payMethod} | TxHash: ${trxId} | Paid: $${selectedPkg.buyerPrice.toFixed(2)} USD`,
-      requirements: selectedPkg.req,
-      category: selectedPkg.platform,
-      currency: "USD",
-      reward_per_worker: selectedPkg.workerReward,
-      total_budget: workerTotalBudget,
-      workers_needed: selectedPkg.qty,
-      status: "draft"
-    };
-
-    const {error} = await supabaseClient.from("tasks").insert(taskData);
-    if(error) throw error;
-
-    message.style.color = "#4ade80";
-    message.textContent = "✅ অর্ডার সফলভাবে জমা হয়েছে! Admin পেমেন্ট যাচাই করার পর কাজটি চালু হবে।";
-    document.getElementById("orderForm").reset();
-    document.getElementById("payMethod").value = "USD (BEP20)";
-    packageDetails.style.display = "none";
-    packageSelect.disabled = true;
-  }catch(err){
-    message.style.color = "#ef4444";
-    message.textContent = "সমস্যা: " + err.message;
-  }finally{
-    submitBtn.disabled = false;
-    submitBtn.textContent = "অর্ডার সাবমিট করুন";
-  }
-});
-
-init();
+checkLogin();
 </script>
 </body>
-  </html>
-  
+                                            </html>
+     
