@@ -320,20 +320,51 @@ async function loadBuyerTasks(){
    verifyBtn.className="verify";
    verifyBtn.onclick=()=>verifyPayment(task.id,verifyBtn);
 
+   const rejectBtn=document.createElement("button");
+   rejectBtn.textContent="Reject Task";
+   rejectBtn.className="reject";
+   rejectBtn.onclick=()=>rejectBuyerTask(task.id,rejectBtn);
+
    const warning=document.createElement("p");
    warning.className="muted";
-   warning.textContent="বাস্তবে Buyer-এর পেমেন্ট পাওয়ার পরেই Verify চাপুন।";
+   warning.textContent="বাস্তবে Buyer-এর পেমেন্ট যাচাই না হওয়া পর্যন্ত Verify করবেন না।";
 
-   card.append(warning,verifyBtn);
+   card.append(warning,verifyBtn,rejectBtn);
   }else{
    const activateBtn=document.createElement("button");
    activateBtn.textContent="Activate Task";
    activateBtn.onclick=()=>activateTask(task.id,activateBtn);
-   card.append(activateBtn);
+
+   const note=document.createElement("p");
+   note.className="muted";
+   note.textContent="পেমেন্ট যাচাই হয়েছে। কাজটি পরীক্ষা করে তারপর Activate করুন।";
+
+   card.append(note,activateBtn);
   }
 
   box.appendChild(card);
  });
+}
+
+async function rejectBuyerTask(id,button){
+ if(!confirm("এই Buyer Task Reject করবেন? Reject করলে কাজটি বাতিল হবে।"))return;
+
+ button.disabled=true;
+ button.textContent="Rejecting...";
+
+ const {data,error}=await db.rpc("reject_buyer_task",{
+  p_task_id:id
+ });
+
+ if(error){
+  alert("Reject failed: "+error.message);
+  button.disabled=false;
+  button.textContent="Reject Task";
+  return;
+ }
+
+ alert(data||"Buyer Task rejected");
+ await loadBuyerTasks();
 }
 
 async function verifyPayment(id,button){
@@ -387,5 +418,5 @@ async function logout(){
 start();
 </script>
 </body>
-  </html>
-  
+ </html>
+ 
