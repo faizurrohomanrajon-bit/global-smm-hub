@@ -314,6 +314,7 @@ async function loadDashboard(){
 
   const {data:wallet,error:walletError}=await db.from("wallets")
    .select("balance,pending_balance")
+   .eq("currency","USD")
    .eq("user_id",user.id)
    .maybeSingle();
 
