@@ -1,13 +1,10 @@
-
-<!DOCTYPE html>
-<html lang="bn">
+<!DOCTYPE html><html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#09090d">
 <title>GLOBAL EARNING - Task Center</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#09090d;color:#f5f5f5;font-family:Arial,sans-serif;padding-bottom:95px}
@@ -22,7 +19,6 @@ h2{font-size:19px}
 button{border:0;border-radius:12px;padding:13px 17px;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5;cursor:not-allowed}
 .orange-btn{background:linear-gradient(135deg,#ff9b42,#ff6332);color:white;box-shadow:0 5px 15px #ff663344}
-.dark-btn{background:#29272e;color:white}
 .topline{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .balance{background:linear-gradient(135deg,#402419,#171116 70%);border:1px solid #68402d;border-radius:22px;padding:20px;margin-top:20px}
 .balance-number{font-size:35px;font-weight:900;margin:10px 0}
@@ -33,7 +29,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .tabs{display:flex;gap:8px;background:#15151a;padding:5px;border-radius:15px;margin:20px 0}
 .tabs button{flex:1;background:transparent;color:#999}
 .tabs button.active{background:#48271c;color:#fff;border:1px solid #a45131}
-.task-card{position:relative;background:linear-gradient(130deg,#1a191e,#101015);border:1px solid #29272e;border-radius:19px;padding:17px;margin:13px 0}
+.task-card{background:linear-gradient(130deg,#1a191e,#101015);border:1px solid #29272e;border-radius:19px;padding:17px;margin:13px 0}
 .task-head{display:flex;align-items:center;gap:13px}
 .task-icon{width:52px;height:52px;border-radius:14px;background:#29221f;display:grid;place-items:center;font-size:25px;flex-shrink:0}
 .task-title{font-size:17px;font-weight:bold;line-height:1.4}
@@ -52,71 +48,45 @@ button:disabled{opacity:.5;cursor:not-allowed}
 #userStatus{font-size:12px;color:#4ade80}
 </style>
 </head>
-
-<body>
-<header>
+<body><header>
  <div class="brand">GLOBAL<span> EARNING</span> 🌍</div>
  <div id="userStatus">Checking Login...</div>
-</header>
-
-<div class="container">
+</header><div class="container">
  <div class="topline">
   <h1>Task Center</h1>
   <button class="orange-btn" onclick="loadTasks()">↻ Refresh</button>
- </div>
-
- <div class="balance">
+ </div> <div class="balance">
   <div class="small">AVAILABLE TASKS</div>
   <div class="balance-number" id="taskCount">0</div>
   <div class="muted">এখনকার Available Tasks</div>
- </div>
-
- <div class="tabs">
+ </div> <div class="tabs">
   <button id="quickTab" class="active" onclick="setMode('quick')">QUICK TASKS</button>
   <button id="highTab" onclick="setMode('high')">HIGH VALUE</button>
- </div>
-
- <input id="search" class="search" placeholder="⌕ Search tasks..." oninput="renderTasks()">
-
- <div class="filters" id="filters">
+ </div> <input id="search" class="search" placeholder="⌕ Search tasks..." oninput="renderTasks()"> <div class="filters" id="filters">
   <button class="filter active" data-category="all">ALL</button>
-  <button class="filter" data-category="facebook">FACEBOOK</button>
-  <button class="filter" data-category="youtube">YOUTUBE</button>
-  <button class="filter" data-category="instagram">INSTAGRAM</button>
-  <button class="filter" data-category="tiktok">TIKTOK</button>
-  <button class="filter" data-category="website">WEBSITE</button>
-  <button class="filter" data-category="survey">SURVEY</button>
-  <button class="filter" data-category="testing">TESTING</button>
-  <button class="filter" data-category="other">OTHER</button>
- </div>
-
- <div class="topline">
+  <button class="filter" data-category="typing">TYPING</button>
+  <button class="filter" data-category="data-entry">DATA ENTRY</button>
+  <button class="filter" data-category="pdf-to-word">PDF TO WORD</button>
+  <button class="filter" data-category="product-listing">PRODUCT LISTING</button>
+  <button class="filter" data-category="website-testing">WEBSITE TESTING</button>
+  <button class="filter" data-category="other">OTHER JOBS</button>
+ </div> <div class="topline">
   <h2>◎ AVAILABLE TASKS</h2>
   <span class="muted" id="availableCount">0</span>
- </div>
-
- <div id="taskMessage" class="muted">Loading tasks...</div>
- <div id="taskList"></div>
-
- <section id="myTaskSection">
+ </div> <div id="taskMessage" class="muted">Loading tasks...</div>
+ <div id="taskList"></div> <section id="myTaskSection">
   <h2>MY TASK HISTORY</h2>
   <div id="submissionMessage" class="muted">Loading...</div>
   <div id="mySubmissions"></div>
  </section>
-</div>
-
-<nav class="bottom-nav">
+</div><nav class="bottom-nav">
  <a class="nav-item" href="dashboard.html"><span>⌂</span>HOME</a>
  <a class="nav-item active" href="tasks.html"><span>◎</span>TASKS</a>
  <a class="nav-item" href="#myTaskSection"><span>▤</span>MY TASKS</a>
  <a class="nav-item" href="wallet.html"><span>▣</span>WALLET</a>
  <a class="nav-item" href="profile.html"><span>☰</span>MORE</a>
-</nav>
-
-<script>
+</nav><script>
 const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
-
-// নিজের আগের Publishable Key বসাবে
 const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
 const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -133,18 +103,20 @@ function safe(value){
  })[c]);
 }
 
-function categoryName(value){
- const c=String(value||"").toLowerCase().trim();
+function normalizeCategory(value){
+ return String(value||"").toLowerCase().trim()
+  .replace(/[_–—]/g,"-")
+  .replace(/\s+/g," ");
+}
 
- if(c==="facebook")return "facebook";
- if(c==="youtube")return "youtube";
- if(c==="instagram")return "instagram";
- if(c==="tiktok")return "tiktok";
- if(c.includes("community"))return "other";
- if(c.includes("content"))return "other";
- if(c.includes("website"))return "website";
- if(c.includes("survey"))return "survey";
- if(c.includes("test"))return "testing";
+function categoryName(value){
+ const c=normalizeCategory(value);
+
+ if(c.includes("typing"))return "typing";
+ if(c.includes("data entry")||c.includes("data-entry"))return "data-entry";
+ if(c.includes("pdf")||c.includes("word"))return "pdf-to-word";
+ if(c.includes("product listing")||c.includes("product-listing"))return "product-listing";
+ if(c.includes("website testing")||c.includes("website-testing"))return "website-testing";
 
  return "other";
 }
@@ -152,14 +124,24 @@ function categoryName(value){
 function taskIcon(task){
  const c=categoryName(task.category);
  return {
-  facebook:"📘",
-  youtube:"▶️",
-  instagram:"📸",
-  tiktok:"🎵",
-  website:"💻",
-  survey:"📋",
-  testing:"🧪",
-  other:"⭐"
+  "typing":"⌨️",
+  "data-entry":"📊",
+  "pdf-to-word":"📄",
+  "product-listing":"🛍️",
+  "website-testing":"🧪",
+  "other":"⭐"
+ }[c];
+}
+
+function categoryLabel(value){
+ const c=categoryName(value);
+ return {
+  "typing":"Typing",
+  "data-entry":"Data Entry",
+  "pdf-to-word":"PDF to Word",
+  "product-listing":"Product Listing",
+  "website-testing":"Website Testing",
+  "other":String(value||"Other Job")
  }[c];
 }
 
@@ -228,7 +210,8 @@ function renderTasks(){
  let list=allTasks.filter(task=>{
   const category=categoryName(task.category);
   const matchesCategory=selectedCategory==="all"||category===selectedCategory;
-  const matchesSearch=(task.title+" "+(task.description||"")).toLowerCase().includes(search);
+  const searchText=(task.title+" "+(task.description||"")+" "+(task.category||"")).toLowerCase();
+  const matchesSearch=searchText.includes(search);
   const matchesMode=selectedMode==="quick"
    ? Number(task.reward_per_worker)<1
    : Number(task.reward_per_worker)>=1;
@@ -255,7 +238,7 @@ function renderTasks(){
     <div class="task-icon">${taskIcon(task)}</div>
     <div style="flex:1;min-width:0">
      <div class="task-title">${safe(task.title)}</div>
-     <div class="task-meta">TASK #${safe(task.id.slice(0,8))}</div>
+     <div class="task-meta">${safe(categoryLabel(task.category))} · TASK #${safe(String(task.id).slice(0,8))}</div>
     </div>
     <button class="orange-btn task-start">START</button>
    </div>
@@ -269,121 +252,118 @@ function renderTasks(){
     <h3>Task Details</h3>
     <p>${safe(task.description)}</p>
     <p class="muted">শর্ত: ${safe(task.requirements||"কোনো অতিরিক্ত শর্ত নেই")}</p>
-    <textarea class="proofInput" placeholder="কাজের প্রমাণ / Proof লিখুন"></textarea>
-    <button class="orange-btn submitBtn">SUBMIT WORK</button>
-    <p class="muted result"></p>
+    <textarea class="proofInput" placeholder="কাজের প্রমাণ / Proof লিখুন"></textarea><button class="orange-btn submitBtn">SUBMIT WORK</button>
+<p class="muted result"></p>
+
    </div>
-  `;
+  `;const startBtn=card.querySelector(".task-start");
+const detail=card.querySelector(".detail");
 
-  const startBtn=card.querySelector(".task-start");
-  const detail=card.querySelector(".detail");
+startBtn.addEventListener("click",()=>{
+detail.style.display=detail.style.display==="block"?"none":"block";
+startBtn.textContent=detail.style.display==="block"?"CLOSE":"START";
+});
 
-  startBtn.addEventListener("click",()=>{
-   detail.style.display=detail.style.display==="block"?"none":"block";
-   startBtn.textContent=detail.style.display==="block"?"CLOSE":"START";
-  });
+const submitBtn=card.querySelector(".submitBtn");
 
-  const submitBtn=card.querySelector(".submitBtn");
+submitBtn.addEventListener("click",async()=>{
+const proof=card.querySelector(".proofInput").value.trim();
+const result=card.querySelector(".result");
 
-  submitBtn.addEventListener("click",async()=>{
-   const proof=card.querySelector(".proofInput").value.trim();
-   const result=card.querySelector(".result");
+if(proof.length<5){
+result.textContent="কমপক্ষে ৫ অক্ষরের Proof লিখুন।";
+return;
+}
 
-   if(proof.length<5){
-    result.textContent="কমপক্ষে ৫ অক্ষরের Proof লিখুন।";
-    return;
-   }
+submitBtn.disabled=true;
+submitBtn.textContent="SUBMITTING...";
 
-   submitBtn.disabled=true;
-   submitBtn.textContent="SUBMITTING...";
+const {error:submitError}=await db
+.from("task_submissions")
+.insert({
+task_id:task.id,
+worker_id:currentUser.id,
+evidence:proof,
+status:"pending"
+});
 
-   const {error:submitError}=await db
-    .from("task_submissions")
-    .insert({
-     task_id:task.id,
-     worker_id:currentUser.id,
-     evidence:proof,
-     status:"pending"
-    });
+if(submitError){
+result.textContent="Error: "+submitError.message;
+submitBtn.disabled=false;
+submitBtn.textContent="SUBMIT WORK";
+return;
+}
 
-   if(submitError){
-    result.textContent="Error: "+submitError.message;
-    submitBtn.disabled=false;
-    submitBtn.textContent="SUBMIT WORK";
-    return;
-   }
+result.textContent="✓ Proof জমা হয়েছে। Admin Review করবে।";
+card.querySelector(".proofInput").disabled=true;
+submitBtn.textContent="SUBMITTED ✓";
 
-   result.textContent="✓ Proof জমা হয়েছে। Admin Review করবে।";
-   card.querySelector(".proofInput").disabled=true;
-   submitBtn.textContent="SUBMITTED ✓";
+await loadTasks();
+await loadMySubmissions();
+});
 
-   await loadTasks();
-   await loadMySubmissions();
-  });
-
-  box.appendChild(card);
- });
+box.appendChild(card);
+});
 }
 
 async function loadMySubmissions(){
- if(!currentUser)return;
+if(!currentUser)return;
 
- const msg=document.getElementById("submissionMessage");
- const box=document.getElementById("mySubmissions");
+const msg=document.getElementById("submissionMessage");
+const box=document.getElementById("mySubmissions");
 
- msg.textContent="Loading...";
- box.innerHTML="";
+msg.textContent="Loading...";
+box.innerHTML="";
 
- const {data,error}=await db
-  .from("task_submissions")
-  .select("id,task_id,status,submitted_at")
-  .eq("worker_id",currentUser.id)
-  .order("submitted_at",{ascending:false});
+const {data,error}=await db
+.from("task_submissions")
+.select("id,task_id,status,submitted_at")
+.eq("worker_id",currentUser.id)
+.order("submitted_at",{ascending:false});
 
- if(error){
-  msg.textContent="Error: "+error.message;
-  return;
- }
+if(error){
+msg.textContent="Error: "+error.message;
+return;
+}
 
- if(!data||data.length===0){
-  msg.textContent="এখনো কোনো কাজ জমা দেননি।";
-  return;
- }
+if(!data||data.length===0){
+msg.textContent="এখনো কোনো কাজ জমা দেননি।";
+return;
+}
 
- msg.textContent=data.length+"টি Submission";
+msg.textContent=data.length+"টি Submission";
 
- data.forEach(item=>{
-  const card=document.createElement("div");
-  card.className="card";
+data.forEach(item=>{
+const card=document.createElement("div");
+card.className="card";
 
-  card.innerHTML=`
-   <div class="muted">Submission #${safe(item.id.slice(0,8))}</div>
+card.innerHTML=`
+
+   <div class="muted">Submission #${safe(String(item.id).slice(0,8))}</div>
    <h3>${safe(item.status.toUpperCase())}</h3>
    <p class="muted">জমা: ${safe(item.submitted_at?new Date(item.submitted_at).toLocaleString():"")}</p>
-  `;
-
-  box.appendChild(card);
- });
+  `;box.appendChild(card);
+});
 }
 
 function setMode(mode){
- selectedMode=mode;
- document.getElementById("quickTab").classList.toggle("active",mode==="quick");
- document.getElementById("highTab").classList.toggle("active",mode==="high");
- renderTasks();
+selectedMode=mode;
+document.getElementById("quickTab").classList.toggle("active",mode==="quick");
+document.getElementById("highTab").classList.toggle("active",mode==="high");
+renderTasks();
 }
 
 document.querySelectorAll(".filter").forEach(btn=>{
- btn.addEventListener("click",()=>{
-  document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-  selectedCategory=btn.dataset.category;
-  renderTasks();
- });
+btn.addEventListener("click",()=>{
+document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+selectedCategory=btn.dataset.category;
+renderTasks();
+});
 });
 
 start();
 </script>
+
 </body>
  </html>
-   
