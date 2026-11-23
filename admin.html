@@ -3,7 +3,7 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GLOBAL EARNING - Admin Panel</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -13,6 +13,9 @@ body{margin:0;padding:20px;background:#080f1d;color:#fff;font-family:Arial,sans-
 h1{color:#4ade80}
 .card{background:#111d30;border:1px solid #26364d;border-radius:14px;padding:18px;margin:15px 0;overflow-wrap:anywhere}
 .muted{color:#9aabc1;font-size:13px}
+input,textarea,select{width:100%;padding:13px;margin:7px 0 14px;background:#081321;color:white;border:1px solid #354761;border-radius:8px;font-size:15px}
+textarea{min-height:90px;resize:vertical}
+label{font-size:14px;color:#d1d5db}
 button{background:#4ade80;color:#07111d;border:0;border-radius:8px;padding:12px 18px;font-weight:bold;cursor:pointer;margin:5px}
 button:disabled{opacity:.5;cursor:not-allowed}
 .refresh{background:#26364d;color:white}
@@ -22,19 +25,64 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .status{color:#4ade80}
 .proof{background:#081321;padding:12px;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere}
 .detail{font-size:13px;line-height:1.8;color:#d1d5db;overflow-wrap:anywhere}
+.primary{width:100%;padding:14px;font-size:16px}
 </style>
 </head>
 <body>
 <div class="container">
+
 <h1>GLOBAL EARNING 🌍</h1>
 <h2>Admin Panel</h2>
-<p class="muted">Worker Submission & Withdrawal Review</p>
+<p class="muted">Task Management, Worker Submission & Withdrawal Review</p>
 
 <div class="card">
 <h3>Admin Status</h3>
 <p id="adminStatus">Checking...</p>
 <button class="refresh" onclick="refreshAll()">Refresh Data</button>
 <button class="refresh" onclick="logout()">Logout</button>
+</div>
+
+<!-- CREATE TASK -->
+<h2>➕ Create New Task</h2>
+<div class="card">
+<form id="taskForm">
+
+<label>কাজের বিভাগ</label>
+<select id="taskCategory" required>
+<option value="">বিভাগ নির্বাচন করুন</option>
+<option value="Typing">Typing</option>
+<option value="Data Entry">Data Entry</option>
+<option value="PDF to Word">PDF to Word</option>
+<option value="Product Listing">Product Listing</option>
+<option value="Website Testing">Website Testing</option>
+</select>
+
+<label>কাজের নাম</label>
+<input id="taskTitle" placeholder="যেমন: ৫ পৃষ্ঠার Typing কাজ" required>
+
+<label>কাজের বিবরণ</label>
+<textarea id="taskDescription" placeholder="Worker-কে কী করতে হবে লিখুন" required></textarea>
+
+<label>কাজের লিংক (ঐচ্ছিক)</label>
+<input id="taskUrl" type="url" placeholder="https://example.com">
+
+<label>কাজের নিয়ম ও নির্দেশনা</label>
+<textarea id="taskRequirements" placeholder="কীভাবে কাজ জমা দিতে হবে লিখুন" required></textarea>
+
+<label>প্রতি Worker-এর পারিশ্রমিক (USD)</label>
+<input id="taskReward" type="number" min="0.01" step="0.01" placeholder="যেমন: 2" required>
+
+<label>কতজন Worker কাজ করবে?</label>
+<input id="taskWorkers" type="number" min="1" step="1" placeholder="যেমন: 5" required>
+
+<label>মোট Worker Reward Budget (USD)</label>
+<input id="taskBudget" readonly placeholder="স্বয়ংক্রিয় হিসাব">
+
+<p class="muted">মোট বাজেট = প্রতি Worker-এর পারিশ্রমিক × Worker সংখ্যা।</p>
+
+<button class="primary" id="createTaskBtn" type="submit">Create Task</button>
+<p id="taskMessage" class="muted"></p>
+</form>
 </div>
 
 <h2>Pending Submissions</h2>
@@ -61,6 +109,7 @@ const withdrawalMessage=document.getElementById("withdrawalMessage");
 const withdrawals=document.getElementById("withdrawals");
 
 let adminVerified=false;
+let currentAdminUser=null;
 
 function safe(value){
  return String(value??"").replace(/[&<>"']/g,c=>({
@@ -92,7 +141,9 @@ async function start(){
    return;
   }
 
+  currentAdminUser=user;
   adminVerified=true;
+
   document.getElementById("adminStatus").innerHTML=
    '<span class="status">Admin verified ✓</span>';
 
@@ -109,6 +160,107 @@ async function refreshAll(){
  await loadBuyerTasks();
 }
 
+/* AUTO CALCULATE TASK BUDGET */
+function calculateBudget(){
+ const reward=Number(document.getElementById("taskReward").value);
+ const workers=Number(document.getElementById("taskWorkers").value);
+
+ document.getElementById("taskBudget").value=
+  reward>0&&workers>0?(reward*workers).toFixed(2):"";
+}
+
+document.getElementById("taskReward").addEventListener("input",calculateBudget);
+document.getElementById("taskWorkers").addEventListener("input",calculateBudget);
+
+/* CREATE TASK */
+document.getElementById("taskForm").addEventListener("submit",async function(e){
+ e.preventDefault();
+
+ if(!adminVerified||!currentAdminUser){
+  alert("Admin verification নেই।");
+  return;
+ }
+
+ const category=document.getElementById("taskCategory").value;
+ const title=document.getElementById("taskTitle").value.trim();
+ const description=document.getElementById("taskDescription").value.trim();
+ const jobUrl=document.getElementById("taskUrl").value.trim();
+ const requirements=document.getElementById("taskRequirements").value.trim();
+ const reward=Number(document.getElementById("taskReward").value);
+ const workers=Number(document.getElementById("taskWorkers").value);
+ const budget=reward*workers;
+
+ const allowedCategories=[
+  "Typing","Data Entry","PDF to Word",
+  "Product Listing","Website Testing"
+ ];
+
+ if(!allowedCategories.includes(category)){
+  alert("সঠিক কাজের বিভাগ নির্বাচন করুন।");
+  return;
+ }
+
+ if(!title||!description||!requirements||!Number.isFinite(reward)||!Number.isInteger(workers)||reward<=0||workers<1){
+  alert("সব তথ্য সঠিকভাবে পূরণ করুন।");
+  return;
+ }
+
+ if(jobUrl){
+  try{
+   const parsed=new URL(jobUrl);
+   if(!["http:","https:"].includes(parsed.protocol))throw new Error();
+  }catch{
+   alert("সঠিক Website URL দিন।");
+   return;
+  }
+ }
+
+ const button=document.getElementById("createTaskBtn");
+ const taskMessage=document.getElementById("taskMessage");
+
+ button.disabled=true;
+ button.textContent="Creating...";
+ taskMessage.textContent="কাজ তৈরি হচ্ছে...";
+
+ const taskData={
+  buyer_id:currentAdminUser.id,
+  category:category,
+  title:title,
+  description:description,
+  job_url:jobUrl||null,
+  requirements:requirements,
+  reward_per_worker:reward,
+  workers_needed:workers,
+  total_budget:budget,
+  currency:"USD",
+  status:"draft",
+  payment_verified:false
+ };
+
+ const {data,error}=await db.from("tasks")
+  .insert(taskData)
+  .select("id")
+  .single();
+
+ button.disabled=false;
+ button.textContent="Create Task";
+
+ if(error){
+  taskMessage.textContent="Error: "+error.message;
+  alert("Task তৈরি হয়নি: "+error.message);
+  return;
+ }
+
+ taskMessage.textContent="Task তৈরি হয়েছে। Payment যাচাইয়ের জন্য Pending আছে।";
+ alert("Task তৈরি হয়েছে! এখন Pending Tasks থেকে পেমেন্ট যাচাই করে Activate করতে পারবেন।");
+
+ document.getElementById("taskForm").reset();
+ document.getElementById("taskBudget").value="";
+
+ await loadBuyerTasks();
+});
+
+/* WORKER SUBMISSIONS */
 async function loadSubmissions(){
  message.textContent="Loading submissions...";
  submissions.innerHTML="";
@@ -177,6 +329,7 @@ async function approve(id,button){
  await loadSubmissions();
 }
 
+/* WITHDRAWAL REQUESTS */
 async function loadWithdrawalRequests(){
  withdrawalMessage.textContent="Loading Withdrawal Requests...";
  withdrawals.innerHTML="";
@@ -275,23 +428,23 @@ async function reviewWithdrawal(id,action,button){
  await loadWithdrawalRequests();
 }
 
-
+/* PENDING TASKS */
 async function loadBuyerTasks(){
  const box=document.getElementById("buyerTasks");
- box.innerHTML="<h2>Buyer Pending Tasks</h2>";
+ box.innerHTML="<h2>Pending Tasks - Payment Review</h2>";
 
  const {data,error}=await db.from("tasks")
-  .select("id,title,description,reward_per_worker,currency,status,payment_verified")
+  .select("id,title,description,reward_per_worker,currency,status,payment_verified,category,workers_needed,total_budget")
   .eq("status","draft")
   .order("created_at",{ascending:false});
 
  if(error){
-  box.innerHTML+="<p class='muted'>Buyer Tasks Error: "+safe(error.message)+"</p>";
+  box.innerHTML+="<p class='muted'>Tasks Error: "+safe(error.message)+"</p>";
   return;
  }
 
  if(!data||data.length===0){
-  box.innerHTML+="<p class='muted'>কোনো Pending Buyer Task নেই।</p>";
+  box.innerHTML+="<p class='muted'>কোনো Pending Task নেই।</p>";
   return;
  }
 
@@ -302,18 +455,23 @@ async function loadBuyerTasks(){
   const title=document.createElement("h3");
   title.textContent=task.title||"Untitled Task";
 
+  const details=document.createElement("div");
+  details.className="detail";
+  details.textContent=
+   "Category: "+(task.category||"")+
+   " | Workers: "+task.workers_needed+
+   " | Reward: $"+task.reward_per_worker+
+   " | Total Budget: $"+task.total_budget;
+
   const desc=document.createElement("p");
   desc.textContent=task.description||"";
-
-  const reward=document.createElement("p");
-  reward.textContent="Reward: "+task.reward_per_worker+" "+task.currency;
 
   const payment=document.createElement("p");
   payment.className="detail";
   payment.textContent="Payment Verification: "+
    (task.payment_verified?"Verified ✓":"Not Verified");
 
-  card.append(title,desc,reward,payment);
+  card.append(title,details,desc,payment);
 
   const rejectBtn=document.createElement("button");
   rejectBtn.textContent="Reject Task";
@@ -329,7 +487,7 @@ async function loadBuyerTasks(){
 
    const warning=document.createElement("p");
    warning.className="muted";
-   warning.textContent="বাস্তবে Buyer-এর পেমেন্ট যাচাই না হওয়া পর্যন্ত Verify করবেন না।";
+   warning.textContent="Buyer-এর পেমেন্ট বাস্তবে পাওয়ার পরেই Verify করবেন।";
 
    card.append(warning,verifyBtn);
   }else{
@@ -337,20 +495,15 @@ async function loadBuyerTasks(){
    activateBtn.textContent="Activate Task";
    activateBtn.onclick=()=>activateTask(task.id,activateBtn);
 
-   const note=document.createElement("p");
-   note.className="muted";
-   note.textContent="পেমেন্ট যাচাই হয়েছে। কাজটি পরীক্ষা করে তারপর Activate করুন।";
-
-   card.append(note,activateBtn);
+   card.appendChild(activateBtn);
   }
 
   box.appendChild(card);
  });
-    }
+}
 
- 
 async function rejectBuyerTask(id,button){
- if(!confirm("এই Buyer Task Reject করবেন? Reject করলে কাজটি বাতিল হবে।"))return;
+ if(!confirm("এই Task বাতিল করবেন?"))return;
 
  button.disabled=true;
  button.textContent="Rejecting...";
@@ -366,7 +519,7 @@ async function rejectBuyerTask(id,button){
   return;
  }
 
- alert(data||"Buyer Task rejected");
+ alert(data||"Task rejected");
  await loadBuyerTasks();
 }
 
