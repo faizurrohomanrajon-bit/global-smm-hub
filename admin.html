@@ -275,6 +275,7 @@ async function reviewWithdrawal(id,action,button){
  await loadWithdrawalRequests();
 }
 
+
 async function loadBuyerTasks(){
  const box=document.getElementById("buyerTasks");
  box.innerHTML="<h2>Buyer Pending Tasks</h2>";
@@ -314,22 +315,23 @@ async function loadBuyerTasks(){
 
   card.append(title,desc,reward,payment);
 
+  const rejectBtn=document.createElement("button");
+  rejectBtn.textContent="Reject Task";
+  rejectBtn.className="reject";
+  rejectBtn.onclick=()=>rejectBuyerTask(task.id,rejectBtn);
+  card.appendChild(rejectBtn);
+
   if(!task.payment_verified){
    const verifyBtn=document.createElement("button");
    verifyBtn.textContent="Verify Payment";
    verifyBtn.className="verify";
    verifyBtn.onclick=()=>verifyPayment(task.id,verifyBtn);
 
-   const rejectBtn=document.createElement("button");
-   rejectBtn.textContent="Reject Task";
-   rejectBtn.className="reject";
-   rejectBtn.onclick=()=>rejectBuyerTask(task.id,rejectBtn);
-
    const warning=document.createElement("p");
    warning.className="muted";
    warning.textContent="বাস্তবে Buyer-এর পেমেন্ট যাচাই না হওয়া পর্যন্ত Verify করবেন না।";
 
-   card.append(warning,verifyBtn,rejectBtn);
+   card.append(warning,verifyBtn);
   }else{
    const activateBtn=document.createElement("button");
    activateBtn.textContent="Activate Task";
@@ -344,8 +346,9 @@ async function loadBuyerTasks(){
 
   box.appendChild(card);
  });
-}
+    }
 
+ 
 async function rejectBuyerTask(id,button){
  if(!confirm("এই Buyer Task Reject করবেন? Reject করলে কাজটি বাতিল হবে।"))return;
 
