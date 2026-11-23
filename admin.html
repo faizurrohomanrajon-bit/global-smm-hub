@@ -22,10 +22,13 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .reject{background:#ef4444;color:white}
 .paid{background:#38bdf8;color:#07111d}
 .verify{background:#fbbf24;color:#172033}
+.testbtn{background:#a78bfa;color:#111827}
 .status{color:#4ade80}
 .proof{background:#081321;padding:12px;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere}
 .detail{font-size:13px;line-height:1.8;color:#d1d5db;overflow-wrap:anywhere}
 .primary{width:100%;padding:14px;font-size:16px}
+.testlabel{display:flex;align-items:center;gap:10px;margin:12px 0;padding:12px;background:#201b35;border-radius:8px}
+.testlabel input{width:auto;margin:0}
 </style>
 </head>
 <body>
@@ -42,7 +45,6 @@ button:disabled{opacity:.5;cursor:not-allowed}
 <button class="refresh" onclick="logout()">Logout</button>
 </div>
 
-<!-- CREATE TASK -->
 <h2>➕ Create New Task</h2>
 <div class="card">
 <form id="taskForm">
@@ -58,27 +60,30 @@ button:disabled{opacity:.5;cursor:not-allowed}
 </select>
 
 <label>কাজের নাম</label>
-<input id="taskTitle" placeholder="যেমন: ৫ পৃষ্ঠার Typing কাজ" required>
+<input id="taskTitle" required>
 
 <label>কাজের বিবরণ</label>
-<textarea id="taskDescription" placeholder="Worker-কে কী করতে হবে লিখুন" required></textarea>
+<textarea id="taskDescription" required></textarea>
 
 <label>কাজের লিংক (ঐচ্ছিক)</label>
 <input id="taskUrl" type="url" placeholder="https://example.com">
 
 <label>কাজের নিয়ম ও নির্দেশনা</label>
-<textarea id="taskRequirements" placeholder="কীভাবে কাজ জমা দিতে হবে লিখুন" required></textarea>
+<textarea id="taskRequirements" required></textarea>
 
 <label>প্রতি Worker-এর পারিশ্রমিক (USD)</label>
-<input id="taskReward" type="number" min="0.01" step="0.01" placeholder="যেমন: 2" required>
+<input id="taskReward" type="number" min="0.01" step="0.01" required>
 
 <label>কতজন Worker কাজ করবে?</label>
-<input id="taskWorkers" type="number" min="1" step="1" placeholder="যেমন: 5" required>
+<input id="taskWorkers" type="number" min="1" step="1" required>
 
 <label>মোট Worker Reward Budget (USD)</label>
-<input id="taskBudget" readonly placeholder="স্বয়ংক্রিয় হিসাব">
+<input id="taskBudget" readonly>
 
-<p class="muted">মোট বাজেট = প্রতি Worker-এর পারিশ্রমিক × Worker সংখ্যা।</p>
+<label class="testlabel">
+<input type="checkbox" id="isTestTask">
+<span>এটি পরীক্ষামূলক Test Task (কোনো আসল পেমেন্ট হবে না)</span>
+</label>
 
 <button class="primary" id="createTaskBtn" type="submit">Create Task</button>
 <p id="taskMessage" class="muted"></p>
@@ -100,7 +105,6 @@ button:disabled{opacity:.5;cursor:not-allowed}
 <script>
 const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
 const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
-
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const message=document.getElementById("message");
@@ -113,15 +117,14 @@ let currentAdminUser=null;
 
 function safe(value){
  return String(value??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",
-  '"':"&quot;","'":"&#039;"
+ "&":"&amp;","<":"&lt;",">":"&gt;",
+ '"':"&quot;","'":"&#039;"
  })[c]);
 }
 
 async function start(){
  try{
   const {data:{user},error}=await db.auth.getUser();
-
   if(error||!user){
    document.getElementById("adminStatus").textContent="Login নেই।";
    message.textContent="Please login first.";
@@ -129,10 +132,8 @@ async function start(){
   }
 
   const {data:isAdmin,error:adminError}=await db.rpc("is_admin");
-
   if(adminError){
-   document.getElementById("adminStatus").textContent=
-    "Admin যাচাই Error: "+adminError.message;
+   document.getElementById("adminStatus").textContent="Admin যাচাই Error: "+adminError.message;
    return;
   }
 
@@ -143,10 +144,7 @@ async function start(){
 
   currentAdminUser=user;
   adminVerified=true;
-
-  document.getElementById("adminStatus").innerHTML=
-   '<span class="status">Admin verified ✓</span>';
-
+  document.getElementById("adminStatus").innerHTML='<span class="status">Admin verified ✓</span>';
   await refreshAll();
  }catch(error){
   document.getElementById("adminStatus").textContent="Error: "+error.message;
@@ -160,26 +158,19 @@ async function refreshAll(){
  await loadBuyerTasks();
 }
 
-/* AUTO CALCULATE TASK BUDGET */
 function calculateBudget(){
  const reward=Number(document.getElementById("taskReward").value);
  const workers=Number(document.getElementById("taskWorkers").value);
-
  document.getElementById("taskBudget").value=
   reward>0&&workers>0?(reward*workers).toFixed(2):"";
 }
-
 document.getElementById("taskReward").addEventListener("input",calculateBudget);
 document.getElementById("taskWorkers").addEventListener("input",calculateBudget);
 
 /* CREATE TASK */
 document.getElementById("taskForm").addEventListener("submit",async function(e){
  e.preventDefault();
-
- if(!adminVerified||!currentAdminUser){
-  alert("Admin verification নেই।");
-  return;
- }
+ if(!adminVerified||!currentAdminUser){alert("Admin verification নেই।");return;}
 
  const category=document.getElementById("taskCategory").value;
  const title=document.getElementById("taskTitle").value.trim();
@@ -188,59 +179,44 @@ document.getElementById("taskForm").addEventListener("submit",async function(e){
  const requirements=document.getElementById("taskRequirements").value.trim();
  const reward=Number(document.getElementById("taskReward").value);
  const workers=Number(document.getElementById("taskWorkers").value);
- const budget=reward*workers;
+ const isTest=document.getElementById("isTestTask").checked;
 
- const allowedCategories=[
-  "Typing","Data Entry","PDF to Word",
-  "Product Listing","Website Testing"
- ];
+ const allowedCategories=["Typing","Data Entry","PDF to Word","Product Listing","Website Testing"];
 
  if(!allowedCategories.includes(category)){
-  alert("সঠিক কাজের বিভাগ নির্বাচন করুন।");
-  return;
+  alert("সঠিক কাজের বিভাগ নির্বাচন করুন।");return;
  }
-
  if(!title||!description||!requirements||!Number.isFinite(reward)||!Number.isInteger(workers)||reward<=0||workers<1){
-  alert("সব তথ্য সঠিকভাবে পূরণ করুন।");
-  return;
+  alert("সব তথ্য সঠিকভাবে পূরণ করুন।");return;
  }
-
  if(jobUrl){
   try{
    const parsed=new URL(jobUrl);
    if(!["http:","https:"].includes(parsed.protocol))throw new Error();
-  }catch{
-   alert("সঠিক Website URL দিন।");
-   return;
-  }
+  }catch{alert("সঠিক Website URL দিন।");return;}
  }
 
  const button=document.getElementById("createTaskBtn");
  const taskMessage=document.getElementById("taskMessage");
-
  button.disabled=true;
  button.textContent="Creating...";
  taskMessage.textContent="কাজ তৈরি হচ্ছে...";
 
  const taskData={
   buyer_id:currentAdminUser.id,
-  category:category,
-  title:title,
-  description:description,
+  category,title,description,
   job_url:jobUrl||null,
-  requirements:requirements,
+  requirements,
   reward_per_worker:reward,
   workers_needed:workers,
-  total_budget:budget,
+  total_budget:reward*workers,
   currency:"USD",
   status:"draft",
-  payment_verified:false
+  payment_verified:false,
+  is_test:isTest
  };
 
- const {data,error}=await db.from("tasks")
-  .insert(taskData)
-  .select("id")
-  .single();
+ const {error}=await db.from("tasks").insert(taskData);
 
  button.disabled=false;
  button.textContent="Create Task";
@@ -251,12 +227,16 @@ document.getElementById("taskForm").addEventListener("submit",async function(e){
   return;
  }
 
- taskMessage.textContent="Task তৈরি হয়েছে। Payment যাচাইয়ের জন্য Pending আছে।";
- alert("Task তৈরি হয়েছে! এখন Pending Tasks থেকে পেমেন্ট যাচাই করে Activate করতে পারবেন।");
+ taskMessage.textContent=isTest?
+  "Test Task তৈরি হয়েছে। এটি আলাদাভাবে Activate করতে হবে।":
+  "Task তৈরি হয়েছে। বাস্তব পেমেন্ট যাচাইয়ের জন্য Pending আছে।";
+
+ alert(isTest?
+  "Test Task তৈরি হয়েছে! Pending Tasks থেকে Activate Test Task চাপুন।":
+  "Task তৈরি হয়েছে! বাস্তব পেমেন্ট পাওয়ার পর Verify করবেন।");
 
  document.getElementById("taskForm").reset();
  document.getElementById("taskBudget").value="";
-
  await loadBuyerTasks();
 });
 
@@ -266,57 +246,47 @@ async function loadSubmissions(){
  submissions.innerHTML="";
 
  const {data,error}=await db.from("task_submissions")
-  .select(`
-   id,task_id,worker_id,evidence,status,submitted_at,
-   tasks(title,reward_per_worker,currency)
-  `)
-  .eq("status","pending")
-  .order("submitted_at",{ascending:true});
+ .select("id,task_id,worker_id,evidence,status,submitted_at,tasks(title,reward_per_worker,currency,is_test)")
+ .eq("status","pending")
+ .order("submitted_at",{ascending:true});
 
- if(error){
-  message.textContent="Error: "+error.message;
-  return;
- }
-
- if(!data||data.length===0){
-  message.textContent="কোনো Pending Submission নেই।";
-  return;
- }
+ if(error){message.textContent="Error: "+error.message;return;}
+ if(!data||data.length===0){message.textContent="কোনো Pending Submission নেই।";return;}
 
  message.textContent=data.length+"টি Pending Submission";
 
  data.forEach(item=>{
-  const task=item.tasks||{};
+  const task=Array.isArray(item.tasks)?item.tasks[0]:(item.tasks||{});
+  const isTest=task.is_test===true;
   const card=document.createElement("div");
   card.className="card";
 
   card.innerHTML=`
-   <h3>${safe(task.title||"Untitled Task")}</h3>
+   <h3>${safe(task.title||"Untitled Task")} ${isTest?"🧪 TEST TASK":""}</h3>
    <p class="muted">Submission ID: ${safe(item.id)}</p>
    <p>Worker ID: ${safe(item.worker_id)}</p>
    <p>Reward: $${safe(task.reward_per_worker)} ${safe(task.currency)}</p>
    <p>Submitted: ${safe(item.submitted_at?new Date(item.submitted_at).toLocaleString():"Unknown")}</p>
    <h4>Worker Proof</h4>
    <div class="proof">${safe(item.evidence||"No proof provided")}</div>
-   <button class="approve">Approve & Pay</button>
+   <p class="muted">${isTest?"Test review: কোনো Wallet Payment হবে না।":"Real task: অনুমোদনে Worker Wallet-এ Reward যাবে।"}</p>
+   <button class="${isTest?"testbtn":"approve"}">${isTest?"Review Test Submission":"Approve & Pay"}</button>
   `;
 
-  card.querySelector(".approve").onclick=()=>approve(
-   item.id,card.querySelector(".approve")
-  );
+  card.querySelector("button").onclick=()=>isTest?
+   reviewTestSubmission(item.id,card.querySelector("button")):
+   approve(item.id,card.querySelector("button"));
+
   submissions.appendChild(card);
  });
 }
 
 async function approve(id,button){
- if(!confirm("Submission অনুমোদন করে Worker-কে USD Reward দিতে চান?"))return;
-
+ if(!confirm("বাস্তব কাজ যাচাই করেছেন? অনুমোদনে Worker-কে USD Reward দেওয়া হবে।"))return;
  button.disabled=true;
  button.textContent="Processing...";
 
- const {data,error}=await db.rpc("approve_task_and_pay_worker",{
-  p_submission_id:id
- });
+ const {data,error}=await db.rpc("approve_task_and_pay_worker",{p_submission_id:id});
 
  if(error){
   alert("Approval failed: "+error.message);
@@ -324,8 +294,24 @@ async function approve(id,button){
   button.textContent="Approve & Pay";
   return;
  }
-
  alert("Approved! Worker balance: $"+data);
+ await loadSubmissions();
+}
+
+async function reviewTestSubmission(id,button){
+ if(!confirm("Test Submission Review করবেন? এতে কোনো Worker Wallet-এ টাকা যোগ হবে না।"))return;
+ button.disabled=true;
+ button.textContent="Reviewing...";
+
+ const {data,error}=await db.rpc("review_test_task_submission",{p_submission_id:id});
+
+ if(error){
+  alert("Test Review failed: "+error.message);
+  button.disabled=false;
+  button.textContent="Review Test Submission";
+  return;
+ }
+ alert(data||"Test submission reviewed. No payment made.");
  await loadSubmissions();
 }
 
@@ -335,26 +321,18 @@ async function loadWithdrawalRequests(){
  withdrawals.innerHTML="";
 
  const {data,error}=await db.from("withdrawal_requests")
-  .select("id,user_id,amount,currency,method,payout_address,status,created_at")
-  .in("status",["pending","approved"])
-  .order("created_at",{ascending:true});
+ .select("id,user_id,amount,currency,method,payout_address,status,created_at")
+ .in("status",["pending","approved"])
+ .order("created_at",{ascending:true});
 
- if(error){
-  withdrawalMessage.textContent="Withdrawal Error: "+error.message;
-  return;
- }
-
- if(!data||data.length===0){
-  withdrawalMessage.textContent="কোনো Pending বা Approved Withdrawal নেই।";
-  return;
- }
+ if(error){withdrawalMessage.textContent="Withdrawal Error: "+error.message;return;}
+ if(!data||data.length===0){withdrawalMessage.textContent="কোনো Pending বা Approved Withdrawal নেই।";return;}
 
  withdrawalMessage.textContent=data.length+"টি Withdrawal Request";
 
  data.forEach(item=>{
   const card=document.createElement("div");
   card.className="card";
-
   card.innerHTML=`
    <h3>💸 ${safe(item.method)}</h3>
    <div class="detail">
@@ -367,7 +345,6 @@ async function loadWithdrawalRequests(){
    </div>
    <div class="actions"></div>
   `;
-
   const actions=card.querySelector(".actions");
 
   if(item.status==="pending"){
@@ -379,7 +356,6 @@ async function loadWithdrawalRequests(){
    rejectBtn.textContent="Reject & Refund";
    rejectBtn.className="reject";
    rejectBtn.onclick=()=>reviewWithdrawal(item.id,"reject",rejectBtn);
-
    actions.append(approveBtn,rejectBtn);
   }
 
@@ -392,10 +368,8 @@ async function loadWithdrawalRequests(){
    const note=document.createElement("p");
    note.className="muted";
    note.textContent="বাস্তবে টাকা পাঠানোর পরেই Mark Paid চাপুন।";
-
    actions.append(note,paidBtn);
   }
-
   withdrawals.appendChild(card);
  });
 }
@@ -406,7 +380,6 @@ async function reviewWithdrawal(id,action,button){
   reject:"Request বাতিল করে Worker-এর ব্যালেন্স ফেরত দেবেন?",
   paid:"বাস্তবে টাকা পাঠানো হয়ে থাকলেই Paid করুন। টাকা পাঠিয়েছেন?"
  };
-
  if(!confirm(prompts[action]))return;
 
  button.disabled=true;
@@ -419,11 +392,9 @@ async function reviewWithdrawal(id,action,button){
  if(error){
   alert("Withdrawal Error: "+error.message);
   button.disabled=false;
-  button.textContent=action==="approve"?"Approve":
-   action==="reject"?"Reject & Refund":"Mark Paid";
+  button.textContent=action==="approve"?"Approve":action==="reject"?"Reject & Refund":"Mark Paid";
   return;
  }
-
  alert(data||"Request updated successfully");
  await loadWithdrawalRequests();
 }
@@ -431,29 +402,22 @@ async function reviewWithdrawal(id,action,button){
 /* PENDING TASKS */
 async function loadBuyerTasks(){
  const box=document.getElementById("buyerTasks");
- box.innerHTML="<h2>Pending Tasks - Payment Review</h2>";
+ box.innerHTML="<h2>Pending Tasks - Review</h2>";
 
  const {data,error}=await db.from("tasks")
-  .select("id,title,description,reward_per_worker,currency,status,payment_verified,category,workers_needed,total_budget")
-  .eq("status","draft")
-  .order("created_at",{ascending:false});
+ .select("id,title,description,reward_per_worker,currency,status,payment_verified,category,workers_needed,total_budget,is_test")
+ .eq("status","draft")
+ .order("created_at",{ascending:false});
 
- if(error){
-  box.innerHTML+="<p class='muted'>Tasks Error: "+safe(error.message)+"</p>";
-  return;
- }
-
- if(!data||data.length===0){
-  box.innerHTML+="<p class='muted'>কোনো Pending Task নেই।</p>";
-  return;
- }
+ if(error){box.innerHTML+="<p class='muted'>Tasks Error: "+safe(error.message)+"</p>";return;}
+ if(!data||data.length===0){box.innerHTML+="<p class='muted'>কোনো Pending Task নেই।</p>";return;}
 
  data.forEach(task=>{
   const card=document.createElement("div");
   card.className="card";
 
   const title=document.createElement("h3");
-  title.textContent=task.title||"Untitled Task";
+  title.textContent=(task.is_test?"🧪 TEST TASK — ":"")+ (task.title||"Untitled Task");
 
   const details=document.createElement("div");
   details.className="detail";
@@ -468,8 +432,9 @@ async function loadBuyerTasks(){
 
   const payment=document.createElement("p");
   payment.className="detail";
-  payment.textContent="Payment Verification: "+
-   (task.payment_verified?"Verified ✓":"Not Verified");
+  payment.textContent=task.is_test?
+   "Test Task: Payment Verification লাগবে না।":
+   "Payment Verification: "+(task.payment_verified?"Verified ✓":"Not Verified");
 
   card.append(title,details,desc,payment);
 
@@ -479,88 +444,92 @@ async function loadBuyerTasks(){
   rejectBtn.onclick=()=>rejectBuyerTask(task.id,rejectBtn);
   card.appendChild(rejectBtn);
 
-  if(!task.payment_verified){
+  if(task.is_test===true){
+   const activateBtn=document.createElement("button");
+   activateBtn.textContent="Activate Test Task";
+   activateBtn.className="testbtn";
+   activateBtn.onclick=()=>activateTestTask(task.id,activateBtn);
+   card.appendChild(activateBtn);
+  }else if(!task.payment_verified){
+   const warning=document.createElement("p");
+   warning.className="muted";
+   warning.textContent="Buyer-এর বাস্তব পেমেন্ট পাওয়ার পরেই Verify করবেন।";
+
    const verifyBtn=document.createElement("button");
    verifyBtn.textContent="Verify Payment";
    verifyBtn.className="verify";
    verifyBtn.onclick=()=>verifyPayment(task.id,verifyBtn);
-
-   const warning=document.createElement("p");
-   warning.className="muted";
-   warning.textContent="Buyer-এর পেমেন্ট বাস্তবে পাওয়ার পরেই Verify করবেন।";
-
    card.append(warning,verifyBtn);
   }else{
    const activateBtn=document.createElement("button");
    activateBtn.textContent="Activate Task";
    activateBtn.onclick=()=>activateTask(task.id,activateBtn);
-
    card.appendChild(activateBtn);
   }
-
   box.appendChild(card);
  });
 }
 
+async function activateTestTask(id,button){
+ if(!confirm("Test Task চালু করবেন? এতে কোনো Buyer Payment বা Worker Wallet Payment হবে না।"))return;
+ button.disabled=true;
+ button.textContent="Activating...";
+
+ const {data,error}=await db.rpc("activate_test_task",{p_task_id:id});
+ if(error){
+  alert("Test activation failed: "+error.message);
+  button.disabled=false;
+  button.textContent="Activate Test Task";
+  return;
+ }
+ alert(data||"Test task activated");
+ await loadBuyerTasks();
+}
+
 async function rejectBuyerTask(id,button){
  if(!confirm("এই Task বাতিল করবেন?"))return;
-
  button.disabled=true;
  button.textContent="Rejecting...";
 
- const {data,error}=await db.rpc("reject_buyer_task",{
-  p_task_id:id
- });
-
+ const {data,error}=await db.rpc("reject_buyer_task",{p_task_id:id});
  if(error){
   alert("Reject failed: "+error.message);
   button.disabled=false;
   button.textContent="Reject Task";
   return;
  }
-
  alert(data||"Task rejected");
  await loadBuyerTasks();
 }
 
 async function verifyPayment(id,button){
  if(!confirm("Buyer-এর পেমেন্ট বাস্তবে পেয়েছেন এবং যাচাই করেছেন?"))return;
-
  button.disabled=true;
  button.textContent="Verifying...";
 
- const {data,error}=await db.rpc("verify_buyer_payment",{
-  p_task_id:id
- });
-
+ const {data,error}=await db.rpc("verify_buyer_payment",{p_task_id:id});
  if(error){
   alert("Payment verification failed: "+error.message);
   button.disabled=false;
   button.textContent="Verify Payment";
   return;
  }
-
  alert(data||"Payment verified");
  await loadBuyerTasks();
 }
 
 async function activateTask(id,button){
  if(!confirm("পেমেন্ট যাচাই করা হয়েছে। এখন Task Active করবেন?"))return;
-
  button.disabled=true;
  button.textContent="Activating...";
 
- const {data,error}=await db.rpc("approve_buyer_task",{
-  p_task_id:id
- });
-
+ const {data,error}=await db.rpc("approve_buyer_task",{p_task_id:id});
  if(error){
   alert("Activation failed: "+error.message);
   button.disabled=false;
   button.textContent="Activate Task";
   return;
  }
-
  alert(data||"Task activated");
  await loadBuyerTasks();
 }
