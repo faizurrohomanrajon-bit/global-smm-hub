@@ -24,7 +24,7 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 .balance p{font-size:12px;color:#c5f5d9}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
 .action{padding:16px;border-radius:14px;text-align:center;font-weight:bold;font-size:14px}
-.deposit{background:#4ade80;color:#052e16}
+.mytasks{background:#4ade80;color:#052e16}
 .withdraw{background:#172338;border:1px solid #34445c;color:white}
 .section{font-size:18px;margin:24px 0 14px}
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -59,7 +59,7 @@ footer{text-align:center;color:#64748b;font-size:11px;margin:30px 0 10px}
 </section>
 
 <section class="actions">
-<a class="action deposit" href="deposit.html">＋ Deposit</a>
+<a class="action mytasks" href="my-tasks.html">📋 My Tasks</a>
 <a class="action withdraw" href="withdraw.html">↗ Withdraw</a>
 </section>
 
@@ -112,6 +112,16 @@ const db = window.supabase.createClient(
 const money = value =>
   "$" + Number(value || 0).toFixed(2);
 
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[char]));
+}
+
 async function loadWallet() {
   const message = document.getElementById("message");
 
@@ -132,12 +142,13 @@ async function loadWallet() {
       .from("wallets")
       .select("balance,pending_balance")
       .eq("user_id", user.id)
+      .eq("currency", "USD")
       .maybeSingle();
 
     if (walletError) throw walletError;
 
     if (!wallet) {
-      throw new Error("আপনার Wallet তৈরি হয়নি। Admin-এর সাহায্য নিন।");
+      throw new Error("আপনার USD Wallet তৈরি হয়নি। Admin-এর সাহায্য নিন।");
     }
 
     const balance = Number(wallet.balance || 0);
@@ -151,6 +162,7 @@ async function loadWallet() {
       .from("wallet_transactions")
       .select("amount,type,status,description,created_at")
       .eq("user_id", user.id)
+      .eq("currency", "USD")
       .order("created_at", { ascending: false })
       .limit(20);
 
@@ -162,11 +174,11 @@ async function loadWallet() {
 
     const earnings = completed
       .filter(t => t.type === "earning")
-      .reduce((sum, t) => sum + Number(t.amount), 0);
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
     const referrals = completed
       .filter(t => t.type === "referral")
-      .reduce((sum, t) => sum + Number(t.amount), 0);
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
     document.getElementById("totalEarnings").textContent = money(earnings);
     document.getElementById("referralEarnings").textContent = money(referrals);
@@ -179,10 +191,10 @@ async function loadWallet() {
       history.style.textAlign = "left";
       history.innerHTML = transactions.map(t => `
         <div style="padding:12px 0;border-bottom:1px solid #26364e">
-          <strong>${String(t.type).toUpperCase()}</strong>
+          <strong>${escapeHtml(String(t.type).toUpperCase())}</strong>
           <div style="margin-top:5px">${money(t.amount)}</div>
-          <small>${t.status} · ${new Date(t.created_at).toLocaleDateString()}</small>
-          <div>${t.description || ""}</div>
+          <small>${escapeHtml(t.status)} · ${new Date(t.created_at).toLocaleDateString()}</small>
+          <div>${escapeHtml(t.description || "")}</div>
         </div>
       `).join("");
     }
