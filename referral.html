@@ -30,6 +30,7 @@ nav a.current{color:#ff9b35}
 <h2>GLOBAL EARNING 🌍</h2>
 <p>Invite Friends & Grow Together</p>
 </header>
+
 <main>
 <div class="card">
 <div class="label">Your Referral Link</div>
@@ -40,7 +41,7 @@ nav a.current{color:#ff9b35}
 
 <div class="card">
 <div class="label">Total Referrals</div>
-<div class="value" id="refCount">0</div>
+<div class="value" id="refCount">Loading...</div>
 </div>
 
 <div class="card">
@@ -64,39 +65,63 @@ const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 async function start(){
  const message=document.getElementById("message");
- const {data:{user},error:authError}=await db.auth.getUser();
+ const refCount=document.getElementById("refCount");
 
- if(authError||!user){
-  message.textContent="প্রথমে Login করুন।";
-  return;
- }
+ try{
+  const {data:{user},error:authError}=await db.auth.getUser();
 
- const link=location.origin+"/login.html?ref="+encodeURIComponent(user.id);
- document.getElementById("refLink").value=link;
+  if(authError||!user){
+   message.textContent="প্রথমে Login করুন।";
+   location.replace("login.html");
+   return;
+  }
 
- const {count,error}=await db.from("profiles")
- .select("id",{count:"exact",head:true})
- .eq("referred_by",user.id);
+  const link=location.origin+"/login.html?ref="+encodeURIComponent(user.id);
+  document.getElementById("refLink").value=link;
 
- if(!error){
-  document.getElementById("refCount").textContent=count||0;
- }
+  // নিরাপদ RPC দিয়ে Referral Count
+  const {data:count,error:countError}=await db.rpc("get_my_referral_count");
 
- const {data:transactions,error:txError}=await db.from("wallet_transactions")
- .select("amount")
- .eq("user_id",user.id)
- .eq("type","referral")
- .eq("status","completed");
+  if(countError){
+   refCount.textContent="লোড হয়নি";
+   console.error("Referral count error:",countError.message);
+  }else{
+   refCount.textContent=Number(count||0);
+  }
 
- if(!txError){
-  const total=(transactions||[]).reduce((sum,item)=>sum+Number(item.amount||0),0);
-  document.getElementById("refEarnings").textContent="$"+total.toFixed(2);
+  // সম্পন্ন Referral Commission
+  const {data:transactions,error:txError}=await db.from("wallet_transactions")
+   .select("amount")
+   .eq("user_id",user.id)
+   .eq("type","referral")
+   .eq("status","completed")
+   .eq("currency","USD");
+
+  if(txError){
+   document.getElementById("refEarnings").textContent="লোড হয়নি";
+   console.error("Referral earnings error:",txError.message);
+  }else{
+   const total=(transactions||[]).reduce(
+    (sum,item)=>sum+Number(item.amount||0),0
+   );
+   document.getElementById("refEarnings").textContent="$"+total.toFixed(2);
+  }
+
+ }catch(error){
+  message.textContent="তথ্য লোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+  console.error(error);
  }
 }
 
 async function copyLink(){
  const input=document.getElementById("refLink");
  const message=document.getElementById("message");
+
+ if(!input.value){
+  message.textContent="Referral Link এখনো তৈরি হয়নি।";
+  return;
+ }
+
  try{
   await navigator.clipboard.writeText(input.value);
   message.textContent="Referral link copied!";
@@ -105,7 +130,8 @@ async function copyLink(){
   message.textContent="লিংকটি নির্বাচন করা হয়েছে। Copy করুন।";
  }
 }
+
 start();
 </script>
 </body>
-  </html>
+</html>
