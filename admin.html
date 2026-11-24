@@ -98,7 +98,30 @@ button:disabled{opacity:.5;cursor:not-allowed}
 <p class="muted">Pending ও Approved Request এখানে দেখাবে।</p>
 <div id="withdrawalMessage" class="muted">Loading...</div>
 <div id="withdrawals"></div>
+<h2>🧪 Test Withdrawal Requests</h2>
+<p class="muted">
+এখানে শুধু পরীক্ষামূলক Request থাকবে।
+এতে কোনো আসল টাকা বা Wallet পরিবর্তন হবে না।
+</p>
 
+<div class="card">
+<label>Test Amount (USD)</label>
+<input id="testAmount" type="number" min="0.01" step="0.01" placeholder="যেমন 5.00">
+
+<label>Payment Method</label>
+<select id="testMethod">
+<option value="bKash">bKash</option>
+<option value="Nagad">Nagad</option>
+<option value="USDT BEP20">USDT BEP20</option>
+</select>
+
+<button class="testbtn" onclick="createTestWithdrawal()">
+Create Test Request
+</button>
+<p id="testWithdrawalMessage" class="muted"></p>
+</div>
+
+<div id="testWithdrawals"></div>
 <div id="buyerTasks"></div>
 </div>
 
