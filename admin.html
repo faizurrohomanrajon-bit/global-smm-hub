@@ -178,8 +178,9 @@ async function refreshAll(){
  if(!adminVerified)return;
  await loadSubmissions();
  await loadWithdrawalRequests();
+ await loadTestWithdrawals();
  await loadBuyerTasks();
-}
+ }
 
 function calculateBudget(){
  const reward=Number(document.getElementById("taskReward").value);
@@ -421,7 +422,120 @@ async function reviewWithdrawal(id,action,button){
  alert(data||"Request updated successfully");
  await loadWithdrawalRequests();
 }
+/* TEST WITHDRAWAL SYSTEM */
 
+async function createTestWithdrawal(){
+ if(!adminVerified||!currentAdminUser){
+  alert("Admin verification নেই।");
+  return;
+ }
+
+ const amount=Number(document.getElementById("testAmount").value);
+ const method=document.getElementById("testMethod").value;
+ const msg=document.getElementById("testWithdrawalMessage");
+
+ if(!Number.isFinite(amount)||amount<=0){
+  msg.textContent="সঠিক Amount লিখুন।";
+  return;
+ }
+
+ msg.textContent="Test Request তৈরি হচ্ছে...";
+
+ const {error}=await db.from("withdrawal_test_requests").insert({
+  admin_id:currentAdminUser.id,
+  amount:amount,
+  method:method,
+  status:"pending"
+ });
+
+ if(error){
+  msg.textContent="Error: "+error.message;
+  return;
+ }
+
+ msg.textContent="Test Request তৈরি হয়েছে। কোনো আসল টাকা পরিবর্তন হয়নি।";
+ document.getElementById("testAmount").value="";
+ await loadTestWithdrawals();
+}
+
+async function loadTestWithdrawals(){
+ const box=document.getElementById("testWithdrawals");
+ if(!box)return;
+
+ box.textContent="Loading Test Requests...";
+
+ const {data,error}=await db.from("withdrawal_test_requests")
+ .select("id,admin_id,amount,method,status,created_at")
+ .order("created_at",{ascending:false});
+
+ if(error){
+  box.textContent="Test Request Error: "+error.message;
+  return;
+ }
+
+ if(!data||data.length===0){
+  box.textContent="কোনো Test Request নেই।";
+  return;
+ }
+
+ box.innerHTML="";
+
+ data.forEach(item=>{
+  const card=document.createElement("div");
+  card.className="card";
+
+  const title=document.createElement("h3");
+  title.textContent="🧪 Test Withdrawal — "+item.method;
+
+  const details=document.createElement("p");
+  details.className="detail";
+  details.textContent=
+   "Amount: $"+Number(item.amount).toFixed(2)+
+   " | Status: "+item.status.toUpperCase()+
+   " | Date: "+new Date(item.created_at).toLocaleString();
+
+  card.append(title,details);
+
+  if(item.status==="pending"){
+   const approveBtn=document.createElement("button");
+   approveBtn.className="testbtn";
+   approveBtn.textContent="Test Approve";
+   approveBtn.onclick=()=>reviewTestWithdrawal(item.id,"approved",approveBtn);
+
+   const rejectBtn=document.createElement("button");
+   rejectBtn.className="reject";
+   rejectBtn.textContent="Test Reject";
+   rejectBtn.onclick=()=>reviewTestWithdrawal(item.id,"rejected",rejectBtn);
+
+   card.append(approveBtn,rejectBtn);
+  }
+
+  box.appendChild(card);
+ });
+}
+
+async function reviewTestWithdrawal(id,action,button){
+ if(!["approved","rejected"].includes(action))return;
+
+ if(!confirm("শুধু Test Request-এর Status পরিবর্তন করবেন? কোনো আসল টাকা পরিবর্তন হবে না।"))return;
+
+ button.disabled=true;
+ button.textContent="Processing...";
+
+ const {error}=await db.from("withdrawal_test_requests")
+ .update({status:action})
+ .eq("id",id);
+
+ if(error){
+  alert("Test Review Error: "+error.message);
+  button.disabled=false;
+  button.textContent=action==="approved"?"Test Approve":"Test Reject";
+  return;
+ }
+
+ alert("Test Request "+action+" হয়েছে। আসল Wallet অপরিবর্তিত আছে।");
+ await loadTestWithdrawals();
+ }
 /* PENDING TASKS */
 async function loadBuyerTasks(){
  const box=document.getElementById("buyerTasks");
