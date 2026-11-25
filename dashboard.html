@@ -14,52 +14,21 @@
  --bg:#080f1d;--card:#111e31;--border:#293b53;
  --gold:#f5c76b;--green:#4ade80;--muted:#9aabc0;
 }
-body{
- font-family:Arial,sans-serif;background:var(--bg);color:#fff;
- padding-bottom:100px;
-}
+body{font-family:Arial,sans-serif;background:var(--bg);color:#fff;padding-bottom:100px}
 .container{max-width:1100px;margin:auto}
-header{
- display:flex;align-items:center;justify-content:space-between;
- padding:17px 18px;background:#0c1829;
- border-bottom:1px solid var(--border);
-}
+header{display:flex;align-items:center;justify-content:space-between;padding:17px 18px;background:#0c1829;border-bottom:1px solid var(--border)}
 .logo{font-size:19px;font-weight:bold;color:var(--gold)}
 .user-area{display:flex;align-items:center;gap:10px}
-.avatar{
- width:39px;height:39px;border-radius:50%;
- display:grid;place-items:center;background:#253c45;
- border:1px solid var(--gold);font-size:20px;
-}
-.logout{
- background:#1b2b40;color:white;border:1px solid #42536a;
- padding:9px 13px;border-radius:9px;cursor:pointer;
-}
+.avatar{width:39px;height:39px;border-radius:50%;display:grid;place-items:center;background:#253c45;border:1px solid var(--gold);font-size:20px}
+.logout{background:#1b2b40;color:white;border:1px solid #42536a;padding:9px 13px;border-radius:9px;cursor:pointer}
 main{padding:18px}
-.hero{
- position:relative;overflow:hidden;padding:25px 20px;
- border-radius:21px;
- background:linear-gradient(130deg,#173c35,#142b3e,#17243c);
- border:1px solid #557b60;
- box-shadow:0 12px 35px #0005;
-}
-.hero:after{
- content:"🌍";position:absolute;right:12px;top:35px;
- font-size:100px;opacity:.12;
-}
+.hero{position:relative;overflow:hidden;padding:25px 20px;border-radius:21px;background:linear-gradient(130deg,#173c35,#142b3e,#17243c);border:1px solid #557b60;box-shadow:0 12px 35px #0005}
+.hero:after{content:"🌍";position:absolute;right:12px;top:35px;font-size:100px;opacity:.12}
 .eyebrow{font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:14px}
 .hero h1{font-size:27px;margin-bottom:9px}
 .hero p{font-size:13px;color:#d5e8df;line-height:1.7}
-.member-tag{
- display:inline-block;margin-top:15px;padding:7px 12px;
- border-radius:20px;background:#ffffff12;
- border:1px solid #ffffff25;color:#d9fbe7;font-size:11px;
-}
-.balance-card{
- position:relative;z-index:1;margin-top:22px;padding:19px;
- border-radius:16px;background:linear-gradient(120deg,#102c2a,#102c3b);
- border:1px solid #43836a;
-}
+.member-tag{display:inline-block;margin-top:15px;padding:7px 12px;border-radius:20px;background:#ffffff12;border:1px solid #ffffff25;color:#d9fbe7;font-size:11px}
+.balance-card{position:relative;z-index:1;margin-top:22px;padding:19px;border-radius:16px;background:linear-gradient(120deg,#102c2a,#102c3b);border:1px solid #43836a}
 .balance-label{font-size:11px;color:#b9e8d0}
 .balance-amount{font-size:36px;font-weight:bold;color:var(--green);margin:11px 0}
 .pending{font-size:12px;color:#cbd5e1}
@@ -67,51 +36,24 @@ main{padding:18px}
 .section-head h2{font-size:19px;color:var(--gold)}
 .section-head p{font-size:12px;color:var(--muted);margin-top:6px}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
-.stat{
- padding:17px 14px;min-height:112px;border-radius:15px;
- background:linear-gradient(145deg,#17283d,#101b2c);
- border:1px solid var(--border);
-}
+.stat{padding:17px 14px;min-height:112px;border-radius:15px;background:linear-gradient(145deg,#17283d,#101b2c);border:1px solid var(--border)}
 .stat-icon{font-size:23px;margin-bottom:9px}
 .stat-number{font-size:23px;font-weight:bold;color:var(--green)}
 .stat-label{font-size:11px;color:var(--muted);margin-top:6px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.quick{
- display:block;text-decoration:none;color:white;
- padding:17px 14px;min-height:125px;border-radius:15px;
- background:linear-gradient(145deg,#17283d,#101b2c);
- border:1px solid var(--border);transition:.2s;
-}
+.quick{display:block;text-decoration:none;color:white;padding:17px 14px;min-height:125px;border-radius:15px;background:linear-gradient(145deg,#17283d,#101b2c);border:1px solid var(--border);transition:.2s}
 .quick:active{transform:scale(.98);border-color:var(--gold)}
 .quick-icon{font-size:27px;margin-bottom:11px}
 .quick h3{font-size:13px;margin-bottom:7px}
 .quick p{font-size:11px;color:var(--muted);line-height:1.6}
-.activity{
- margin-top:25px;padding:18px;border-radius:16px;
- background:#111e31;border:1px solid var(--border);
-}
+.activity{margin-top:25px;padding:18px;border-radius:16px;background:#111e31;border:1px solid var(--border)}
 .activity h3{font-size:15px;color:var(--gold);margin-bottom:12px}
 .activity p{font-size:12px;color:var(--muted);line-height:1.8}
-.status{
- margin-top:18px;text-align:center;padding:12px;
- border-radius:10px;background:#10251f;border:1px solid #245b43;
- color:var(--green);font-size:12px;
-}
+.status{margin-top:18px;text-align:center;padding:12px;border-radius:10px;background:#10251f;border:1px solid #245b43;color:var(--green);font-size:12px}
 footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-height:2}
-.bottom-nav{
- position:fixed;bottom:0;left:0;right:0;z-index:100;
- display:flex;justify-content:flex-start;overflow-x:auto;
- white-space:nowrap;padding:9px 3px calc(9px + env(safe-area-inset-bottom));
- background:#091525f5;border-top:1px solid #35445b;
- backdrop-filter:blur(14px);scrollbar-width:none;
-}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:flex-start;overflow-x:auto;white-space:nowrap;padding:9px 3px calc(9px + env(safe-area-inset-bottom));background:#091525f5;border-top:1px solid #35445b;backdrop-filter:blur(14px);scrollbar-width:none}
 .bottom-nav::-webkit-scrollbar{display:none}
-.nav-item{
- text-decoration:none;color:#9aabc0;
- display:flex;flex-direction:column;align-items:center;
- justify-content:center;gap:5px;font-size:10px;
- flex:0 0 14.285%;
-}
+.nav-item{text-decoration:none;color:#9aabc0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:10px;flex:0 0 14.285%}
 .nav-icon{font-size:21px}
 .nav-item.active{color:var(--gold);font-weight:bold}
 @media(min-width:650px){
@@ -120,10 +62,7 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
  .hero h1{font-size:35px}
  .stats{grid-template-columns:repeat(4,1fr)}
  .grid{grid-template-columns:repeat(3,1fr)}
- .bottom-nav{
-  left:50%;transform:translateX(-50%);
-  width:min(100%,700px);border-radius:16px 16px 0 0;
- }
+ .bottom-nav{left:50%;transform:translateX(-50%);width:min(100%,700px);border-radius:16px 16px 0 0}
 }
 </style>
 </head>
@@ -161,29 +100,10 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </div>
 
 <section class="stats">
- <div class="stat">
-  <div class="stat-icon">📋</div>
-  <div class="stat-number" id="availableTasks">0</div>
-  <div class="stat-label">Available Tasks</div>
- </div>
-
- <div class="stat">
-  <div class="stat-icon">📝</div>
-  <div class="stat-number" id="myTasks">0</div>
-  <div class="stat-label">My Submissions</div>
- </div>
-
- <div class="stat">
-  <div class="stat-icon">👥</div>
-  <div class="stat-number" id="referralCount">0</div>
-  <div class="stat-label">My Referrals</div>
- </div>
-
- <div class="stat">
-  <div class="stat-icon">🤝</div>
-  <div class="stat-number" id="referralEarnings">$0.00</div>
-  <div class="stat-label">Referral Earnings</div>
- </div>
+ <div class="stat"><div class="stat-icon">📋</div><div class="stat-number" id="availableTasks">0</div><div class="stat-label">Available Tasks</div></div>
+ <div class="stat"><div class="stat-icon">📝</div><div class="stat-number" id="myTasks">0</div><div class="stat-label">My Submissions</div></div>
+ <div class="stat"><div class="stat-icon">👥</div><div class="stat-number" id="referralCount">0</div><div class="stat-label">My Referrals</div></div>
+ <div class="stat"><div class="stat-icon">🤝</div><div class="stat-number" id="referralEarnings">$0.00</div><div class="stat-label">Referral Earnings</div></div>
 </section>
 
 <div class="section-head">
@@ -192,37 +112,11 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </div>
 
 <section class="grid">
-
- <a class="quick" href="tasks.html?category=typing">
-  <div class="quick-icon">⌨️</div>
-  <h3>Typing</h3>
-  <p>টাইপিং সংক্রান্ত কাজ খুঁজুন</p>
- </a>
-
- <a class="quick" href="tasks.html?category=data-entry">
-  <div class="quick-icon">📊</div>
-  <h3>Data Entry</h3>
-  <p>ডেটা এন্ট্রির কাজ খুঁজুন</p>
- </a>
-
- <a class="quick" href="tasks.html?category=pdf-to-word">
-  <div class="quick-icon">📄</div>
-  <h3>PDF to Word</h3>
-  <p>ডকুমেন্ট কনভার্সনের কাজ</p>
- </a>
-
- <a class="quick" href="tasks.html?category=product-listing">
-  <div class="quick-icon">🛍️</div>
-  <h3>Product Listing</h3>
-  <p>পণ্য তালিকাভুক্তির কাজ</p>
- </a>
-
- <a class="quick" href="tasks.html?category=website-testing">
-  <div class="quick-icon">🌐</div>
-  <h3>Website Testing</h3>
-  <p>ওয়েবসাইট পরীক্ষা ও ফিডব্যাক</p>
- </a>
-
+ <a class="quick" href="tasks.html?category=typing"><div class="quick-icon">⌨️</div><h3>Typing</h3><p>টাইপিং সংক্রান্ত কাজ খুঁজুন</p></a>
+ <a class="quick" href="tasks.html?category=data-entry"><div class="quick-icon">📊</div><h3>Data Entry</h3><p>ডেটা এন্ট্রির কাজ খুঁজুন</p></a>
+ <a class="quick" href="tasks.html?category=pdf-to-word"><div class="quick-icon">📄</div><h3>PDF to Word</h3><p>ডকুমেন্ট কনভার্সনের কাজ</p></a>
+ <a class="quick" href="tasks.html?category=product-listing"><div class="quick-icon">🛍️</div><h3>Product Listing</h3><p>পণ্য তালিকাভুক্তির কাজ</p></a>
+ <a class="quick" href="tasks.html?category=website-testing"><div class="quick-icon">🌐</div><h3>Website Testing</h3><p>ওয়েবসাইট পরীক্ষা ও ফিডব্যাক</p></a>
 </section>
 
 <div class="section-head">
@@ -231,37 +125,25 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </div>
 
 <section class="grid">
+ <a class="quick" href="tasks.html"><div class="quick-icon">📋</div><h3>Available Tasks →</h3><p>সব উপলভ্য কাজ দেখুন</p></a>
+ <a class="quick" href="my-tasks.html"><div class="quick-icon">📝</div><h3>My Tasks →</h3><p>জমা দেওয়া কাজের অবস্থা</p></a>
+ <a class="quick" href="wallet.html"><div class="quick-icon">💰</div><h3>My Wallet →</h3><p>ব্যালেন্স ও লেনদেন</p></a>
+ <a class="quick" href="referral.html"><div class="quick-icon">🤝</div><h3>Referral →</h3><p>রেফারেল ও কমিশন</p></a>
+ <a class="quick" href="withdraw.html"><div class="quick-icon">💸</div><h3>Withdrawal →</h3><p>উত্তোলনের তথ্য</p></a>
 
- <a class="quick" href="tasks.html">
-  <div class="quick-icon">📋</div>
-  <h3>Available Tasks →</h3>
-  <p>সব উপলভ্য কাজ দেখুন</p>
+ <!-- Telegram Community -->
+ <a class="quick" href="https://t.me/EarningZonebdhsj" target="_blank" rel="noopener noreferrer">
+  <div class="quick-icon">📢</div>
+  <h3>Telegram Community →</h3>
+  <p>নতুন আপডেট ও ঘোষণা পেতে গ্রুপে যোগ দিন</p>
  </a>
 
- <a class="quick" href="my-tasks.html">
-  <div class="quick-icon">📝</div>
-  <h3>My Tasks →</h3>
-  <p>জমা দেওয়া কাজের অবস্থা</p>
+ <!-- Telegram Support -->
+ <a class="quick" href="https://t.me/GlobalEarningSupporte" target="_blank" rel="noopener noreferrer">
+  <div class="quick-icon">🎧</div>
+  <h3>Contact Support →</h3>
+  <p>সাহায্যের জন্য আমাদের সাপোর্টে যোগাযোগ করুন</p>
  </a>
-
- <a class="quick" href="wallet.html">
-  <div class="quick-icon">💰</div>
-  <h3>My Wallet →</h3>
-  <p>ব্যালেন্স ও লেনদেন</p>
- </a>
-
- <a class="quick" href="referral.html">
-  <div class="quick-icon">🤝</div>
-  <h3>Referral →</h3>
-  <p>রেফারেল ও কমিশন</p>
- </a>
-
- <a class="quick" href="withdraw.html">
-  <div class="quick-icon">💸</div>
-  <h3>Withdrawal →</h3>
-  <p>উত্তোলনের তথ্য</p>
- </a>
-
 </section>
 
 <section class="activity">
@@ -270,14 +152,12 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </section>
 
 <div class="status" id="status">● Connecting Account...</div>
-
 </main>
 
 <footer>
  © 2026 GLOBAL EARNING. All rights reserved.<br>
  Bangladesh 🇧🇩 | Worldwide 🌍
 </footer>
-
 </div>
 
 <nav class="bottom-nav">
@@ -294,11 +174,7 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
 const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
-const db=window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY
-);
-
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const el=id=>document.getElementById(id);
 
 async function loadDashboard(){
@@ -313,7 +189,6 @@ async function loadDashboard(){
    return;
   }
 
-  // Load profile
   const {data:profile,error:profileError}=await db
    .from("profiles")
    .select("display_name")
@@ -321,11 +196,9 @@ async function loadDashboard(){
    .maybeSingle();
 
   if(!profileError){
-   el("welcomeName").textContent=
-    "Welcome, "+(profile?.display_name || "Worker")+" 👋";
+   el("welcomeName").textContent="Welcome, "+(profile?.display_name || "Worker")+" 👋";
   }
 
-  // Load wallet
   const {data:wallet,error:walletError}=await db
    .from("wallets")
    .select("balance,pending_balance")
@@ -334,37 +207,26 @@ async function loadDashboard(){
    .maybeSingle();
 
   if(!walletError && wallet){
-   el("balance").textContent=
-    "$"+Number(wallet.balance || 0).toFixed(2);
-
-   el("pendingBalance").textContent=
-    "Pending Balance: $"+Number(wallet.pending_balance || 0).toFixed(2);
+   el("balance").textContent="$"+Number(wallet.balance || 0).toFixed(2);
+   el("pendingBalance").textContent="Pending Balance: $"+Number(wallet.pending_balance || 0).toFixed(2);
   }
 
-  // Load available tasks
   const {count:taskCount,error:taskError}=await db
    .from("tasks")
    .select("id",{count:"exact",head:true})
    .eq("status","active")
    .eq("currency","USD");
 
-  if(!taskError){
-   el("availableTasks").textContent=taskCount ?? 0;
-  }
+  if(!taskError) el("availableTasks").textContent=taskCount ?? 0;
 
-  // Load my submissions
   const {count:myCount,error:myError}=await db
    .from("task_submissions")
    .select("id",{count:"exact",head:true})
    .eq("worker_id",user.id);
 
-  if(!myError){
-   el("myTasks").textContent=myCount ?? 0;
-  }
+  if(!myError) el("myTasks").textContent=myCount ?? 0;
 
-  // Load referral count using RPC
-  const {data:refCount,error:refError}=await db
-   .rpc("get_my_referral_count");
+  const {data:refCount,error:refError}=await db.rpc("get_my_referral_count");
 
   if(!refError){
    el("referralCount").textContent=refCount ?? 0;
@@ -372,7 +234,6 @@ async function loadDashboard(){
    console.error("Referral count error:",refError.message);
   }
 
-  // Load referral earnings
   const {data:transactions,error:refEarnError}=await db
    .from("wallet_transactions")
    .select("amount")
@@ -381,12 +242,8 @@ async function loadDashboard(){
    .eq("status","completed");
 
   if(!refEarnError){
-   const total=(transactions || []).reduce(
-    (sum,item)=>sum+Number(item.amount || 0),0
-   );
-
-   el("referralEarnings").textContent=
-    "$"+total.toFixed(2);
+   const total=(transactions || []).reduce((sum,item)=>sum+Number(item.amount || 0),0);
+   el("referralEarnings").textContent="$"+total.toFixed(2);
   }
 
   el("status").textContent="● Account Connected";
@@ -412,7 +269,6 @@ async function logout(){
 
 loadDashboard();
 </script>
-
 </body>
- </html>
-                                                        
+  </html>
+                                            
