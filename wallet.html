@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080d19">
 <title>USD Wallet | GLOBAL EARNING</title>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Arial,sans-serif;background:#080d19;color:#f8fafc}
@@ -18,7 +19,11 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 .heading small{color:#4ade80;letter-spacing:2px;font-weight:bold}
 .heading h1{font-size:27px;margin:10px 0}
 .heading p{font-size:13px;color:#94a3b8}
-.balance{background:linear-gradient(130deg,#123d2d,#126047);border:1px solid #287a52;border-radius:22px;padding:25px;margin-bottom:18px}
+.balance{
+ background:linear-gradient(130deg,#123d2d,#126047);
+ border:1px solid #287a52;border-radius:22px;
+ padding:25px;margin-bottom:18px
+}
 .balance small{color:#c5f5d9}
 .balance h2{font-size:38px;margin:15px 0}
 .balance p{font-size:12px;color:#c5f5d9}
@@ -30,187 +35,256 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card{background:#111c2e;border:1px solid #26364e;border-radius:15px;padding:17px}
 .card span{font-size:12px;color:#94a3b8}
-.card h3{font-size:23px;color:#4ade80;margin-top:12px}
-.history{background:#111c2e;border:1px solid #26364e;border-radius:15px;padding:20px;text-align:center;color:#94a3b8;font-size:13px;line-height:1.8}
+.card h3{font-size:23px;color:#4ade80;margin-top:12px;overflow-wrap:anywhere}
+.history{background:#111c2e;border:1px solid #26364e;border-radius:15px;padding:20px;text-align:center;color:#94a3b8;font-size:13px;line-height:1.8;overflow-wrap:anywhere}
 .notice{margin-top:20px;padding:15px;border:1px solid #35445a;border-radius:12px;color:#94a3b8;font-size:12px;line-height:1.7}
 #message{margin:15px 0;color:#fbbf24;font-size:13px}
 footer{text-align:center;color:#64748b;font-size:11px;margin:30px 0 10px}
-@media(max-width:400px){.container{padding:15px}.balance h2{font-size:32px}}
+@media(max-width:400px){
+ .container{padding:15px}
+ .balance h2{font-size:32px}
+ .card h3{font-size:20px}
+}
 </style>
 </head>
+
 <body>
 <div class="container">
 
 <header>
-<div class="brand">🌍 GLOBAL EARNING</div>
-<a class="back" href="dashboard.html">← Dashboard</a>
+ <div class="brand">🌍 GLOBAL EARNING</div>
+ <a class="back" href="dashboard.html">← Dashboard</a>
 </header>
 
 <section class="heading">
-<small>MY FINANCIAL CENTER</small>
-<h1>💎 My Wallet</h1>
-<p>আপনার সব আয় ও ব্যালেন্স ডলারে দেখুন।</p>
+ <small>MY FINANCIAL CENTER</small>
+ <h1>💎 My Wallet</h1>
+ <p>আপনার সব আয় ও ব্যালেন্স ডলারে দেখুন।</p>
 </section>
 
 <section class="balance">
-<small>💰 TOTAL WALLET BALANCE</small>
-<h2 id="totalBalance">$0.00 USD</h2>
-<p>Available wallet balance</p>
+ <small>💰 TOTAL WALLET BALANCE</small>
+ <h2 id="totalBalance">$0.00</h2>
+ <p>Available + Pending Balance</p>
 </section>
 
 <section class="actions">
-<a class="action mytasks" href="my-tasks.html">📋 My Tasks</a>
-<a class="action withdraw" href="withdraw.html">↗ Withdraw</a>
+ <a class="action mytasks" href="my-tasks.html">📋 My Tasks</a>
+ <a class="action withdraw" href="withdraw.html">↗ Withdraw</a>
 </section>
 
 <h2 class="section">Wallet Overview</h2>
 
 <section class="cards">
-<div class="card">
-<span>Available Balance</span>
-<h3 id="availableBalance">$0.00</h3>
-</div>
-<div class="card">
-<span>Pending Balance</span>
-<h3 id="pendingBalance">$0.00</h3>
-</div>
-<div class="card">
-<span>Total Earnings</span>
-<h3 id="totalEarnings">$0.00</h3>
-</div>
-<div class="card">
-<span>Referral Earnings</span>
-<h3 id="referralEarnings">$0.00</h3>
-</div>
+ <div class="card">
+  <span>Available Balance</span>
+  <h3 id="availableBalance">$0.00</h3>
+ </div>
+
+ <div class="card">
+  <span>Pending Balance</span>
+  <h3 id="pendingBalance">$0.00</h3>
+ </div>
+
+ <div class="card">
+  <span>Total Earnings</span>
+  <h3 id="totalEarnings">$0.00</h3>
+ </div>
+
+ <div class="card">
+  <span>Referral Earnings</span>
+  <h3 id="referralEarnings">$0.00</h3>
+ </div>
 </section>
 
 <div id="message">Wallet তথ্য লোড হচ্ছে...</div>
 
 <h2 class="section">Transaction History</h2>
+
 <section class="history" id="history">
 লোড হচ্ছে...
 </section>
 
 <section class="notice">
-🔒 <strong>Wallet Security</strong><br>
-আপনার Wallet-এর তথ্য Supabase থেকে লোড করা হচ্ছে। অনুমোদিত লেনদেন ছাড়া ব্যালেন্স পরিবর্তন করা যাবে না।
+ 🔒 <strong>Wallet Security</strong><br>
+ আপনার Wallet-এর তথ্য Supabase থেকে লোড করা হচ্ছে। অনুমোদিত লেনদেন ছাড়া ব্যালেন্স পরিবর্তন করা যাবে না।
 </section>
 
 <footer>GLOBAL EARNING 🌍 · USD WALLET</footer>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
-const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+<script>
+const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
+
+const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+
+const db=window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
 );
 
-const money = value =>
-  "$" + Number(value || 0).toFixed(2);
+const money=value=>{
+ return "$"+Number(value||0).toFixed(2);
+};
 
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  }[char]));
+function escapeHtml(value){
+ return String(value??"").replace(/[&<>"']/g,char=>({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
+ }[char]));
 }
 
-async function loadWallet() {
-  const message = document.getElementById("message");
+function showMessage(message,color){
+ const box=document.getElementById("message");
+ box.textContent=message;
+ box.style.color=color;
+}
 
-  try {
-    const { data: sessionData, error: sessionError } =
-      await db.auth.getSession();
+async function loadWallet(){
 
-    if (sessionError) throw sessionError;
+ const history=document.getElementById("history");
 
-    const user = sessionData.session?.user;
+ try{
 
-    if (!user) {
-      window.location.href = "login.html";
-      return;
-    }
+  // Check logged-in user
+  const {data:sessionData,error:sessionError}=
+   await db.auth.getSession();
 
-    const { data: wallet, error: walletError } = await db
-      .from("wallets")
-      .select("balance,pending_balance")
-      .eq("user_id", user.id)
-      .eq("currency", "USD")
-      .maybeSingle();
+  if(sessionError)throw sessionError;
 
-    if (walletError) throw walletError;
+  const user=sessionData.session?.user;
 
-    if (!wallet) {
-      throw new Error("আপনার USD Wallet তৈরি হয়নি। Admin-এর সাহায্য নিন।");
-    }
-
-    const balance = Number(wallet.balance || 0);
-    const pending = Number(wallet.pending_balance || 0);
-
-    document.getElementById("totalBalance").textContent = money(balance);
-    document.getElementById("availableBalance").textContent = money(balance);
-    document.getElementById("pendingBalance").textContent = money(pending);
-
-    const { data: transactions, error: transactionError } = await db
-      .from("wallet_transactions")
-      .select("amount,type,status,description,created_at")
-      .eq("user_id", user.id)
-      .eq("currency", "USD")
-      .order("created_at", { ascending: false })
-      .limit(20);
-
-    if (transactionError) throw transactionError;
-
-    const completed = (transactions || []).filter(
-      t => t.status === "completed"
-    );
-
-    const earnings = completed
-      .filter(t => t.type === "earning")
-      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-
-    const referrals = completed
-      .filter(t => t.type === "referral")
-      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-
-    document.getElementById("totalEarnings").textContent = money(earnings);
-    document.getElementById("referralEarnings").textContent = money(referrals);
-
-    const history = document.getElementById("history");
-
-    if (!transactions || transactions.length === 0) {
-      history.innerHTML = "📊<br><strong>No Transactions Yet</strong><br>আপনার লেনদেন শুরু হলে এখানে দেখা যাবে।";
-    } else {
-      history.style.textAlign = "left";
-      history.innerHTML = transactions.map(t => `
-        <div style="padding:12px 0;border-bottom:1px solid #26364e">
-          <strong>${escapeHtml(String(t.type).toUpperCase())}</strong>
-          <div style="margin-top:5px">${money(t.amount)}</div>
-          <small>${escapeHtml(t.status)} · ${new Date(t.created_at).toLocaleDateString()}</small>
-          <div>${escapeHtml(t.description || "")}</div>
-        </div>
-      `).join("");
-    }
-
-    message.textContent = "Wallet সফলভাবে লোড হয়েছে।";
-    message.style.color = "#4ade80";
-
-  } catch (error) {
-    console.error(error);
-    message.textContent = error.message || "Wallet লোড করা যায়নি।";
-    message.style.color = "#f87171";
+  if(!user){
+   window.location.href="login.html";
+   return;
   }
+
+  // Load wallet balance
+  const {data:wallet,error:walletError}=await db
+   .from("wallets")
+   .select("balance,pending_balance")
+   .eq("user_id",user.id)
+   .eq("currency","USD")
+   .maybeSingle();
+
+  if(walletError)throw walletError;
+
+  if(!wallet){
+   throw new Error("আপনার USD Wallet তৈরি হয়নি। Admin-এর সাহায্য নিন।");
+  }
+
+  const balance=Number(wallet.balance||0);
+  const pending=Number(wallet.pending_balance||0);
+
+  document.getElementById("availableBalance").textContent=money(balance);
+
+  document.getElementById("pendingBalance").textContent=money(pending);
+
+  document.getElementById("totalBalance").textContent=
+   money(balance+pending);
+
+  // Load all completed transactions for earnings calculation
+  const {data:completedTransactions,error:earningsError}=await db
+   .from("wallet_transactions")
+   .select("amount,type")
+   .eq("user_id",user.id)
+   .eq("currency","USD")
+   .eq("status","completed");
+
+  if(earningsError)throw earningsError;
+
+  const completed=completedTransactions||[];
+
+  const earnings=completed
+   .filter(t=>t.type==="earning")
+   .reduce((sum,t)=>sum+Number(t.amount||0),0);
+
+  const referrals=completed
+   .filter(t=>t.type==="referral")
+   .reduce((sum,t)=>sum+Number(t.amount||0),0);
+
+  document.getElementById("totalEarnings").textContent=money(earnings);
+
+  document.getElementById("referralEarnings").textContent=money(referrals);
+
+  // Load latest 20 transactions for history
+  const {data:transactions,error:historyError}=await db
+   .from("wallet_transactions")
+   .select("amount,type,status,description,created_at")
+   .eq("user_id",user.id)
+   .eq("currency","USD")
+   .order("created_at",{ascending:false})
+   .limit(20);
+
+  if(historyError)throw historyError;
+
+  if(!transactions||transactions.length===0){
+
+   history.style.textAlign="center";
+
+   history.innerHTML=
+    "📊<br><strong>No Transactions Yet</strong><br>"+
+    "আপনার লেনদেন শুরু হলে এখানে দেখা যাবে।";
+
+  }else{
+
+   history.style.textAlign="left";
+
+   history.innerHTML=transactions.map(t=>{
+
+    const date=t.created_at
+     ?new Date(t.created_at).toLocaleString()
+     :"";
+
+    return `
+     <div style="padding:12px 0;border-bottom:1px solid #26364e">
+
+      <strong>${escapeHtml(String(t.type||"").toUpperCase())}</strong>
+
+      <div style="margin-top:5px">${money(t.amount)}</div>
+
+      <small>
+       ${escapeHtml(t.status||"")} · ${escapeHtml(date)}
+      </small>
+
+      <div>${escapeHtml(t.description||"")}</div>
+
+     </div>
+    `;
+
+   }).join("");
+
+  }
+
+  showMessage(
+   "Wallet সফলভাবে লোড হয়েছে।",
+   "#4ade80"
+  );
+
+ }catch(error){
+
+  console.error("Wallet Error:",error);
+
+  showMessage(
+   error.message||"Wallet লোড করা যায়নি।",
+   "#f87171"
+  );
+
+  history.textContent="Transaction History লোড করা যায়নি।";
+
+ }
+
 }
 
 loadWallet();
 </script>
+
 </body>
   </html>
   
