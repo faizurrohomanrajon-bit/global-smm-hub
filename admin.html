@@ -176,6 +176,7 @@ async function start(){
 
 async function refreshAll(){
  if(!adminVerified)return;
+ await loadWorkers();
  await loadSubmissions();
  await loadWithdrawalRequests();
  await loadTestWithdrawals();
@@ -263,8 +264,57 @@ document.getElementById("taskForm").addEventListener("submit",async function(e){
  document.getElementById("taskBudget").value="";
  await loadBuyerTasks();
 });
-
+<h2>👥 Worker List</h2>
+<p class="muted">Registered Workers</p>
+<div id="workersMessage" class="muted">Loading Workers...</div>
+<div id="workersList"></div>
 /* WORKER SUBMISSIONS */
+ /* WORKER LIST */
+async function loadWorkers(){
+ const box=document.getElementById("workersList");
+ const msg=document.getElementById("workersMessage");
+
+ box.innerHTML="";
+ msg.textContent="Loading Workers...";
+
+ const {data,error}=await db
+  .from("profiles")
+  .select("id,display_name,role,created_at")
+  .order("created_at",{ascending:false});
+
+ if(error){
+  msg.textContent="Worker List Error: "+error.message;
+  return;
+ }
+
+ if(!data || data.length===0){
+  msg.textContent="কোনো Worker পাওয়া যায়নি।";
+  return;
+ }
+
+ msg.textContent=data.length+" জন Account পাওয়া গেছে।";
+
+ data.forEach(user=>{
+  const card=document.createElement("div");
+  card.className="card";
+
+  const name=document.createElement("h3");
+  name.textContent=user.display_name || "Unknown";
+
+  const info=document.createElement("p");
+  info.className="detail";
+  info.textContent=
+   "User ID: "+user.id+
+   " | Role: "+(user.role || "worker")+
+   " | Joined: "+
+   (user.created_at
+    ? new Date(user.created_at).toLocaleDateString()
+    : "Unknown");
+
+  card.append(name,info);
+  box.appendChild(card);
+ });
+ }
 async function loadSubmissions(){
  message.textContent="Loading submissions...";
  submissions.innerHTML="";
