@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#080f1d">
 <title>Withdrawal | GLOBAL EARNING</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#080f1d;color:#fff;font-family:Arial,sans-serif;padding-bottom:90px}
@@ -24,6 +25,7 @@ input,select{width:100%;padding:13px;background:#081527;border:1px solid #34465d
 button{width:100%;padding:14px;border:0;border-radius:9px;background:#4ade80;color:#052e20;font-weight:bold;margin-top:17px;cursor:pointer}
 button:disabled{opacity:.5}
 .note{font-size:12px;color:#94a3b8;line-height:1.7;margin-top:12px}
+.minimum{font-size:13px;color:#4ade80;margin-top:9px}
 .item{padding:13px 0;border-bottom:1px solid #293c54;font-size:12px;line-height:1.8;overflow-wrap:anywhere}
 .status{font-size:12px;color:#94a3b8;margin-top:12px;line-height:1.6}
 nav{position:fixed;bottom:0;left:0;right:0;background:#081221;border-top:1px solid #29415b;display:flex;justify-content:space-around;padding:11px 3px}
@@ -32,6 +34,7 @@ nav a span{display:block;font-size:20px;margin-bottom:5px}
 nav a.active{color:#4ade80}
 </style>
 </head>
+
 <body>
 <header><div class="logo">🌍 GLOBAL EARNING</div></header>
 
@@ -54,7 +57,8 @@ nav a.active{color:#4ade80}
 </select>
 
 <label>Withdrawal Amount (USD)</label>
-<input id="amount" type="number" min="0.01" step="0.01" placeholder="যেমন 5.00">
+<input id="amount" type="number" min="1" step="0.01" placeholder="সর্বনিম্ন 1.00 USD">
+<p class="minimum">সর্বনিম্ন Withdrawal: $1.00</p>
 
 <label id="addressLabel">bKash Number</label>
 <input id="address" type="text" maxlength="200" placeholder="আপনার bKash Number">
@@ -86,16 +90,23 @@ const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let user=null;
 let walletBalance=0;
+
 const el=id=>document.getElementById(id);
+const MIN_WITHDRAWAL=1.00;
 
 function escapeHtml(value){
  return String(value).replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
  }[c]));
 }
 
 function updateFields(){
  const method=el("method").value;
+
  if(method==="USDT BEP20"){
   el("addressLabel").textContent="USDT BEP20 Wallet Address";
   el("address").placeholder="আপনার BEP20 Address";
@@ -120,8 +131,10 @@ async function loadWallet(){
  }
 
  walletBalance=Number(data?.balance||0);
+
  el("balance").textContent="$"+walletBalance.toFixed(2);
- el("pending").textContent="Pending: $"+Number(data?.pending_balance||0).toFixed(2);
+ el("pending").textContent=
+  "Pending: $"+Number(data?.pending_balance||0).toFixed(2);
 }
 
 async function loadHistory(){
@@ -152,10 +165,12 @@ async function loadHistory(){
 
 async function loadPage(){
  const {data:{user:u},error}=await db.auth.getUser();
+
  if(error||!u){
   location.replace("login.html");
   return;
  }
+
  user=u;
  await loadWallet();
  await loadHistory();
@@ -164,20 +179,23 @@ async function loadPage(){
 async function submitWithdrawal(){
  const btn=el("submitBtn");
  const msg=el("message");
+
  msg.textContent="";
 
  const amount=Number(el("amount").value);
  const method=el("method").value;
  const address=el("address").value.trim();
 
- if(!Number.isFinite(amount)||amount<=0){
-  msg.textContent="সঠিক Amount লিখুন।";
+ if(!Number.isFinite(amount)||amount<MIN_WITHDRAWAL){
+  msg.textContent="সর্বনিম্ন Withdrawal Amount হলো $1.00।";
   return;
  }
+
  if(amount>walletBalance){
   msg.textContent="আপনার Available Balance যথেষ্ট নয়।";
   return;
  }
+
  if(!address||address.length<5||address.length>200){
   msg.textContent="সঠিক Payment Address বা Number লিখুন।";
   return;
@@ -197,6 +215,7 @@ async function submitWithdrawal(){
   if(error) throw error;
 
   msg.textContent="Withdrawal Request সফলভাবে জমা হয়েছে। Admin যাচাই করবেন।";
+
   el("amount").value="";
   el("address").value="";
 
