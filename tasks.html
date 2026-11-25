@@ -1,10 +1,13 @@
-<!DOCTYPE html><html lang="bn">
+
+<!DOCTYPE html>
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#09090d">
 <title>GLOBAL EARNING - Task Center</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#09090d;color:#f5f5f5;font-family:Arial,sans-serif;padding-bottom:95px}
@@ -32,13 +35,13 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .task-card{background:linear-gradient(130deg,#1a191e,#101015);border:1px solid #29272e;border-radius:19px;padding:17px;margin:13px 0}
 .task-head{display:flex;align-items:center;gap:13px}
 .task-icon{width:52px;height:52px;border-radius:14px;background:#29221f;display:grid;place-items:center;font-size:25px;flex-shrink:0}
-.task-title{font-size:17px;font-weight:bold;line-height:1.4}
+.task-title{font-size:17px;font-weight:bold;line-height:1.4;overflow-wrap:anywhere}
 .task-reward{display:flex;gap:15px;flex-wrap:wrap;margin:14px 0 10px}
 .reward{color:#4adea0;font-size:16px;font-weight:bold}
-.task-meta{font-size:12px;color:#888}
+.task-meta{font-size:12px;color:#888;line-height:1.6}
 .task-start{margin-left:auto;min-width:90px}
 .detail{display:none;background:#0c0c11;border:1px solid #45332d;border-radius:14px;padding:14px;margin-top:15px}
-.detail textarea{width:100%;min-height:100px;padding:13px;background:#17171d;color:white;border:1px solid #39333a;border-radius:10px;resize:vertical;margin:10px 0}
+.detail textarea{width:100%;min-height:110px;padding:13px;background:#17171d;color:white;border:1px solid #39333a;border-radius:10px;resize:vertical;margin:10px 0;font-family:Arial}
 .muted{color:#999;font-size:13px;line-height:1.5}
 .empty{text-align:center;padding:25px;color:#999}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#111116ed;border-top:1px solid #302d34;display:flex;justify-content:space-around;padding:10px 3px calc(10px + env(safe-area-inset-bottom));z-index:10}
@@ -46,23 +49,42 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .nav-item span{display:block;font-size:21px;margin-bottom:5px}
 .nav-item.active{color:#ff783e}
 #userStatus{font-size:12px;color:#4ade80}
+.task-link{display:inline-block;color:#ff9a68;margin:10px 0;font-size:13px;overflow-wrap:anywhere}
+.status-pending{color:#facc15}
+.status-approved{color:#4ade80}
+.status-rejected{color:#f87171}
+.result{margin-top:10px}
 </style>
 </head>
-<body><header>
+
+<body>
+
+<header>
  <div class="brand">GLOBAL<span> EARNING</span> 🌍</div>
  <div id="userStatus">Checking Login...</div>
-</header><div class="container">
+</header>
+
+<div class="container">
+
  <div class="topline">
   <h1>Task Center</h1>
-  <button class="orange-btn" onclick="loadTasks()">↻ Refresh</button>
- </div> <div class="balance">
+  <button class="orange-btn" id="refreshBtn" onclick="loadTasks()">↻ Refresh</button>
+ </div>
+
+ <div class="balance">
   <div class="small">AVAILABLE TASKS</div>
   <div class="balance-number" id="taskCount">0</div>
   <div class="muted">এখনকার Available Tasks</div>
- </div> <div class="tabs">
+ </div>
+
+ <div class="tabs">
   <button id="quickTab" class="active" onclick="setMode('quick')">QUICK TASKS</button>
   <button id="highTab" onclick="setMode('high')">HIGH VALUE</button>
- </div> <input id="search" class="search" placeholder="⌕ Search tasks..." oninput="renderTasks()"> <div class="filters" id="filters">
+ </div>
+
+ <input id="search" class="search" placeholder="⌕ Search tasks..." oninput="renderTasks()">
+
+ <div class="filters" id="filters">
   <button class="filter active" data-category="all">ALL</button>
   <button class="filter" data-category="typing">TYPING</button>
   <button class="filter" data-category="data-entry">DATA ENTRY</button>
@@ -70,26 +92,40 @@ button:disabled{opacity:.5;cursor:not-allowed}
   <button class="filter" data-category="product-listing">PRODUCT LISTING</button>
   <button class="filter" data-category="website-testing">WEBSITE TESTING</button>
   <button class="filter" data-category="other">OTHER JOBS</button>
- </div> <div class="topline">
+ </div>
+
+ <div class="topline">
   <h2>◎ AVAILABLE TASKS</h2>
   <span class="muted" id="availableCount">0</span>
- </div> <div id="taskMessage" class="muted">Loading tasks...</div>
- <div id="taskList"></div> <section id="myTaskSection">
+ </div>
+
+ <div id="taskMessage" class="muted">Loading tasks...</div>
+ <div id="taskList"></div>
+
+ <section id="myTaskSection">
   <h2>MY TASK HISTORY</h2>
   <div id="submissionMessage" class="muted">Loading...</div>
   <div id="mySubmissions"></div>
  </section>
-</div><nav class="bottom-nav">
+
+</div>
+
+<nav class="bottom-nav">
  <a class="nav-item" href="dashboard.html"><span>⌂</span>HOME</a>
  <a class="nav-item active" href="tasks.html"><span>◎</span>TASKS</a>
  <a class="nav-item" href="#myTaskSection"><span>▤</span>MY TASKS</a>
  <a class="nav-item" href="wallet.html"><span>▣</span>WALLET</a>
  <a class="nav-item" href="profile.html"><span>☰</span>MORE</a>
-</nav><script>
-const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
-const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+</nav>
 
-const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+<script>
+const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+
+const db=window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
 
 let currentUser=null;
 let allTasks=[];
@@ -97,14 +133,32 @@ let myTaskIds=[];
 let selectedCategory="all";
 let selectedMode="quick";
 
+const el=id=>document.getElementById(id);
+
 function safe(value){
  return String(value??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#039;"
  })[c]);
 }
 
+function safeUrl(value){
+ try{
+  const url=new URL(String(value||""));
+  if(url.protocol==="https:"||url.protocol==="http:"){
+   return url.href;
+  }
+ }catch(e){}
+ return "";
+}
+
 function normalizeCategory(value){
- return String(value||"").toLowerCase().trim()
+ return String(value||"")
+  .toLowerCase()
+  .trim()
   .replace(/[_–—]/g,"-")
   .replace(/\s+/g," ");
 }
@@ -113,16 +167,29 @@ function categoryName(value){
  const c=normalizeCategory(value);
 
  if(c.includes("typing"))return "typing";
- if(c.includes("data entry")||c.includes("data-entry"))return "data-entry";
- if(c.includes("pdf")||c.includes("word"))return "pdf-to-word";
- if(c.includes("product listing")||c.includes("product-listing"))return "product-listing";
- if(c.includes("website testing")||c.includes("website-testing"))return "website-testing";
+
+ if(c.includes("data entry")||c.includes("data-entry")){
+  return "data-entry";
+ }
+
+ if(c.includes("pdf")||c.includes("word")){
+  return "pdf-to-word";
+ }
+
+ if(c.includes("product listing")||c.includes("product-listing")){
+  return "product-listing";
+ }
+
+ if(c.includes("website testing")||c.includes("website-testing")){
+  return "website-testing";
+ }
 
  return "other";
 }
 
 function taskIcon(task){
  const c=categoryName(task.category);
+
  return {
   "typing":"⌨️",
   "data-entry":"📊",
@@ -135,6 +202,7 @@ function taskIcon(task){
 
 function categoryLabel(value){
  const c=categoryName(value);
+
  return {
   "typing":"Typing",
   "data-entry":"Data Entry",
@@ -145,221 +213,396 @@ function categoryLabel(value){
  }[c];
 }
 
-async function start(){
- const {data,error}=await db.auth.getUser();
+function setInitialCategory(){
+ const params=new URLSearchParams(window.location.search);
+ const requested=categoryName(params.get("category"));
 
- if(error||!data.user){
-  document.getElementById("userStatus").textContent="Login Required";
-  document.getElementById("taskMessage").textContent="প্রথমে Login করুন।";
-  return;
+ if(params.has("category")){
+  selectedCategory=requested;
  }
 
- currentUser=data.user;
- document.getElementById("userStatus").textContent="● Worker Online";
+ document.querySelectorAll(".filter").forEach(btn=>{
+  const active=btn.dataset.category===selectedCategory;
+  btn.classList.toggle("active",active);
+ });
+}
 
- await loadTasks();
- await loadMySubmissions();
+async function start(){
+ try{
+  const {data,error}=await db.auth.getUser();
+
+  if(error||!data.user){
+   el("userStatus").textContent="Login Required";
+   el("taskMessage").textContent="প্রথমে Login করুন।";
+   el("taskCount").textContent="0";
+   return;
+  }
+
+  currentUser=data.user;
+
+  el("userStatus").textContent="● Worker Online";
+
+  setInitialCategory();
+
+  await loadTasks();
+  await loadMySubmissions();
+
+ }catch(error){
+  console.error(error);
+  el("taskMessage").textContent="অ্যাকাউন্ট লোড করা যায়নি। আবার চেষ্টা করুন।";
+ }
 }
 
 async function loadTasks(){
  if(!currentUser)return;
 
- const msg=document.getElementById("taskMessage");
- const box=document.getElementById("taskList");
+ const msg=el("taskMessage");
+ const box=el("taskList");
+ const refresh=el("refreshBtn");
 
  msg.textContent="Loading tasks...";
  box.innerHTML="";
 
- const {data:mine,error:mineError}=await db
-  .from("task_submissions")
-  .select("task_id")
-  .eq("worker_id",currentUser.id);
+ refresh.disabled=true;
 
- if(mineError){
-  msg.textContent="Error: "+mineError.message;
-  return;
+ try{
+
+  // Load tasks already submitted by this worker
+  const {data:mine,error:mineError}=await db
+   .from("task_submissions")
+   .select("task_id")
+   .eq("worker_id",currentUser.id);
+
+  if(mineError){
+   msg.textContent="Submission Error: "+mineError.message;
+   return;
+  }
+
+  myTaskIds=(mine||[]).map(x=>x.task_id);
+
+  // Load active USD tasks
+  const {data,error}=await db
+   .from("tasks")
+   .select("id,title,description,requirements,reward_per_worker,currency,workers_needed,category,created_at,deadline,job_url")
+   .eq("status","active")
+   .eq("currency","USD")
+   .order("created_at",{ascending:false});
+
+  if(error){
+   msg.textContent="Task Error: "+error.message;
+   return;
+  }
+
+  // Exclude tasks already submitted by this worker
+  allTasks=(data||[]).filter(task=>
+   !myTaskIds.includes(task.id)
+  );
+
+  el("taskCount").textContent=allTasks.length;
+
+  renderTasks();
+
+ }catch(error){
+  console.error(error);
+  msg.textContent="কাজ লোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+ }finally{
+  refresh.disabled=false;
  }
-
- myTaskIds=(mine||[]).map(x=>x.task_id);
-
- const {data,error}=await db
-  .from("tasks")
-  .select("id,title,description,requirements,reward_per_worker,currency,workers_needed,category,created_at")
-  .eq("status","active")
-  .eq("currency","USD")
-  .order("created_at",{ascending:false});
-
- if(error){
-  msg.textContent="Error: "+error.message;
-  return;
- }
-
- allTasks=(data||[]).filter(t=>!myTaskIds.includes(t.id));
-
- document.getElementById("taskCount").textContent=allTasks.length;
- renderTasks();
 }
 
 function renderTasks(){
- const box=document.getElementById("taskList");
- const msg=document.getElementById("taskMessage");
- const search=document.getElementById("search").value.toLowerCase().trim();
+ const box=el("taskList");
+ const msg=el("taskMessage");
+ const search=el("search").value.toLowerCase().trim();
 
  box.innerHTML="";
 
- let list=allTasks.filter(task=>{
+ const list=allTasks.filter(task=>{
+
   const category=categoryName(task.category);
-  const matchesCategory=selectedCategory==="all"||category===selectedCategory;
-  const searchText=(task.title+" "+(task.description||"")+" "+(task.category||"")).toLowerCase();
+
+  const matchesCategory=
+   selectedCategory==="all"||
+   category===selectedCategory;
+
+  const searchText=(
+   (task.title||"")+" "+
+   (task.description||"")+" "+
+   (task.category||"")
+  ).toLowerCase();
+
   const matchesSearch=searchText.includes(search);
+
+  const reward=Number(task.reward_per_worker||0);
+
   const matchesMode=selectedMode==="quick"
-   ? Number(task.reward_per_worker)<1
-   : Number(task.reward_per_worker)>=1;
+   ? reward<1
+   : reward>=1;
 
   return matchesCategory&&matchesSearch&&matchesMode;
  });
 
- document.getElementById("availableCount").textContent=list.length;
+ el("availableCount").textContent=list.length;
 
  if(!list.length){
   msg.textContent="";
-  box.innerHTML='<div class="card empty">কোনো কাজ পাওয়া যায়নি। পরে আবার দেখুন।</div>';
+  box.innerHTML=
+   '<div class="card empty">কোনো কাজ পাওয়া যায়নি। পরে আবার দেখুন।</div>';
   return;
  }
 
  msg.textContent=list.length+"টি Available Task";
 
  list.forEach(task=>{
+
   const card=document.createElement("div");
   card.className="task-card";
 
+  const reward=Number(task.reward_per_worker||0);
+  const jobUrl=safeUrl(task.job_url);
+
   card.innerHTML=`
    <div class="task-head">
+
     <div class="task-icon">${taskIcon(task)}</div>
+
     <div style="flex:1;min-width:0">
      <div class="task-title">${safe(task.title)}</div>
-     <div class="task-meta">${safe(categoryLabel(task.category))} · TASK #${safe(String(task.id).slice(0,8))}</div>
+
+     <div class="task-meta">
+      ${safe(categoryLabel(task.category))}
+      · TASK #${safe(String(task.id).slice(0,8))}
+     </div>
     </div>
+
     <button class="orange-btn task-start">START</button>
+
    </div>
 
    <div class="task-reward">
-    <span class="reward">💵 +$${safe(Number(task.reward_per_worker).toFixed(2))}</span>
+    <span class="reward">💵 +$${reward.toFixed(2)}</span>
     <span class="task-meta">👥 ${safe(task.workers_needed)} Workers</span>
    </div>
 
    <div class="detail">
+
     <h3>Task Details</h3>
-    <p>${safe(task.description)}</p>
-    <p class="muted">শর্ত: ${safe(task.requirements||"কোনো অতিরিক্ত শর্ত নেই")}</p>
-    <textarea class="proofInput" placeholder="কাজের প্রমাণ / Proof লিখুন"></textarea><button class="orange-btn submitBtn">SUBMIT WORK</button>
-<p class="muted result"></p>
+
+    <p class="muted">${safe(task.description||"")}</p>
+
+    <p class="muted" style="margin-top:10px">
+     শর্ত: ${safe(task.requirements||"কোনো অতিরিক্ত শর্ত নেই")}
+    </p>
+
+    ${
+     task.deadline
+     ? `<p class="muted" style="margin-top:8px">Deadline: ${safe(new Date(task.deadline).toLocaleString())}</p>`
+     : ""
+    }
+
+    ${
+     jobUrl
+     ? `<a class="task-link" href="${safe(jobUrl)}" target="_blank" rel="noopener noreferrer">🔗 Open Task Link</a>`
+     : ""
+    }
+
+    <textarea class="proofInput" placeholder="কাজের প্রমাণ / Proof লিখুন"></textarea>
+
+    <button class="orange-btn submitBtn">SUBMIT WORK</button>
+
+    <p class="muted result"></p>
 
    </div>
-  `;const startBtn=card.querySelector(".task-start");
-const detail=card.querySelector(".detail");
+  `;
 
-startBtn.addEventListener("click",()=>{
-detail.style.display=detail.style.display==="block"?"none":"block";
-startBtn.textContent=detail.style.display==="block"?"CLOSE":"START";
-});
+  const startBtn=card.querySelector(".task-start");
+  const detail=card.querySelector(".detail");
 
-const submitBtn=card.querySelector(".submitBtn");
+  startBtn.addEventListener("click",()=>{
+   const isOpen=detail.style.display==="block";
 
-submitBtn.addEventListener("click",async()=>{
-const proof=card.querySelector(".proofInput").value.trim();
-const result=card.querySelector(".result");
+   detail.style.display=isOpen?"none":"block";
+   startBtn.textContent=isOpen?"START":"CLOSE";
+  });
 
-if(proof.length<5){
-result.textContent="কমপক্ষে ৫ অক্ষরের Proof লিখুন।";
-return;
-}
+  const submitBtn=card.querySelector(".submitBtn");
 
-submitBtn.disabled=true;
-submitBtn.textContent="SUBMITTING...";
+  submitBtn.addEventListener("click",async()=>{
 
-const {error:submitError}=await db
-.from("task_submissions")
-.insert({
-task_id:task.id,
-worker_id:currentUser.id,
-evidence:proof,
-status:"pending"
-});
+   const proof=card.querySelector(".proofInput").value.trim();
+   const result=card.querySelector(".result");
+   const proofInput=card.querySelector(".proofInput");
 
-if(submitError){
-result.textContent="Error: "+submitError.message;
-submitBtn.disabled=false;
-submitBtn.textContent="SUBMIT WORK";
-return;
-}
+   if(proof.length<5){
+    result.textContent="কমপক্ষে ৫ অক্ষরের Proof লিখুন।";
+    return;
+   }
 
-result.textContent="✓ Proof জমা হয়েছে। Admin Review করবে।";
-card.querySelector(".proofInput").disabled=true;
-submitBtn.textContent="SUBMITTED ✓";
+   if(myTaskIds.includes(task.id)){
+    result.textContent="এই কাজটি আগে জমা দেওয়া হয়েছে।";
+    return;
+   }
 
-await loadTasks();
-await loadMySubmissions();
-});
+   submitBtn.disabled=true;
+   submitBtn.textContent="SUBMITTING...";
+   result.textContent="Proof জমা হচ্ছে...";
 
-box.appendChild(card);
-});
+   try{
+
+    const {data:authData,error:authError}=await db.auth.getUser();
+
+    if(authError||!authData.user){
+     result.textContent="Session শেষ হয়েছে। আবার Login করুন।";
+     submitBtn.disabled=false;
+     submitBtn.textContent="SUBMIT WORK";
+     return;
+    }
+
+    const {error:submitError}=await db
+     .from("task_submissions")
+     .insert({
+      task_id:task.id,
+      worker_id:currentUser.id,
+      evidence:proof,
+      status:"pending"
+     });
+
+    if(submitError){
+
+     result.textContent="Error: "+submitError.message;
+
+     submitBtn.disabled=false;
+     submitBtn.textContent="SUBMIT WORK";
+
+     return;
+    }
+
+    // Prevent another submission from this page
+    myTaskIds.push(task.id);
+
+    result.textContent="✓ Proof জমা হয়েছে। Admin Review করবে।";
+
+    proofInput.disabled=true;
+    submitBtn.textContent="SUBMITTED ✓";
+
+    // Refresh task list and history
+    await loadTasks();
+    await loadMySubmissions();
+
+   }catch(error){
+
+    console.error(error);
+
+    result.textContent="জমা দিতে সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+
+    submitBtn.disabled=false;
+    submitBtn.textContent="SUBMIT WORK";
+   }
+
+  });
+
+  box.appendChild(card);
+
+ });
 }
 
 async function loadMySubmissions(){
-if(!currentUser)return;
+ if(!currentUser)return;
 
-const msg=document.getElementById("submissionMessage");
-const box=document.getElementById("mySubmissions");
+ const msg=el("submissionMessage");
+ const box=el("mySubmissions");
 
-msg.textContent="Loading...";
-box.innerHTML="";
+ msg.textContent="Loading...";
+ box.innerHTML="";
 
-const {data,error}=await db
-.from("task_submissions")
-.select("id,task_id,status,submitted_at")
-.eq("worker_id",currentUser.id)
-.order("submitted_at",{ascending:false});
+ try{
 
-if(error){
-msg.textContent="Error: "+error.message;
-return;
-}
+  const {data,error}=await db
+   .from("task_submissions")
+   .select("id,task_id,status,submitted_at")
+   .eq("worker_id",currentUser.id)
+   .order("submitted_at",{ascending:false});
 
-if(!data||data.length===0){
-msg.textContent="এখনো কোনো কাজ জমা দেননি।";
-return;
-}
+  if(error){
+   msg.textContent="Error: "+error.message;
+   return;
+  }
 
-msg.textContent=data.length+"টি Submission";
+  if(!data||data.length===0){
+   msg.textContent="এখনো কোনো কাজ জমা দেননি।";
+   return;
+  }
 
-data.forEach(item=>{
-const card=document.createElement("div");
-card.className="card";
+  msg.textContent=data.length+"টি Submission";
 
-card.innerHTML=`
+  data.forEach(item=>{
 
-   <div class="muted">Submission #${safe(String(item.id).slice(0,8))}</div>
-   <h3>${safe(item.status.toUpperCase())}</h3>
-   <p class="muted">জমা: ${safe(item.submitted_at?new Date(item.submitted_at).toLocaleString():"")}</p>
-  `;box.appendChild(card);
-});
+   const card=document.createElement("div");
+   card.className="card";
+
+   let statusClass="status-pending";
+
+   if(item.status==="approved"){
+    statusClass="status-approved";
+   }
+
+   if(item.status==="rejected"){
+    statusClass="status-rejected";
+   }
+
+   card.innerHTML=`
+    <div class="muted">
+     Submission #${safe(String(item.id).slice(0,8))}
+    </div>
+
+    <h3 class="${statusClass}" style="margin:9px 0">
+     ${safe(String(item.status||"pending").toUpperCase())}
+    </h3>
+
+    <p class="muted">
+     জমা: ${safe(
+      item.submitted_at
+      ? new Date(item.submitted_at).toLocaleString()
+      : ""
+     )}
+    </p>
+   `;
+
+   box.appendChild(card);
+
+  });
+
+ }catch(error){
+  console.error(error);
+  msg.textContent="Submission History লোড করা যায়নি।";
+ }
 }
 
 function setMode(mode){
-selectedMode=mode;
-document.getElementById("quickTab").classList.toggle("active",mode==="quick");
-document.getElementById("highTab").classList.toggle("active",mode==="high");
-renderTasks();
+ selectedMode=mode;
+
+ el("quickTab").classList.toggle("active",mode==="quick");
+ el("highTab").classList.toggle("active",mode==="high");
+
+ renderTasks();
 }
 
+// Category filter
 document.querySelectorAll(".filter").forEach(btn=>{
-btn.addEventListener("click",()=>{
-document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-selectedCategory=btn.dataset.category;
-renderTasks();
-});
+
+ btn.addEventListener("click",()=>{
+
+  document.querySelectorAll(".filter").forEach(b=>
+   b.classList.remove("active")
+  );
+
+  btn.classList.add("active");
+
+  selectedCategory=btn.dataset.category;
+
+  renderTasks();
+ });
+
 });
 
 start();
@@ -367,3 +610,4 @@ start();
 
 </body>
  </html>
+ 
