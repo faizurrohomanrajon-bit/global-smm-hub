@@ -1,11 +1,12 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080f1d">
 <title>Login | GLOBAL SMM HUB</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#080f1d;color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -17,98 +18,163 @@ h1{text-align:center;font-size:30px;margin-bottom:10px}
 label{display:block;margin-bottom:9px;font-size:14px}
 input{width:100%;padding:15px;background:#091424;border:1px solid #34445b;border-radius:9px;color:white;font-size:15px;margin-bottom:20px}
 button{width:100%;padding:15px;border:0;border-radius:9px;background:#16a34a;color:white;font-weight:bold;font-size:16px;cursor:pointer}
-button:disabled{opacity:.6}
+button:disabled{opacity:.6;cursor:not-allowed}
 .links{text-align:center;margin-top:23px;font-size:14px;color:#94a3b8}
 a{color:#4ade80;text-decoration:none}
-.message{text-align:center;margin-top:15px;font-size:13px;line-height:1.6}
+.message{text-align:center;margin-top:15px;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
 .home{text-align:center;margin-top:25px;color:#94a3b8;font-size:14px}
 </style>
 </head>
+
 <body>
+
 <div class="container">
+
 <div class="logo">🌍 GLOBAL SMM HUB</div>
+
 <div class="card">
+
 <h1>Welcome Back</h1>
 <p class="sub">Login to your global marketing account</p>
 
 <form id="loginForm">
+
 <label>Email Address</label>
-<input type="email" id="email" placeholder="Enter your email" required>
+<input
+ type="email"
+ id="email"
+ placeholder="Enter your email"
+ autocomplete="email"
+ required
+>
 
 <label>Password</label>
-<input type="password" id="password" placeholder="Enter your password" required>
+<input
+ type="password"
+ id="password"
+ placeholder="Enter your password"
+ autocomplete="current-password"
+ required
+>
 
 <button type="submit" id="loginBtn">LOGIN →</button>
-<div class="message" id="message"></div>
+
+<div class="message" id="message" role="status"></div>
+
 </form>
 
 <div class="links">
-Don't have an account? <a id="registerLink" href="register.html">Create Account</a>
+Don't have an account?
+<a id="registerLink" href="register.html">Create Account</a>
 </div>
+
 </div>
-<div class="home"><a href="index.html">← Back to Homepage</a></div>
+
+<div class="home">
+<a href="index.html">← Back to Homepage</a>
+</div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
-const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+<script>
+const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+
+const supabaseClient=window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
 );
 
-document.getElementById("loginForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
+const form=document.getElementById("loginForm");
+const button=document.getElementById("loginBtn");
+const message=document.getElementById("message");
 
-  const button = document.getElementById("loginBtn");
-  const message = document.getElementById("message");
+let loginBusy=false;
 
-  button.disabled = true;
-  button.textContent = "PLEASE WAIT...";
-  message.textContent = "";
+// Referral link থেকে Referrer ID
+const params=new URLSearchParams(window.location.search);
+const referrerId=params.get("ref");
 
-  try {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email: document.getElementById("email").value.trim(),
-      password: document.getElementById("password").value
-    });
+if(referrerId){
+ document.getElementById("registerLink").href=
+  "register.html?ref="+encodeURIComponent(referrerId);
+}
 
-    if (error) throw error;
+function showMessage(text,color="#fca5a5"){
+ message.textContent=text;
+ message.style.color=color;
+}
 
-    // Referral link থেকে Referrer ID নেওয়া
-    const params = new URLSearchParams(window.location.search);
-    const referrerId = params.get("ref");
+form.addEventListener("submit",async function(e){
 
-    if (referrerId && data.user) {
-      const { error: referralError } = await supabaseClient.rpc(
-        "attach_referral",
-        { p_referrer: referrerId }
-      );
+ e.preventDefault();
 
-      if (referralError) {
-        console.error("Referral save error:", referralError.message);
-      }
-    }
+ if(loginBusy)return;
 
-    message.textContent = "Login successful!";
-    window.location.href = "dashboard.html";
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
 
-  } catch (error) {
-    message.textContent = error.message;
-  } finally {
-    button.disabled = false;
-    button.textContent = "LOGIN →";
+ if(!email||!password){
+  showMessage("Email ও Password লিখুন।");
+  return;
+ }
+
+ loginBusy=true;
+ button.disabled=true;
+ button.textContent="PLEASE WAIT...";
+ showMessage("");
+
+ try{
+
+  const {data,error}=await supabaseClient.auth.signInWithPassword({
+   email:email,
+   password:password
+  });
+
+  if(error)throw error;
+
+  if(!data.user){
+   throw new Error("Login করা যায়নি। আবার চেষ্টা করুন।");
   }
+
+  // Referral ID থাকলে একবার সংরক্ষণের চেষ্টা
+  if(referrerId){
+
+   const {error:referralError}=await supabaseClient.rpc(
+    "attach_referral",
+    {p_referrer:referrerId}
+   );
+
+   if(referralError){
+    console.error("Referral save error:",referralError.message);
+   }
+
+  }
+
+  showMessage("Login successful! Redirecting...","#4ade80");
+
+  window.location.replace("dashboard.html");
+
+ }catch(error){
+
+  console.error("Login error:",error);
+
+  showMessage(
+   error.message||"Login ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
+   "#fca5a5"
+  );
+
+  loginBusy=false;
+  button.disabled=false;
+  button.textContent="LOGIN →";
+
+ }
+
 });
-  const ref = new URLSearchParams(location.search).get("ref");
-
-if (ref) {
-  document.getElementById("registerLink").href =
-    "register.html?ref=" + encodeURIComponent(ref);
-  }
 </script>
+
 </body>
   </html>
   
