@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080f1d">
 <title>Register | GLOBAL SMM HUB</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#080f1d;color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -17,8 +18,8 @@ h1{text-align:center;font-size:29px;margin-bottom:10px}
 label{display:block;margin-bottom:8px;font-size:14px}
 input{width:100%;padding:14px;background:#091424;border:1px solid #34445b;border-radius:9px;color:white;font-size:15px;margin-bottom:17px}
 button{width:100%;padding:15px;border:0;border-radius:9px;background:#16a34a;color:white;font-size:16px;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.6}
-.message{text-align:center;margin-top:15px;font-size:13px;line-height:1.6}
+button:disabled{opacity:.6;cursor:not-allowed}
+.message{text-align:center;margin-top:15px;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
 .links{text-align:center;margin-top:22px;color:#94a3b8;font-size:14px}
 a{color:#4ade80;text-decoration:none}
 .home{text-align:center;margin-top:23px;color:#94a3b8;font-size:14px}
@@ -28,9 +29,12 @@ a{color:#4ade80;text-decoration:none}
 .referral .valid{color:#4ade80;font-size:12px;margin-top:8px}
 </style>
 </head>
+
 <body>
 <div class="container">
+
 <div class="logo">🌍 GLOBAL SMM HUB</div>
+
 <div class="card">
 <h1>Create Account</h1>
 <p class="sub">Join our global marketing platform</p>
@@ -42,8 +46,9 @@ a{color:#4ade80;text-decoration:none}
 </div>
 
 <form id="registerForm">
+
 <label>Full Name</label>
-<input type="text" id="name" placeholder="Enter your full name" required>
+<input type="text" id="name" placeholder="Enter your full name" maxlength="80" required>
 
 <label>Email Address</label>
 <input type="email" id="email" placeholder="Enter your email" required>
@@ -55,17 +60,21 @@ a{color:#4ade80;text-decoration:none}
 <input type="password" id="confirmPassword" placeholder="Confirm your password" minlength="8" required>
 
 <button type="submit" id="registerBtn">CREATE ACCOUNT →</button>
-<div class="message" id="message"></div>
+
+<div class="message" id="message" aria-live="polite"></div>
 </form>
 
 <div class="links">
-Already have an account? <a href="login.html">Login</a>
+Already have an account? <a id="loginLink" href="login.html">Login</a>
 </div>
 </div>
+
 <div class="home"><a href="index.html">← Back to Homepage</a></div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
 const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
@@ -75,27 +84,53 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_KEY
 );
 
-// Referral ID যাচাই ও দেখানো
-const referrerId = new URLSearchParams(location.search).get("ref");
-const validRef = referrerId &&
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(referrerId);
+const params = new URLSearchParams(window.location.search);
+const referrerId = params.get("ref");
 
-if (validRef) {
-  document.getElementById("referralBox").style.display = "block";
-  document.getElementById("referralId").textContent = referrerId;
+const validRef = Boolean(
+  referrerId &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(referrerId)
+);
+
+const referralBox = document.getElementById("referralBox");
+const referralIdBox = document.getElementById("referralId");
+const loginLink = document.getElementById("loginLink");
+
+if(validRef){
+  referralBox.style.display = "block";
+  referralIdBox.textContent = referrerId;
+  loginLink.href = "login.html?ref=" + encodeURIComponent(referrerId);
 }
 
-document.getElementById("registerForm").addEventListener("submit", async function(e) {
+const form = document.getElementById("registerForm");
+const button = document.getElementById("registerBtn");
+const message = document.getElementById("message");
+
+form.addEventListener("submit", async function(e){
   e.preventDefault();
+
+  if(button.disabled) return;
 
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   const confirm = document.getElementById("confirmPassword").value;
-  const message = document.getElementById("message");
-  const button = document.getElementById("registerBtn");
 
-  if (password !== confirm) {
+  message.textContent = "";
+
+  if(!name){
+    message.style.color = "#f87171";
+    message.textContent = "Please enter your full name.";
+    return;
+  }
+
+  if(password.length < 8){
+    message.style.color = "#f87171";
+    message.textContent = "Password must be at least 8 characters.";
+    return;
+  }
+
+  if(password !== confirm){
     message.style.color = "#f87171";
     message.textContent = "Passwords do not match.";
     return;
@@ -103,55 +138,72 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
   button.disabled = true;
   button.textContent = "PLEASE WAIT...";
-  message.textContent = "";
 
-  try {
-    const { data, error } = await supabaseClient.auth.signUp({
+  try{
+
+    const {data,error} = await supabaseClient.auth.signUp({
       email: email,
       password: password,
       options: {
-        data: { full_name: name }
+        data: {
+          full_name: name,
+          display_name: name
+        }
       }
     });
 
-    if (error) throw error;
-
-    if (validRef && data.session && data.user) {
-      const { error: refError } = await supabaseClient.rpc(
-        "attach_referral",
-        { p_referrer: referrerId }
-      );
-
-      if (refError) {
-        console.error("Referral save error:", refError.message);
-        message.style.color = "#f87171";
-        message.textContent = "Account created, but referral could not be saved.";
-        return;
-      }
-    }
+    if(error) throw error;
 
     message.style.color = "#4ade80";
-    message.textContent = "Account created successfully! Please login.";
 
-    document.getElementById("registerForm").reset();
+    if(data.session && data.user){
 
-    const loginUrl = validRef
-      ? "login.html?ref=" + encodeURIComponent(referrerId)
-      : "login.html";
+      if(validRef){
+        const {error:refError} = await supabaseClient.rpc(
+          "attach_referral",
+          {p_referrer:referrerId}
+        );
 
-    setTimeout(() => {
-      window.location.href = loginUrl;
-    }, 1800);
+        if(refError){
+          console.error("Referral error:",refError.message);
+        }
+      }
 
-  } catch (error) {
+      message.textContent = "Account created successfully! Redirecting...";
+
+      setTimeout(function(){
+        window.location.replace("dashboard.html");
+      },1500);
+
+    }else{
+
+      message.textContent =
+        "Account created! Please check your email and confirm your account. Then login.";
+
+      form.reset();
+
+      setTimeout(function(){
+        const loginUrl = validRef
+          ? "login.html?ref=" + encodeURIComponent(referrerId)
+          : "login.html";
+
+        window.location.href = loginUrl;
+      },3500);
+    }
+
+  }catch(error){
+
     message.style.color = "#f87171";
-    message.textContent = error.message;
-  } finally {
+    message.textContent = error.message || "Registration failed. Please try again.";
+
+  }finally{
+
     button.disabled = false;
     button.textContent = "CREATE ACCOUNT →";
   }
 });
 </script>
+
 </body>
-  </html>
+                                             </html>
   
