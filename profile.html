@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -14,7 +15,7 @@ header{padding:18px;background:#0b1728;border-bottom:1px solid #263b50}
 main{max-width:650px;margin:auto;padding:20px}
 .hero{text-align:center;padding:30px 15px;background:linear-gradient(130deg,#155c43,#142d4c);border:1px solid #267c58;border-radius:18px}
 .avatar{width:75px;height:75px;margin:0 auto 15px;border-radius:50%;background:#0b2b2b;display:grid;place-items:center;font-size:36px}
-.hero h2{margin-bottom:8px}
+.hero h2{margin-bottom:8px;overflow-wrap:anywhere}
 .hero p{font-size:13px;color:#d1fae5}
 .card{margin-top:18px;padding:20px;background:#111f33;border:1px solid #263e59;border-radius:15px}
 .card h3{margin-bottom:18px;color:#4ade80}
@@ -24,8 +25,9 @@ main{max-width:650px;margin:auto;padding:20px}
 .value{font-size:14px;overflow-wrap:anywhere}
 input{width:100%;padding:13px;background:#081527;border:1px solid #34465d;border-radius:9px;color:white;margin:10px 0}
 button{width:100%;padding:13px;border:0;border-radius:9px;background:#4ade80;color:#052e20;font-weight:bold;margin-top:10px;cursor:pointer}
+button:disabled{opacity:.6;cursor:not-allowed}
 .logout{background:#7f1d1d;color:white}
-.status{font-size:12px;color:#94a3b8;margin-top:12px;line-height:1.6}
+.status{font-size:12px;color:#94a3b8;margin-top:12px;line-height:1.6;overflow-wrap:anywhere}
 nav{position:fixed;bottom:0;left:0;right:0;background:#081221;border-top:1px solid #29415b;display:flex;justify-content:space-around;padding:12px 3px}
 nav a{color:#91a2b8;text-decoration:none;text-align:center;font-size:10px;flex:1}
 nav a span{display:block;font-size:20px;margin-bottom:5px}
@@ -53,14 +55,14 @@ nav a.active{color:#4ade80}
 
 <section class="card">
  <h3>🔐 Change Password</h3>
- <input type="password" id="newPassword" placeholder="নতুন Password লিখুন" minlength="6">
- <button onclick="changePassword()">Update Password</button>
+ <input type="password" id="newPassword" placeholder="নতুন Password লিখুন" minlength="6" autocomplete="new-password">
+ <button id="passwordButton" onclick="changePassword()">Update Password</button>
  <p class="status" id="passwordStatus"></p>
 </section>
 
 <section class="card">
  <h3>⚙️ Account</h3>
- <button class="logout" onclick="logout()">Logout</button>
+ <button class="logout" id="logoutButton" onclick="logout()">Logout</button>
  <p class="status" id="status">Connecting Account...</p>
 </section>
 </main>
@@ -79,58 +81,119 @@ const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let currentUser=null;
+let passwordBusy=false;
+let logoutBusy=false;
 
 async function loadProfile(){
- const {data:{user},error}=await db.auth.getUser();
- if(error||!user){
-  location.replace("login.html");
-  return;
+ const status=document.getElementById("status");
+
+ try{
+  const {data:{user},error}=await db.auth.getUser();
+
+  if(error||!user){
+   location.replace("login.html");
+   return;
+  }
+
+  currentUser=user;
+
+  const {data:profile,error:profileError}=await db
+   .from("profiles")
+   .select("display_name")
+   .eq("id",user.id)
+   .maybeSingle();
+
+  if(profileError){
+   status.textContent="Profile loading error: "+profileError.message;
+   return;
+  }
+
+  const name=profile?.display_name||"Worker";
+
+  document.getElementById("name").textContent=name;
+  document.getElementById("displayName").textContent=name;
+  document.getElementById("email").textContent=user.email||"Not available";
+  document.getElementById("userId").textContent=user.id;
+
+  document.getElementById("createdAt").textContent=
+   user.created_at
+   ?new Date(user.created_at).toLocaleString("en-GB")
+   :"Not available";
+
+  status.textContent="● Account Connected";
+
+ }catch(error){
+  status.textContent="Connection error: "+error.message;
  }
- currentUser=user;
-
- const {data:profile}=await db.from("profiles")
-  .select("display_name")
-  .eq("id",user.id)
-  .maybeSingle();
-
- const name=profile?.display_name||"Worker";
- document.getElementById("name").textContent=name;
- document.getElementById("displayName").textContent=name;
- document.getElementById("email").textContent=user.email||"Not available";
- document.getElementById("userId").textContent=user.id;
- document.getElementById("createdAt").textContent=
-  user.created_at?new Date(user.created_at).toLocaleDateString():"Not available";
-
- document.getElementById("status").textContent="● Account Connected";
 }
 
 async function changePassword(){
- if(!currentUser)return;
- const password=document.getElementById("newPassword").value;
+ if(!currentUser||passwordBusy)return;
+
+ const input=document.getElementById("newPassword");
+ const button=document.getElementById("passwordButton");
  const status=document.getElementById("passwordStatus");
+ const password=input.value;
 
  if(password.length<6){
   status.textContent="Password কমপক্ষে ৬ অক্ষরের হতে হবে।";
   return;
  }
 
- const {error}=await db.auth.updateUser({password});
- if(error){
+ passwordBusy=true;
+ button.disabled=true;
+ button.textContent="Updating...";
+
+ try{
+  const {error}=await db.auth.updateUser({password});
+
+  if(error){
+   status.textContent="Error: "+error.message;
+   return;
+  }
+
+  input.value="";
+  status.textContent="Password সফলভাবে পরিবর্তন হয়েছে।";
+
+ }catch(error){
   status.textContent="Error: "+error.message;
-  return;
+ }finally{
+  passwordBusy=false;
+  button.disabled=false;
+  button.textContent="Update Password";
  }
- document.getElementById("newPassword").value="";
- status.textContent="Password সফলভাবে পরিবর্তন হয়েছে।";
 }
 
 async function logout(){
+ if(!currentUser||logoutBusy)return;
  if(!confirm("আপনি কি Logout করতে চান?"))return;
- const {error}=await db.auth.signOut();
- if(error){alert(error.message);return;}
- location.replace("login.html");
+
+ const button=document.getElementById("logoutButton");
+ logoutBusy=true;
+ button.disabled=true;
+ button.textContent="Logging out...";
+
+ try{
+  const {error}=await db.auth.signOut();
+
+  if(error){
+   alert(error.message);
+   return;
+  }
+
+  location.replace("login.html");
+
+ }catch(error){
+  alert("Logout error: "+error.message);
+ }finally{
+  logoutBusy=false;
+  button.disabled=false;
+  button.textContent="Logout";
+ }
 }
 
 loadProfile();
 </script>
 </body>
-                                                     </html>
+                    </html>
+ 
