@@ -6,124 +6,279 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#08090d">
 <title>My Tasks | GLOBAL EARNING</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#08090d;color:#fff;font-family:Arial,sans-serif;padding-bottom:85px}
-header{padding:22px 17px;background:#11131b;border-bottom:1px solid #292b33}
+body{
+ margin:0;background:#08090d;color:#fff;
+ font-family:Arial,sans-serif;padding-bottom:85px
+}
+header{
+ padding:22px 17px;background:#11131b;
+ border-bottom:1px solid #292b33
+}
 h2{margin:0;color:#ff9b35}
 header p{color:#aaa;font-size:13px;margin:8px 0 0}
 main{padding:16px;max-width:700px;margin:auto}
-.summary{background:#151720;border:1px solid #292b35;border-radius:13px;padding:16px;margin-bottom:18px}
+.summary{
+ background:#151720;border:1px solid #292b35;
+ border-radius:13px;padding:16px;margin-bottom:18px
+}
 .summary strong{font-size:25px;color:#ff9b35}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
-.tabs button{background:#191b25;color:#ddd;border:1px solid #343744;border-radius:20px;padding:9px 14px}
-.tabs button.active{background:#ff982e;color:#111;border-color:#ff982e}
-.task{background:#151720;border:1px solid #292b35;border-radius:13px;padding:15px;margin-bottom:12px}
+.tabs button{
+ background:#191b25;color:#ddd;border:1px solid #343744;
+ border-radius:20px;padding:9px 14px;cursor:pointer
+}
+.tabs button.active{
+ background:#ff982e;color:#111;border-color:#ff982e
+}
+.task{
+ background:#151720;border:1px solid #292b35;
+ border-radius:13px;padding:15px;margin-bottom:12px
+}
 .task h3{margin:0 0 9px;font-size:16px}
-.meta{color:#aaa;font-size:13px;line-height:1.8}
-.status{display:inline-block;padding:5px 10px;border-radius:15px;font-size:12px;margin-top:10px;background:#343744}
-.pending{color:#ffc16b}.approved{color:#64e59a}.rejected{color:#ff7777}
+.meta{color:#aaa;font-size:13px;line-height:1.8;overflow-wrap:anywhere}
+.status{
+ display:inline-block;padding:5px 10px;border-radius:15px;
+ font-size:12px;margin-top:10px;background:#343744
+}
+.pending{color:#ffc16b}
+.approved{color:#64e59a}
+.rejected{color:#ff7777}
 .empty{text-align:center;color:#999;padding:35px 10px}
-nav{position:fixed;bottom:0;left:0;right:0;background:#11131b;border-top:1px solid #292b35;display:flex;justify-content:space-around;padding:13px 5px}
+.error{color:#ff7777}
+nav{
+ position:fixed;bottom:0;left:0;right:0;
+ background:#11131b;border-top:1px solid #292b35;
+ display:flex;justify-content:space-around;
+ padding:13px 5px calc(13px + env(safe-area-inset-bottom));
+ z-index:10
+}
 nav a{color:#bbb;text-decoration:none;font-size:12px}
 nav a.current{color:#ff9b35}
 </style>
 </head>
+
 <body>
+
 <header>
-<h2>GLOBAL EARNING 🌍</h2>
-<p>My Task History</p>
+ <h2>GLOBAL EARNING 🌍</h2>
+ <p>My Task History</p>
 </header>
+
 <main>
-<div class="summary">
-<div class="meta">Approved Task Rewards</div>
-<strong id="total">$0.00</strong>
-</div>
-<div class="tabs">
-<button class="active" onclick="filterTasks('all',this)">All</button>
-<button onclick="filterTasks('pending',this)">Pending</button>
-<button onclick="filterTasks('approved',this)">Approved</button>
-<button onclick="filterTasks('rejected',this)">Rejected</button>
-</div>
-<div id="taskList" class="empty">Loading...</div>
+
+ <div class="summary">
+  <div class="meta">Approved Task Rewards</div>
+  <strong id="total">$0.00</strong>
+ </div>
+
+ <div class="tabs">
+  <button class="active" data-filter="all">All</button>
+  <button data-filter="pending">Pending</button>
+  <button data-filter="approved">Approved</button>
+  <button data-filter="rejected">Rejected</button>
+ </div>
+
+ <div id="taskList" class="empty">Loading...</div>
+
 </main>
+
 <nav>
-<a href="dashboard.html">Home</a>
-<a href="tasks.html">Tasks</a>
-<a href="my-tasks.html" class="current">My Tasks</a>
-<a href="wallet.html">Wallet</a>
+ <a href="dashboard.html">Home</a>
+ <a href="tasks.html">Tasks</a>
+ <a href="my-tasks.html" class="current">My Tasks</a>
+ <a href="wallet.html">Wallet</a>
 </nav>
+
 <script>
 const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
 const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const db=window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
 let allTasks=[];
 let currentFilter="all";
 
-async function start(){
- const box=document.getElementById("taskList");
- const {data:{user},error:authError}=await db.auth.getUser();
- if(authError||!user){
-  box.textContent="প্রথমে Login করুন।";
-  return;
- }
- const {data,error}=await db.from("task_submissions")
- .select("id,task_id,status,submitted_at,tasks(title,reward_per_worker,currency)")
- .eq("worker_id",user.id)
- .order("submitted_at",{ascending:false});
+const el=id=>document.getElementById(id);
 
- if(error){
-  box.textContent="তথ্য লোড হয়নি: "+error.message;
-  return;
+async function start(){
+
+ const box=el("taskList");
+
+ try{
+
+  const {data:authData,error:authError}=await db.auth.getUser();
+  const user=authData?.user;
+
+  if(authError||!user){
+   box.textContent="প্রথমে Login করুন।";
+   return;
+  }
+
+  // Load worker submissions
+  const {data,error}=await db
+   .from("task_submissions")
+   .select(`
+    id,
+    task_id,
+    status,
+    submitted_at,
+    tasks(
+     title,
+     reward_per_worker,
+     currency
+    )
+   `)
+   .eq("worker_id",user.id)
+   .order("submitted_at",{ascending:false});
+
+  if(error){
+   console.error(error);
+   box.className="empty error";
+   box.textContent="তথ্য লোড হয়নি: "+error.message;
+   return;
+  }
+
+  allTasks=data||[];
+
+  // Load completed earning transactions
+  const {data:walletTx,error:walletError}=await db
+   .from("wallet_transactions")
+   .select("amount")
+   .eq("user_id",user.id)
+   .eq("type","earning")
+   .eq("status","completed");
+
+  if(walletError){
+   console.error("Reward total error:",walletError);
+   el("total").textContent="Unavailable";
+  }else{
+
+   const total=(walletTx||[]).reduce(
+    (sum,item)=>sum+Number(item.amount||0),
+    0
+   );
+
+   el("total").textContent="$"+total.toFixed(2);
+  }
+
+  renderTasks();
+
+ }catch(error){
+
+  console.error(error);
+  box.className="empty error";
+  box.textContent="তথ্য লোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+
  }
- allTasks=data||[];
- const {data:walletTx}=await db.from("wallet_transactions")
- .select("amount")
- .eq("user_id",user.id)
- .eq("type","earning")
- .eq("status","completed");
- const total=(walletTx||[]).reduce((sum,item)=>sum+Number(item.amount||0),0);
- document.getElementById("total").textContent="$"+total.toFixed(2);
- renderTasks();
 }
 
 function filterTasks(status,button){
+
  currentFilter=status;
- document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+
+ document.querySelectorAll(".tabs button").forEach(b=>{
+  b.classList.remove("active");
+ });
+
  button.classList.add("active");
+
  renderTasks();
 }
 
 function renderTasks(){
- const box=document.getElementById("taskList");
- const items=allTasks.filter(item=>currentFilter==="all"||item.status===currentFilter);
+
+ const box=el("taskList");
+
+ const items=allTasks.filter(item=>
+  currentFilter==="all"||
+  item.status===currentFilter
+ );
+
  if(!items.length){
   box.className="empty";
   box.textContent="এই বিভাগে কোনো কাজ নেই।";
   return;
  }
+
  box.className="";
  box.innerHTML="";
+
  items.forEach(item=>{
+
   const status=item.status||"pending";
   const task=item.tasks||{};
+
   const card=document.createElement("div");
   card.className="task";
+
   const title=document.createElement("h3");
   title.textContent=task.title||"Task";
+
   const meta=document.createElement("div");
   meta.className="meta";
-  meta.textContent="Reward: $"+Number(task.reward_per_worker||0).toFixed(2)+" · Submitted: "+new Date(item.submitted_at).toLocaleString();
+
+  const reward=Number(task.reward_per_worker||0);
+
+  let submittedDate="";
+
+  if(item.submitted_at){
+   const date=new Date(item.submitted_at);
+
+   if(!isNaN(date.getTime())){
+    submittedDate=date.toLocaleString();
+   }
+  }
+
+  meta.textContent=
+   "Reward: $"+reward.toFixed(2)+
+   " · Submitted: "+submittedDate;
+
   const badge=document.createElement("span");
-  badge.className="status "+(status==="approved"?"approved":status==="rejected"?"rejected":"pending");
-  badge.textContent=status==="approved"?"Approved":status==="rejected"?"Rejected":"Pending Review";
+
+  badge.className="status "+
+   (status==="approved"
+    ?"approved"
+    :status==="rejected"
+    ?"rejected"
+    :"pending"
+   );
+
+  if(status==="approved"){
+   badge.textContent="Approved";
+  }else if(status==="rejected"){
+   badge.textContent="Rejected";
+  }else{
+   badge.textContent="Pending Review";
+  }
+
   card.append(title,meta,badge);
+
   box.appendChild(card);
+
  });
+
 }
+
+// Filter button events
+document.querySelectorAll(".tabs button").forEach(button=>{
+
+ button.addEventListener("click",()=>{
+  filterTasks(button.dataset.filter,button);
+ });
+
+});
+
 start();
 </script>
+
 </body>
-  </html>
-  
+ </html>
+                                          
