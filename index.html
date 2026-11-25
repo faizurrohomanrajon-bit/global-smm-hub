@@ -6,6 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080f1d">
 <meta name="description" content="GLOBAL EARNING - একটি অনলাইন মাইক্রো-টাস্ক মার্কেটপ্লেস।">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <title>GLOBAL EARNING 🌍</title>
 
 <style>
@@ -206,6 +209,17 @@ footer{
  <p>Bangladesh 🇧🇩 | Worldwide 🌍</p>
 </footer>
 
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("/service-worker.js")
+      .catch(function(error) {
+        console.error("Service Worker error:", error);
+      });
+  });
+}
+</script>
+
 </body>
-                 </html>
-  
+    </html>
+    
