@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="bn">
+
+<!DOCTYPE html>
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,63 +17,105 @@ h3{margin-top:0;color:#f5c76b}
 label{display:block;margin:15px 0 7px;color:#dce5f3}
 input,textarea{width:100%;padding:13px;border-radius:9px;border:1px solid #35465f;background:#0b1628;color:white;font-size:15px}
 textarea{min-height:100px;resize:vertical}
-button{width:100%;padding:14px;margin-top:20px;background:#f5c76b;color:#111827;border:0;border-radius:9px;font-size:16px;font-weight:bold}
-button:disabled{opacity:.6}
+button{width:100%;padding:14px;margin-top:20px;background:#f5c76b;color:#111827;border:0;border-radius:9px;font-size:16px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.6;cursor:not-allowed}
 .info{background:#172943;padding:13px;border-radius:9px;color:#cbd5e1;font-size:14px;line-height:1.6}
 .total{font-size:18px;color:#4ade80;font-weight:bold;margin-top:15px}
-#message{margin-top:15px;line-height:1.6}
+#message{margin-top:15px;line-height:1.6;overflow-wrap:anywhere}
 .back{display:inline-block;margin-top:18px;color:#f5c76b;text-decoration:none}
 </style>
 </head>
-<body><header>
+<body>
+
+<header>
 <h2>GLOBAL EARNING 🌍</h2>
 <p>Buyer Job Posting</p>
-</header><div class="container">
+</header>
+
+<div class="container">
 <div class="card">
-<h3>নতুন কাজ পোস্ট করুন</h3><div class="info">
-যেকোনো বৈধ কাজ পোস্ট করতে পারবেন। কাজটি Admin যাচাই ও অনুমোদন না করা পর্যন্ত Worker-দের কাছে প্রকাশ হবে না।
-</div><form id="jobForm"><label>কাজের ক্যাটাগরি</label>
-<input id="category" type="text" placeholder="যেমন: Typing, Design, Translation" required>
+
+<h3>নতুন কাজ পোস্ট করুন</h3>
+
+<div class="info">
+কাজ পোস্ট করার পর Admin যাচাই করবেন। প্রকৃত পেমেন্ট যাচাই ও অনুমোদনের আগে কাজ Worker-দের কাছে প্রকাশ হবে না।
+</div>
+
+<form id="jobForm">
+
+<label>কাজের ক্যাটাগরি</label>
+<input id="category" type="text" maxlength="60"
+placeholder="যেমন: Typing, Data Entry" required>
 
 <label>কাজের শিরোনাম</label>
-<input id="title" type="text" placeholder="কাজের নাম লিখুন" required>
+<input id="title" type="text" maxlength="120"
+placeholder="কাজের নাম লিখুন" required>
 
 <label>কাজের বিস্তারিত বিবরণ</label>
+<textarea id="description" maxlength="5000"
+placeholder="কী কাজ করতে হবে বিস্তারিত লিখুন" required></textarea>
 
-<textarea id="description" placeholder="কী কাজ করতে হবে বিস্তারিত লিখুন" required></textarea><label>কাজের লিংক (ঐচ্ছিক)</label>
-<input id="jobUrl" type="url" placeholder="https://example.com">
+<label>কাজের লিংক (ঐচ্ছিক)</label>
+<input id="jobUrl" type="url"
+placeholder="https://example.com">
 
 <label>কাজের নির্দেশনা ও শর্ত</label>
+<textarea id="requirements" maxlength="5000"
+placeholder="Worker-কে কীভাবে কাজ জমা দিতে হবে লিখুন"></textarea>
 
-<textarea id="requirements" placeholder="Worker-কে কীভাবে কাজ জমা দিতে হবে লিখুন"></textarea><label>প্রতি Worker-এর পারিশ্রমিক (USD)</label>
-<input id="reward" type="number" min="0.01" step="0.01" placeholder="যেমন: 2.00" required>
+<label>প্রতি Worker-এর পারিশ্রমিক (USD)</label>
+<input id="reward" type="number" min="0.01"
+max="100000" step="0.01" placeholder="যেমন: 2.00" required>
 
 <label>কতজন Worker প্রয়োজন?</label>
-<input id="workers" type="number" min="1" step="1" value="1" required>
+<input id="workers" type="number" min="1"
+max="10000" step="1" value="1" required>
 
 <div class="total">
 মোট বাজেট: $<span id="totalBudget">0.00</span>
-</div><button type="submit" id="submitBtn">কাজ পোস্ট করুন</button>
-
-</form><div id="message"></div>
-<a class="back" href="dashboard.html">← Dashboard-এ ফিরে যান</a>
 </div>
-</div><script>
-const SUPABASE_URL = "https://hbvtnlwwafmwdfaibrrz.supabase.co";
-const SUPABASE_KEY = "sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
-const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+<button type="submit" id="submitBtn">কাজ পোস্ট করুন</button>
 
-const rewardInput = document.getElementById("reward");
-const workersInput = document.getElementById("workers");
-const totalBudget = document.getElementById("totalBudget");
-const message = document.getElementById("message");
-const submitBtn = document.getElementById("submitBtn");
+</form>
+
+<div id="message"></div>
+<a class="back" href="dashboard.html">← Dashboard-এ ফিরে যান</a>
+
+</div>
+</div>
+
+<script>
+const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
+const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
+
+const db=window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
+const form=document.getElementById("jobForm");
+const rewardInput=document.getElementById("reward");
+const workersInput=document.getElementById("workers");
+const totalBudget=document.getElementById("totalBudget");
+const message=document.getElementById("message");
+const submitBtn=document.getElementById("submitBtn");
+
+let submitting=false;
+
+function showMessage(text,color){
+ message.textContent=text;
+ message.style.color=color;
+}
 
 function calculateBudget(){
  const reward=Number(rewardInput.value)||0;
  const workers=Number(workersInput.value)||0;
- totalBudget.textContent=(reward*workers).toFixed(2);
+
+ const budget=reward*workers;
+
+ totalBudget.textContent=
+ Number.isFinite(budget)?budget.toFixed(2):"0.00";
 }
 
 rewardInput.addEventListener("input",calculateBudget);
@@ -79,86 +123,125 @@ workersInput.addEventListener("input",calculateBudget);
 
 async function getCurrentUser(){
  const {data,error}=await db.auth.getUser();
+
  if(error||!data.user)return null;
+
  return data.user;
 }
 
-document.getElementById("jobForm").addEventListener("submit",async function(e){
+form.addEventListener("submit",async function(e){
  e.preventDefault();
 
- const user=await getCurrentUser();
+ if(submitting)return;
 
- if(!user){
-  message.textContent="প্রথমে Login করুন।";
-  message.style.color="#fca5a5";
-  return;
- }
+ showMessage("তথ্য যাচাই হচ্ছে...","#cbd5e1");
 
- const category=document.getElementById("category").value.trim();
- const title=document.getElementById("title").value.trim();
- const description=document.getElementById("description").value.trim();
- const jobUrl=document.getElementById("jobUrl").value.trim();
- const requirements=document.getElementById("requirements").value.trim();
- const reward=Number(rewardInput.value);
- const workers=Number(workersInput.value);
- const budget=Number((reward*workers).toFixed(2));
+ try{
 
- if(!category||!title||!description||reward<0.01||
-    !Number.isInteger(workers)||workers<1||!Number.isFinite(budget)){
-  message.textContent="সব তথ্য সঠিকভাবে পূরণ করুন।";
-  message.style.color="#fca5a5";
-  return;
- }
+  const user=await getCurrentUser();
 
- if(jobUrl){
-  try{
-   const parsed=new URL(jobUrl);
-   if(!["http:","https:"].includes(parsed.protocol)){
-    throw new Error("Invalid URL");
-   }
-  }catch(e){
-   message.textContent="সঠিক https:// অথবা http:// লিংক দিন।";
-   message.style.color="#fca5a5";
+  if(!user){
+   showMessage("প্রথমে Login করুন।","#fca5a5");
    return;
   }
- }
 
- submitBtn.disabled=true;
- submitBtn.textContent="জমা হচ্ছে...";
- message.textContent="";
+  const category=document.getElementById("category").value.trim();
+  const title=document.getElementById("title").value.trim();
+  const description=document.getElementById("description").value.trim();
+  const jobUrl=document.getElementById("jobUrl").value.trim();
+  const requirements=document.getElementById("requirements").value.trim();
 
- const {error}=await db.from("tasks").insert({
-  buyer_id:user.id,
-  category:category,
-  title:title,
-  description:description,
-  job_url:jobUrl||null,
-  requirements:requirements,
-  reward_per_worker:reward,
-  workers_needed:workers,
-  total_budget:budget,
-  currency:"USD",
-  status:"draft",
-  payment_verified:false
- });
+  const reward=Number(rewardInput.value);
+  const workers=Number(workersInput.value);
+  const budget=Number((reward*workers).toFixed(2));
 
- if(error){
-  message.textContent="কাজ জমা হয়নি: "+error.message;
-  message.style.color="#fca5a5";
+  if(!category||!title||!description){
+   showMessage("সব প্রয়োজনীয় তথ্য পূরণ করুন।","#fca5a5");
+   return;
+  }
+
+  if(!Number.isFinite(reward)||reward<0.01||reward>100000){
+   showMessage("সঠিক পারিশ্রমিক লিখুন।","#fca5a5");
+   return;
+  }
+
+  if(!Number.isInteger(workers)||workers<1||workers>10000){
+   showMessage("Worker সংখ্যা ১ থেকে ১০০০০-এর মধ্যে দিন।","#fca5a5");
+   return;
+  }
+
+  if(!Number.isFinite(budget)||budget<=0){
+   showMessage("বাজেটের হিসাব সঠিক নয়।","#fca5a5");
+   return;
+  }
+
+  if(jobUrl){
+   try{
+    const parsed=new URL(jobUrl);
+
+    if(!["http:","https:"].includes(parsed.protocol)){
+     throw new Error("Invalid URL");
+    }
+
+   }catch(error){
+    showMessage("সঠিক https:// অথবা http:// লিংক দিন।","#fca5a5");
+    return;
+   }
+  }
+
+  submitting=true;
+  submitBtn.disabled=true;
+  submitBtn.textContent="জমা হচ্ছে...";
+  showMessage("কাজ জমা হচ্ছে...","#cbd5e1");
+
+  const {error}=await db.from("tasks").insert({
+   buyer_id:user.id,
+   category:category,
+   title:title,
+   description:description,
+   job_url:jobUrl||null,
+   requirements:requirements||null,
+   reward_per_worker:reward,
+   workers_needed:workers,
+   total_budget:budget,
+   currency:"USD",
+   status:"draft",
+   payment_verified:false
+  });
+
+  if(error){
+   showMessage("কাজ জমা হয়নি: "+error.message,"#fca5a5");
+   return;
+  }
+
+  showMessage(
+   "✓ কাজের পোস্ট সফলভাবে জমা হয়েছে। Admin Review-এর অপেক্ষায় আছে।",
+   "#4ade80"
+  );
+
+  form.reset();
+  workersInput.value="1";
+  calculateBudget();
+
+ }catch(error){
+
+  showMessage(
+   "সমস্যা হয়েছে: "+(error.message||"আবার চেষ্টা করুন।"),
+   "#fca5a5"
+  );
+
+ }finally{
+
+  submitting=false;
   submitBtn.disabled=false;
   submitBtn.textContent="কাজ পোস্ট করুন";
-  return;
+
  }
 
- message.textContent="✓ কাজের পোস্ট জমা হয়েছে। Admin Review-এর অপেক্ষায় আছে।";
- message.style.color="#4ade80";
-
- document.getElementById("jobForm").reset();
- workersInput.value="1";
- calculateBudget();
-
- submitBtn.disabled=false;
- submitBtn.textContent="কাজ পোস্ট করুন";
 });
-</script></body>
- </html>
+
+calculateBudget();
+</script>
+
+</body>
+</html>
