@@ -67,16 +67,23 @@ nav a.active{color:#4ade80}
  </select>
 
  <label>Withdrawal Amount (USD)</label>
- <input id="amount" type="number" min="1" max="1000000" step="0.01" placeholder="সর্বনিম্ন 1.00 USD">
+ <input id="amount" type="number" min="1" max="1000000"
+ step="0.01" inputmode="decimal"
+ placeholder="সর্বনিম্ন 1.00 USD">
 
  <p class="minimum">সর্বনিম্ন Withdrawal: $1.00</p>
 
  <label id="addressLabel">bKash Number</label>
- <input id="address" type="text" maxlength="200" autocomplete="off" placeholder="আপনার bKash Number">
+ <input id="address" type="text" maxlength="200"
+ autocomplete="off" placeholder="আপনার bKash Number">
 
- <p class="note" id="networkNote">আপনার নিজের পেমেন্ট অ্যাকাউন্টের তথ্য দিন।</p>
+ <p class="note" id="networkNote">
+ আপনার নিজের পেমেন্ট অ্যাকাউন্টের তথ্য দিন।
+ </p>
 
- <button id="submitBtn">Submit Withdrawal Request</button>
+ <button type="button" id="submitBtn">
+ Submit Withdrawal Request
+ </button>
 
  <p class="status" id="message"></p>
 </section>
@@ -113,7 +120,8 @@ const el=id=>document.getElementById(id);
 const MIN_WITHDRAWAL=1.00;
 
 function money(value){
- return "$"+Number(value||0).toFixed(2);
+ const number=Number(value||0);
+ return "$"+(Number.isFinite(number)?number:0).toFixed(2);
 }
 
 function escapeHtml(value){
@@ -126,33 +134,28 @@ function escapeHtml(value){
  }[c]));
 }
 
+function showMessage(text,color="#fbbf24"){
+ el("message").textContent=text;
+ el("message").style.color=color;
+}
+
 function updateFields(){
 
  const method=el("method").value;
 
  if(method==="USDT BEP20"){
-
   el("addressLabel").textContent="USDT BEP20 Wallet Address";
   el("address").placeholder="আপনার BEP20 Address";
-
   el("networkNote").textContent=
    "শুধুমাত্র BNB Smart Chain (BEP20) Network।";
-
  }else{
-
   el("addressLabel").textContent=method+" Number";
   el("address").placeholder="আপনার "+method+" Number";
-
   el("networkNote").textContent=
    "আপনার নিজের "+method+" অ্যাকাউন্টের তথ্য দিন।";
-
  }
 
-}
-
-function showMessage(text,color="#fbbf24"){
- el("message").textContent=text;
- el("message").style.color=color;
+ el("address").value="";
 }
 
 async function loadWallet(){
@@ -173,10 +176,8 @@ async function loadWallet(){
  walletBalance=Number(data.balance||0);
 
  el("balance").textContent=money(walletBalance);
-
  el("pending").textContent=
   "Pending: "+money(data.pending_balance);
-
 }
 
 async function loadHistory(){
@@ -191,10 +192,8 @@ async function loadHistory(){
  if(error)throw error;
 
  if(!data||data.length===0){
-
   el("history").textContent=
    "এখনো কোনো Withdrawal Request নেই।";
-
   return;
  }
 
@@ -214,23 +213,17 @@ async function loadHistory(){
 
   return `
    <div class="item">
-
     <b>${money(item.amount)}</b><br>
-
     Method: ${escapeHtml(item.method)}<br>
-
     Status:
     <span class="${statusClass}">
      ${escapeHtml(item.status)}
     </span><br>
-
     ${escapeHtml(date)}
-
    </div>
   `;
 
  }).join("");
-
 }
 
 async function loadPage(){
@@ -261,7 +254,6 @@ async function loadPage(){
   el("history").textContent="History load failed.";
 
  }
-
 }
 
 async function submitWithdrawal(){
@@ -269,7 +261,6 @@ async function submitWithdrawal(){
  if(submitting)return;
 
  const btn=el("submitBtn");
-
  const amount=Number(el("amount").value);
  const method=el("method").value;
  const address=el("address").value.trim();
@@ -282,22 +273,47 @@ async function submitWithdrawal(){
  }
 
  if(!Number.isFinite(amount)||amount<MIN_WITHDRAWAL){
-  showMessage("সর্বনিম্ন Withdrawal Amount হলো $1.00।","#f87171");
+  showMessage(
+   "সর্বনিম্ন Withdrawal Amount হলো $1.00।",
+   "#f87171"
+  );
   return;
  }
 
- if(!Number.isFinite(amount*100)||Math.round(amount*100)!==amount*100){
-  showMessage("সর্বোচ্চ দুই দশমিক পর্যন্ত Amount দিন।","#f87171");
+ if(Math.abs(amount*100-Math.round(amount*100))>0.000001){
+  showMessage(
+   "সর্বোচ্চ দুই দশমিক পর্যন্ত Amount দিন।",
+   "#f87171"
+  );
   return;
  }
 
  if(amount>walletBalance){
-  showMessage("আপনার Available Balance যথেষ্ট নয়।","#f87171");
+  showMessage(
+   "আপনার Available Balance যথেষ্ট নয়।",
+   "#f87171"
+  );
   return;
  }
 
  if(!address||address.length<5||address.length>200){
-  showMessage("সঠিক Payment Address বা Number লিখুন।","#f87171");
+  showMessage(
+   "সঠিক Payment Address বা Number লিখুন।",
+   "#f87171"
+  );
+  return;
+ }
+
+ if(!["bKash","Nagad","USDT BEP20"].includes(method)){
+  showMessage("সঠিক Payment Method নির্বাচন করুন।","#f87171");
+  return;
+ }
+
+ if(!confirm(
+  "আপনার Withdrawal Request জমা দিতে চান?\n"+
+  "Amount: "+money(amount)+"\n"+
+  "Method: "+method
+ )){
   return;
  }
 
@@ -307,34 +323,56 @@ async function submitWithdrawal(){
 
  showMessage("Request জমা হচ্ছে...");
 
+ let requestCreated=false;
+
  try{
 
-  const {error}=await db.rpc("create_withdrawal_request",{
-   p_amount:amount,
-   p_method:method,
-   p_payout_address:address
-  });
+  const {data,error}=await db.rpc(
+   "create_withdrawal_request",
+   {
+    p_amount:amount,
+    p_method:method,
+    p_payout_address:address
+   }
+  );
 
   if(error)throw error;
+
+  requestCreated=true;
 
   el("amount").value="";
   el("address").value="";
 
   showMessage(
-   "Withdrawal Request সফলভাবে জমা হয়েছে। Admin যাচাই করবেন।",
+   "✓ Withdrawal Request সফলভাবে জমা হয়েছে। Admin যাচাই করবেন।",
    "#4ade80"
   );
 
-  await loadWallet();
-  await loadHistory();
+  // Request সফল হওয়ার পর Refresh ব্যর্থ হলেও
+  // Request-কে ব্যর্থ বলা হবে না।
+  try{
+   await loadWallet();
+  }catch(refreshError){
+   console.error("Wallet refresh:",refreshError);
+  }
+
+  try{
+   await loadHistory();
+  }catch(refreshError){
+   console.error("History refresh:",refreshError);
+   el("history").textContent=
+    "Request জমা হয়েছে। History পরে আবার দেখুন।";
+  }
 
  }catch(error){
 
   console.error(error);
 
   showMessage(
-   "Request ব্যর্থ: "+error.message,
-   "#f87171"
+   requestCreated
+    ?"Request জমা হয়েছে। তবে পেজ রিফ্রেশে সমস্যা হয়েছে।"
+    :"Request ব্যর্থ: "+(error.message||"আবার চেষ্টা করুন।"),
+   requestCreated?"#4ade80":"#f87171"
   );
 
  }finally{
@@ -356,4 +394,5 @@ loadPage();
 </script>
 
 </body>
-</html>
+  </html>
+ 
