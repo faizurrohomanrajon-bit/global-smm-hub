@@ -130,6 +130,7 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 
 <body>
 <div class="container">
+
 <header>
  <div class="logo">🌍 GLOBAL EARNING</div>
  <div class="user-area">
@@ -139,6 +140,7 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </header>
 
 <main>
+
 <section class="hero">
  <div class="eyebrow">✦ GLOBAL WORKSPACE</div>
  <h1>Welcome Back!</h1>
@@ -164,16 +166,19 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
   <div class="stat-number" id="availableTasks">0</div>
   <div class="stat-label">Available Tasks</div>
  </div>
+
  <div class="stat">
   <div class="stat-icon">📝</div>
   <div class="stat-number" id="myTasks">0</div>
   <div class="stat-label">My Submissions</div>
  </div>
+
  <div class="stat">
   <div class="stat-icon">👥</div>
   <div class="stat-number" id="referralCount">0</div>
   <div class="stat-label">My Referrals</div>
  </div>
+
  <div class="stat">
   <div class="stat-icon">🤝</div>
   <div class="stat-number" id="referralEarnings">$0.00</div>
@@ -187,31 +192,37 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </div>
 
 <section class="grid">
+
  <a class="quick" href="tasks.html?category=typing">
   <div class="quick-icon">⌨️</div>
   <h3>Typing</h3>
   <p>টাইপিং সংক্রান্ত কাজ খুঁজুন</p>
  </a>
+
  <a class="quick" href="tasks.html?category=data-entry">
   <div class="quick-icon">📊</div>
   <h3>Data Entry</h3>
   <p>ডেটা এন্ট্রির কাজ খুঁজুন</p>
  </a>
+
  <a class="quick" href="tasks.html?category=pdf-to-word">
   <div class="quick-icon">📄</div>
   <h3>PDF to Word</h3>
   <p>ডকুমেন্ট কনভার্সনের কাজ</p>
  </a>
+
  <a class="quick" href="tasks.html?category=product-listing">
   <div class="quick-icon">🛍️</div>
   <h3>Product Listing</h3>
   <p>পণ্য তালিকাভুক্তির কাজ</p>
  </a>
+
  <a class="quick" href="tasks.html?category=website-testing">
   <div class="quick-icon">🌐</div>
   <h3>Website Testing</h3>
   <p>ওয়েবসাইট পরীক্ষা ও ফিডব্যাক</p>
  </a>
+
 </section>
 
 <div class="section-head">
@@ -220,6 +231,7 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </div>
 
 <section class="grid">
+
  <a class="quick" href="tasks.html">
   <div class="quick-icon">📋</div>
   <h3>Available Tasks →</h3>
@@ -249,6 +261,7 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
   <h3>Withdrawal →</h3>
   <p>উত্তোলনের তথ্য</p>
  </a>
+
 </section>
 
 <section class="activity">
@@ -257,12 +270,14 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </section>
 
 <div class="status" id="status">● Connecting Account...</div>
+
 </main>
 
 <footer>
  © 2026 GLOBAL EARNING. All rights reserved.<br>
  Bangladesh 🇧🇩 | Worldwide 🌍
 </footer>
+
 </div>
 
 <nav class="bottom-nav">
@@ -279,7 +294,11 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 const SUPABASE_URL="https://hbvtnlwwafmwdfaibrrz.supabase.co";
 const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const db=window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
 const el=id=>document.getElementById(id);
 
 async function loadDashboard(){
@@ -294,7 +313,9 @@ async function loadDashboard(){
    return;
   }
 
-  const {data:profile,error:profileError}=await db.from("profiles")
+  // Load profile
+  const {data:profile,error:profileError}=await db
+   .from("profiles")
    .select("display_name")
    .eq("id",user.id)
    .maybeSingle();
@@ -304,7 +325,9 @@ async function loadDashboard(){
     "Welcome, "+(profile?.display_name || "Worker")+" 👋";
   }
 
-  const {data:wallet,error:walletError}=await db.from("wallets")
+  // Load wallet
+  const {data:wallet,error:walletError}=await db
+   .from("wallets")
    .select("balance,pending_balance")
    .eq("currency","USD")
    .eq("user_id",user.id)
@@ -313,30 +336,45 @@ async function loadDashboard(){
   if(!walletError && wallet){
    el("balance").textContent=
     "$"+Number(wallet.balance || 0).toFixed(2);
+
    el("pendingBalance").textContent=
     "Pending Balance: $"+Number(wallet.pending_balance || 0).toFixed(2);
   }
 
-  const {count:taskCount,error:taskError}=await db.from("tasks")
+  // Load available tasks
+  const {count:taskCount,error:taskError}=await db
+   .from("tasks")
    .select("id",{count:"exact",head:true})
    .eq("status","active")
    .eq("currency","USD");
 
-  if(!taskError)el("availableTasks").textContent=taskCount ?? 0;
+  if(!taskError){
+   el("availableTasks").textContent=taskCount ?? 0;
+  }
 
-  const {count:myCount,error:myError}=await db.from("task_submissions")
+  // Load my submissions
+  const {count:myCount,error:myError}=await db
+   .from("task_submissions")
    .select("id",{count:"exact",head:true})
    .eq("worker_id",user.id);
 
-  if(!myError)el("myTasks").textContent=myCount ?? 0;
+  if(!myError){
+   el("myTasks").textContent=myCount ?? 0;
+  }
 
-  const {count:refCount,error:refError}=await db.from("profiles")
-   .select("id",{count:"exact",head:true})
-   .eq("referred_by",user.id);
+  // Load referral count using RPC
+  const {data:refCount,error:refError}=await db
+   .rpc("get_my_referral_count");
 
-  if(!refError)el("referralCount").textContent=refCount ?? 0;
+  if(!refError){
+   el("referralCount").textContent=refCount ?? 0;
+  }else{
+   console.error("Referral count error:",refError.message);
+  }
 
-  const {data:transactions,error:refEarnError}=await db.from("wallet_transactions")
+  // Load referral earnings
+  const {data:transactions,error:refEarnError}=await db
+   .from("wallet_transactions")
    .select("amount")
    .eq("user_id",user.id)
    .eq("type","referral")
@@ -346,12 +384,15 @@ async function loadDashboard(){
    const total=(transactions || []).reduce(
     (sum,item)=>sum+Number(item.amount || 0),0
    );
-   el("referralEarnings").textContent="$"+total.toFixed(2);
+
+   el("referralEarnings").textContent=
+    "$"+total.toFixed(2);
   }
 
   el("status").textContent="● Account Connected";
+
  }catch(error){
-  console.error(error);
+  console.error("Dashboard error:",error);
   el("status").textContent="● কিছু তথ্য লোড হয়নি। আবার চেষ্টা করুন।";
  }
 }
@@ -360,15 +401,18 @@ async function logout(){
  if(!confirm("আপনি কি Logout করতে চান?"))return;
 
  const {error}=await db.auth.signOut();
+
  if(error){
   alert("Logout Error: "+error.message);
   return;
  }
+
  window.location.replace("login.html");
 }
 
 loadDashboard();
 </script>
+
 </body>
-   </html>
-  
+ </html>
+                                                        
