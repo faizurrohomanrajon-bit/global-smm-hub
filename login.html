@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080f1d">
-<title>Login | GLOBAL SMM HUB</title>
+<title>Login | GLOBAL EARNING</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -27,47 +27,29 @@ a{color:#4ade80;text-decoration:none}
 </head>
 
 <body>
-
 <div class="container">
 
-<div class="logo">🌍 GLOBAL SMM HUB</div>
+<div class="logo">🌍 GLOBAL EARNING</div>
 
 <div class="card">
-
 <h1>Welcome Back</h1>
-<p class="sub">Login to your global marketing account</p>
+<p class="sub">Login to your global earning account</p>
 
 <form id="loginForm">
-
 <label>Email Address</label>
-<input
- type="email"
- id="email"
- placeholder="Enter your email"
- autocomplete="email"
- required
->
+<input type="email" id="email" placeholder="Enter your email" autocomplete="email" required>
 
 <label>Password</label>
-<input
- type="password"
- id="password"
- placeholder="Enter your password"
- autocomplete="current-password"
- required
->
+<input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
 
 <button type="submit" id="loginBtn">LOGIN →</button>
-
 <div class="message" id="message" role="status"></div>
-
 </form>
 
 <div class="links">
 Don't have an account?
 <a id="registerLink" href="register.html">Create Account</a>
 </div>
-
 </div>
 
 <div class="home">
@@ -93,7 +75,6 @@ const message=document.getElementById("message");
 
 let loginBusy=false;
 
-// Referral link থেকে Referrer ID
 const params=new URLSearchParams(window.location.search);
 const referrerId=params.get("ref");
 
@@ -108,7 +89,6 @@ function showMessage(text,color="#fca5a5"){
 }
 
 form.addEventListener("submit",async function(e){
-
  e.preventDefault();
 
  if(loginBusy)return;
@@ -127,7 +107,6 @@ form.addEventListener("submit",async function(e){
  showMessage("");
 
  try{
-
   const {data,error}=await supabaseClient.auth.signInWithPassword({
    email:email,
    password:password
@@ -139,9 +118,7 @@ form.addEventListener("submit",async function(e){
    throw new Error("Login করা যায়নি। আবার চেষ্টা করুন।");
   }
 
-  // Referral ID থাকলে একবার সংরক্ষণের চেষ্টা
   if(referrerId){
-
    const {error:referralError}=await supabaseClient.rpc(
     "attach_referral",
     {p_referrer:referrerId}
@@ -150,15 +127,13 @@ form.addEventListener("submit",async function(e){
    if(referralError){
     console.error("Referral save error:",referralError.message);
    }
-
   }
 
   showMessage("Login successful! Redirecting...","#4ade80");
 
-  window.location.replace("dashboard.html");
+  window.location.replace("dashboard.html?showWelcome=1");
 
  }catch(error){
-
   console.error("Login error:",error);
 
   showMessage(
@@ -169,12 +144,9 @@ form.addEventListener("submit",async function(e){
   loginBusy=false;
   button.disabled=false;
   button.textContent="LOGIN →";
-
  }
-
 });
 </script>
 
 </body>
-  </html>
-  
+</html>
