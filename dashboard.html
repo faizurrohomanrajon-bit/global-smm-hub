@@ -56,6 +56,113 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 .nav-item{text-decoration:none;color:#9aabc0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:10px;flex:0 0 14.285%}
 .nav-icon{font-size:21px}
 .nav-item.active{color:var(--gold);font-weight:bold}
+
+/* Welcome Popup Banner */
+.welcome-overlay{
+ display:none;
+ position:fixed;
+ inset:0;
+ z-index:1000;
+ background:#000c;
+ backdrop-filter:blur(7px);
+ align-items:center;
+ justify-content:center;
+ padding:16px;
+}
+.welcome-overlay.show{display:flex}
+.welcome-box{
+ width:100%;
+ max-width:470px;
+ max-height:88vh;
+ overflow-y:auto;
+ position:relative;
+ padding:25px 20px;
+ border-radius:20px;
+ background:linear-gradient(145deg,#142b3e,#101b2c);
+ border:1px solid #557b60;
+ box-shadow:0 20px 70px #000b;
+}
+.welcome-close{
+ position:absolute;
+ top:12px;
+ right:13px;
+ width:34px;
+ height:34px;
+ border-radius:50%;
+ border:1px solid #52657b;
+ background:#1b2b40;
+ color:white;
+ font-size:20px;
+ cursor:pointer;
+}
+.welcome-title{
+ text-align:center;
+ font-size:23px;
+ color:var(--gold);
+ margin:8px 25px 10px;
+}
+.welcome-sub{
+ text-align:center;
+ color:#cbd5e1;
+ font-size:13px;
+ line-height:1.7;
+ margin-bottom:20px;
+}
+.welcome-list{
+ display:grid;
+ gap:10px;
+}
+.welcome-item{
+ display:flex;
+ align-items:center;
+ gap:12px;
+ padding:12px;
+ border-radius:11px;
+ background:#ffffff09;
+ border:1px solid #293b53;
+}
+.welcome-item .emoji{font-size:24px}
+.welcome-item strong{
+ display:block;
+ font-size:13px;
+ margin-bottom:4px;
+ color:#fff;
+}
+.welcome-item small{
+ color:#aab9ca;
+ font-size:11px;
+ line-height:1.5;
+}
+.welcome-links{
+ display:grid;
+ gap:10px;
+ margin-top:20px;
+}
+.welcome-link{
+ display:block;
+ text-align:center;
+ text-decoration:none;
+ padding:14px 12px;
+ border-radius:10px;
+ font-size:13px;
+ font-weight:bold;
+}
+.telegram-group{
+ background:#168bd0;
+ color:white;
+}
+.telegram-support{
+ background:#173c35;
+ border:1px solid #43836a;
+ color:#a7f3d0;
+}
+.welcome-note{
+ color:#94a3b8;
+ font-size:10px;
+ text-align:center;
+ margin-top:13px;
+ line-height:1.6;
+}
 @media(min-width:650px){
  main{padding:26px}
  .hero{padding:36px}
@@ -68,6 +175,62 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
 </head>
 
 <body>
+
+<!-- Welcome Popup -->
+<div class="welcome-overlay" id="welcomeOverlay">
+ <div class="welcome-box">
+  <button class="welcome-close" id="welcomeClose" aria-label="Close">×</button>
+
+  <div style="text-align:center;font-size:42px">🌍</div>
+  <h2 class="welcome-title">Welcome to GLOBAL EARNING!</h2>
+  <p class="welcome-sub">
+   আমাদের Global Workspace-এ আপনাকে স্বাগতম।
+   আপনার পছন্দের কাজ নির্বাচন করে শুরু করুন।
+  </p>
+
+  <div class="welcome-list">
+   <div class="welcome-item">
+    <span class="emoji">⌨️</span>
+    <div><strong>Typing</strong><small>ডকুমেন্ট ও লেখা টাইপ করার কাজ</small></div>
+   </div>
+   <div class="welcome-item">
+    <span class="emoji">📊</span>
+    <div><strong>Data Entry</strong><small>Google Sheets ও Excel-এ তথ্য সাজানো</small></div>
+   </div>
+   <div class="welcome-item">
+    <span class="emoji">📄</span>
+    <div><strong>PDF to Word</strong><small>PDF ডকুমেন্ট Word ফরম্যাটে তৈরি</small></div>
+   </div>
+   <div class="welcome-item">
+    <span class="emoji">🛍️</span>
+    <div><strong>Product Listing</strong><small>অনলাইন পণ্যের তথ্য তালিকাভুক্ত করা</small></div>
+   </div>
+   <div class="welcome-item">
+    <span class="emoji">🌐</span>
+    <div><strong>Website Testing</strong><small>ওয়েবসাইট পরীক্ষা ও ফিডব্যাক দেওয়া</small></div>
+   </div>
+  </div>
+
+  <div class="welcome-links">
+   <a class="welcome-link telegram-group"
+      href="https://t.me/EarningZonebdhsj"
+      target="_blank" rel="noopener noreferrer">
+      📢 JOIN TELEGRAM COMMUNITY
+   </a>
+
+   <a class="welcome-link telegram-support"
+      href="https://t.me/GlobalEarningSupporte"
+      target="_blank" rel="noopener noreferrer">
+      🎧 CONTACT SUPPORT
+   </a>
+  </div>
+
+  <p class="welcome-note">
+   নতুন আপডেট ও সহায়তার জন্য আমাদের Telegram Community-তে যুক্ত থাকুন।
+  </p>
+ </div>
+</div>
+
 <div class="container">
 
 <header>
@@ -130,20 +293,8 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
  <a class="quick" href="wallet.html"><div class="quick-icon">💰</div><h3>My Wallet →</h3><p>ব্যালেন্স ও লেনদেন</p></a>
  <a class="quick" href="referral.html"><div class="quick-icon">🤝</div><h3>Referral →</h3><p>রেফারেল ও কমিশন</p></a>
  <a class="quick" href="withdraw.html"><div class="quick-icon">💸</div><h3>Withdrawal →</h3><p>উত্তোলনের তথ্য</p></a>
-
- <!-- Telegram Community -->
- <a class="quick" href="https://t.me/EarningZonebdhsj" target="_blank" rel="noopener noreferrer">
-  <div class="quick-icon">📢</div>
-  <h3>Telegram Community →</h3>
-  <p>নতুন আপডেট ও ঘোষণা পেতে গ্রুপে যোগ দিন</p>
- </a>
-
- <!-- Telegram Support -->
- <a class="quick" href="https://t.me/GlobalEarningSupporte" target="_blank" rel="noopener noreferrer">
-  <div class="quick-icon">🎧</div>
-  <h3>Contact Support →</h3>
-  <p>সাহায্যের জন্য আমাদের সাপোর্টে যোগাযোগ করুন</p>
- </a>
+ <a class="quick" href="https://t.me/EarningZonebdhsj" target="_blank" rel="noopener noreferrer"><div class="quick-icon">📢</div><h3>Telegram Community →</h3><p>নতুন আপডেট পেতে গ্রুপে যোগ দিন</p></a>
+ <a class="quick" href="https://t.me/GlobalEarningSupporte" target="_blank" rel="noopener noreferrer"><div class="quick-icon">🎧</div><h3>Contact Support →</h3><p>সাহায্যের জন্য যোগাযোগ করুন</p></a>
 </section>
 
 <section class="activity">
@@ -158,6 +309,7 @@ footer{text-align:center;color:#64748b;font-size:11px;padding:25px 10px;line-hei
  © 2026 GLOBAL EARNING. All rights reserved.<br>
  Bangladesh 🇧🇩 | Worldwide 🌍
 </footer>
+
 </div>
 
 <nav class="bottom-nav">
@@ -177,6 +329,33 @@ const SUPABASE_KEY="sb_publishable_PBEsz-_TswIKq8W3rTFaOg_UVAbfPTk";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const el=id=>document.getElementById(id);
 
+// Show popup only after a successful login redirect
+const pageUrl=new URL(window.location.href);
+const showWelcome=pageUrl.searchParams.get("showWelcome")==="1";
+
+if(showWelcome){
+ pageUrl.searchParams.delete("showWelcome");
+ history.replaceState({},document.title,pageUrl.pathname+pageUrl.search+pageUrl.hash);
+}
+
+function openWelcome(){
+ el("welcomeOverlay").classList.add("show");
+}
+
+function closeWelcome(){
+ el("welcomeOverlay").classList.remove("show");
+}
+
+el("welcomeClose").addEventListener("click",closeWelcome);
+
+el("welcomeOverlay").addEventListener("click",function(e){
+ if(e.target===this)closeWelcome();
+});
+
+document.addEventListener("keydown",function(e){
+ if(e.key==="Escape")closeWelcome();
+});
+
 async function loadDashboard(){
  try{
   el("status").textContent="● Connecting Account...";
@@ -187,6 +366,11 @@ async function loadDashboard(){
   if(authError || !user){
    window.location.replace("login.html");
    return;
+  }
+
+  // Show popup after checking the logged-in user
+  if(showWelcome){
+   openWelcome();
   }
 
   const {data:profile,error:profileError}=await db
@@ -269,6 +453,7 @@ async function logout(){
 
 loadDashboard();
 </script>
+
 </body>
-  </html>
-                                            
+    </html>
+                                    
